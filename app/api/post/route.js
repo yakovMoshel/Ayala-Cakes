@@ -7,9 +7,9 @@ export const GET = async () => {
   await connectToMongo();
   const posts = await postModel.find().sort({ createdAt: 1 });
 
-  const headers = new Headers({
-    "Cache-Control": "no-store",
-  });
+  // const headers = new Headers({
+  //   "Cache-Control": "no-store",
+  // });
 
   return NextResponse.json({ success: true, data: posts }, { headers });
 };
