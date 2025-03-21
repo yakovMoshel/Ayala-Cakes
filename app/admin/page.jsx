@@ -1,4 +1,4 @@
-import AdminWrapper from '@/components/AdminWrapper';
+import AdminWrapper from "@/Components/AdminWrapper";
 
 export default function AdminPage({ children }) {
   return (
