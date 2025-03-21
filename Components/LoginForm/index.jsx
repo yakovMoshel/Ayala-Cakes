@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import styles from './style.module.scss';
 import { useRouter } from 'next/navigation';
+import useStore from '../../useStore';
+
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -10,6 +12,9 @@ export default function LoginForm() {
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const { setAuthenticated, setUser } = useStore();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +38,8 @@ export default function LoginForm() {
 
       // הצגת הודעת הצלחה
       setSuccessMessage('Login successful');
-
+      setAuthenticated(true);
+      setUser(data.user);
       // מעבר לעמוד Admin
       setTimeout(() => {
         router.push('/admin');

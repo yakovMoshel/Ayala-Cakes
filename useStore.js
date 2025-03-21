@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
 const useStore = create((set) => ({
-  // ניהול התחברות
-  isAuthenticated: false, // מצב התחברות
-  setAuthenticated: (value) => set({ isAuthenticated: value }), // עדכון מצב התחברות
+  isAuthenticated: false,
+  user: null,
+  setAuthenticated: (value) => set({ isAuthenticated: value }),
+  setUser: (user) => set({ user }),
 
-  // מועדפים
   favorites: [],
   isFavBlinking: false,
   addFavorite: (productId) =>
