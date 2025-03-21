@@ -1,5 +1,3 @@
-// utils/serialization.js
-
 /**
  * ממיר אובייקט של מונגו לאובייקט פשוט שניתן להעביר בין Server ל-Client Components
  * @param {Object} obj - אובייקט MongoDB או כל אובייקט אחר
