@@ -4,6 +4,7 @@ import styles from './style.module.scss';
 import { useRouter } from 'next/navigation';
 import useStore from '../../useStore';
 
+
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,11 +12,15 @@ export default function LoginForm() {
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const setAuthenticated = useStore((state) => state.setAuthenticated);
+
+  const { setAuthenticated, setUser } = useStore();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // שליחת נתוני התחברות לשרת
     const res = await fetch('/api/auth/', {
       method: 'POST',
       headers: {
@@ -26,14 +31,21 @@ export default function LoginForm() {
 
     const data = await res.json();
     setLoading(false);
+
     if (data.success) {
-      document.cookie = `sessionToken=${data.token}; path=/; Secure; HttpOnly; SameSite=Strict`;
-      setAuthenticated(true);
+      // שמירת הטוקן ב-Cookie (או LocalStorage אם תעדיף)
+      document.cookie = `sessionToken=${data.token}; path=/; Secure; SameSite=Strict`;
+
+      // הצגת הודעת הצלחה
       setSuccessMessage('Login successful');
+      setAuthenticated(true);
+      setUser(data.user);
+      // מעבר לעמוד Admin
       setTimeout(() => {
         router.push('/admin');
       }, 1000);
     } else {
+      // טיפול בשגיאה
       setErrorMessage(data.message);
     }
   };
@@ -44,28 +56,30 @@ export default function LoginForm() {
         <div className={styles.formRow}>
           <div className={styles.formGroup}>
             <label htmlFor="email">Email:</label>
-            <input 
-              type="email" 
-              id="email" 
+            <input
+              type="email"
+              id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="password">Password:</label>
-            <input 
-              type="password" 
-              id="password" 
+            <input
+              type="password"
+              id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
         </div>
         {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
         {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
-        <button type="submit" disabled={!email || !password || loading}>התחבר</button>
+        <button type="submit" disabled={!email || !password || loading}>
+          התחבר
+        </button>
         {loading && <div className={styles.loader}></div>}
       </form>
     </div>

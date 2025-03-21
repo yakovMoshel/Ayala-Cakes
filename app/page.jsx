@@ -11,7 +11,7 @@ import Head from 'next/head';
 const Home = async () => {
   await connectToMongo();
 
-  const allProducts = await getAllProducts()
+  const allProducts = await getAllProducts();
   const limitedProducts = allProducts.slice(0, 4);
 
   return (

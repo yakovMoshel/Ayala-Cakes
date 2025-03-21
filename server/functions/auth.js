@@ -5,16 +5,15 @@ const User = require('../DL/Models/userModel');
 async function login(email, password) {
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
-    throw new Error('Login failed');
+    throw new Error('User not found');
   }
 
   const passwordMatch = await bcryptjs.compare(password, user.password);
   if (!passwordMatch) {
-    throw new Error('Login failed');
-  } else {
+    throw new Error('Invalid password');
   }
 
-  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.SECRET_CODE, { expiresIn: "30d" });
+  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.SECRET_CODE, { expiresIn: '30d' });
   return token;
 }
 
@@ -33,15 +32,17 @@ function authenticateToken(req, res, next) {
   });
 }
 
+
+
 async function verifyToken(token) {
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_CODE);
-    return decoded;
+    const decoded = jwt.verify(token, process.env.SECRET_CODE)
+    const user = await User.findById(decoded.userId)
+    return !!user
   } catch (error) {
-    return null;
+    return false
   }
 }
-
 
 
 module.exports = { login, authenticateToken,verifyToken };

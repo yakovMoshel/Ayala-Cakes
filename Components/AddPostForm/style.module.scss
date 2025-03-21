@@ -29,13 +29,13 @@
       border-radius: 10px;
       margin-bottom: 20px;
       text-align: center;
-      
+
       &.success {
         background-color: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
       }
-      
+
       &.error {
         background-color: #f8d7da;
         color: #721c24;
@@ -75,7 +75,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 20px;
-      
+
       @media (max-width: 768px) {
         grid-template-columns: 1fr;
       }
@@ -126,7 +126,7 @@
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
-        
+
         &:hover {
           background-color: var(--secColor);
         }
@@ -135,12 +135,11 @@
   }
 }
 
-
 .formatButtons {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
-  
+
   button {
     width: 40px;
     height: 40px;
@@ -149,7 +148,7 @@
     background: white;
     cursor: pointer;
     font-weight: bold;
-    
+
     &:hover {
       background: var(--mainColor);
       color: white;
@@ -160,11 +159,11 @@
 @media (max-width: 768px) {
   .topPosts {
     padding: 20px;
-    
+
     .formContainer {
       padding: 15px;
     }
-    
+
     .form {
       .formRow {
         flex-direction: column;

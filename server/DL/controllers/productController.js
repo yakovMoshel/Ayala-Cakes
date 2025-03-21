@@ -1,16 +1,60 @@
-
 import { productModel } from "../Models/productModel";
 import { messageModel } from "../Models/messageModel";
 import { categoryModel } from "../Models/categoryModel";
+import { serializeData } from "@/utils/serialization";
+
 
 export const getProducts = async (categoryName) => {
-  if (categoryName) {
-    const productsByCategory = await productModel.find({ category: categoryName, isActive: true });
-    return productsByCategory;
+  try {
+    if (categoryName) {
+      const productsByCategory = await productModel.find({ category: categoryName, isActive: true }).lean();
+      return serializeData(productsByCategory);
+    }
+    
+    const allProducts = await productModel.find({ isActive: true }).lean();
+    return serializeData(allProducts);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw error;
   }
-  return productModel.find({ isActive: true });
 };
 
-export const getOneProduct = (id) => productModel.findOne({ _id: id, isActive: true });
-export const getSomeProducts =  (ids) => productModel.find({ _id: { $in: ids }, isActive: true });
-export const createMessage = (message) => messageModel.create(message);
+export const getOneProduct = async (id) => {
+  try {
+    const product = await productModel.findOne({ _id: id, isActive: true }).lean();
+    return serializeData(product);
+  } catch (error) {
+    console.error('Error fetching single product:', error);
+    throw error;
+  }
+};
+
+export const getSomeProducts = async (ids) => {
+  try {
+    const products = await productModel.find({ _id: { $in: ids }, isActive: true }).lean();
+    return serializeData(products);
+  } catch (error) {
+    console.error('Error fetching multiple products:', error);
+    throw error;
+  }
+};
+
+export const createMessage = async (message) => {
+  try {
+    const newMessage = await messageModel.create(message);
+    return serializeData(newMessage);
+  } catch (error) {
+    console.error('Error creating message:', error);
+    throw error;
+  }
+};
+
+export const getCategories = async () => {
+  try {
+    const categories = await categoryModel.find().lean();
+    return serializeData(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+};
