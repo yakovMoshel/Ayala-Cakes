@@ -1,7 +1,13 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import styles from './style.module.scss';
+
+const ReactQuill = dynamic(() => import('react-quill'), { 
+  ssr: false,
+  loading: () => <p>טוען עורך...</p>
+});
 
 export default function AddPostForm() {
   const [formData, setFormData] = useState({
@@ -18,18 +24,45 @@ export default function AddPostForm() {
     callToAction: '',
     socialImage: ''
   });
-
-
-  
   
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const [quillLoaded, setQuillLoaded] = useState(false);
+
+  useEffect(() => {
+    import('react-quill/dist/quill.snow.css');
+    setQuillLoaded(true);
+  }, []);
+
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link'],
+      ['clean']
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'link'
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleEditorChange = (content) => {
+    setFormData(prev => ({
+      ...prev,
+      content: content
     }));
   };
 
@@ -55,32 +88,8 @@ export default function AddPostForm() {
     setIsLoading(true);
     setFeedback({ type: '', message: '' });
   
-    const formatContent = (content) => {
-      return content
-        .split('\n')
-        .map(line => {
-          // Headers
-          if (line.startsWith('##')) {
-            const level = line.match(/^#+/)[0].length;
-            const text = line.replace(/^#+\s*/, '');
-            return `<h${level}>${text}</h${level}>`;
-          }
-          // Bullets
-          if (line.startsWith('*')) {
-            const text = line.replace(/^\*\s*/, '');
-            return `<li>${text}</li>`;
-          }
-          // Bold text
-          const boldText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-          // Regular paragraph
-          return `<p>${boldText}</p>`;
-        })
-        .join('');
-    };
-  
     const formattedData = {
       ...formData,
-      content: formatContent(formData.content),
       image: formData.image.trim(),
     };
   
@@ -107,32 +116,6 @@ export default function AddPostForm() {
         behavior: 'smooth'
       });
     }
-  };
-
-
-  const formatSelection = (type) => {
-    const textarea = document.querySelector(`textarea[name="content"]`);
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = formData.content.substring(start, end);
-    
-    let newText;
-    switch(type) {
-      case 'bold':
-        newText = `**${selectedText}**`;
-        break;
-      case 'bullet':
-        newText = `* ${selectedText}`;
-        break;
-      case 'header':
-        newText = `# ${selectedText}`;
-        break;
-      default:
-        return;
-    }
-
-    const newContent = formData.content.substring(0, start) + newText + formData.content.substring(end);
-    setFormData(prev => ({ ...prev, content: newContent }));
   };
 
   return (
@@ -175,21 +158,21 @@ export default function AddPostForm() {
             </div>
 
             <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-        <div className={styles.formatButtons}>
-          <button type="button" onClick={() => formatSelection('bold')}>B</button>
-          <button type="button" onClick={() => formatSelection('bullet')}>•</button>
-          <button type="button" onClick={() => formatSelection('header')}>H</button>
-        </div>
-        <textarea
-          name="content"
-          value={formData.content}
-          placeholder="תוכן"
-          onChange={handleChange}
-          required
-          className={styles.contentTextarea}
-        ></textarea>
-      </div>
+              <div className={styles.formGroup}>
+                <div className={styles.editorContainer}>
+                  {quillLoaded && (
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.content}
+                      onChange={handleEditorChange}
+                      modules={modules}
+                      formats={formats}
+                      placeholder="תוכן"
+                      className={styles.quillEditor}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
