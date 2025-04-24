@@ -172,3 +172,50 @@
     }
   }
 }
+
+
+/* מיכל העורך */
+.editorContainer {
+  direction: rtl;
+  text-align: right;
+  margin-bottom: 20px;
+
+  /* התאמות לתמיכה בעברית */
+  :global(.ql-editor) {
+    direction: rtl;
+    text-align: right;
+    min-height: 250px;
+    font-family: var(--font);
+  }
+
+  :global(.ql-snow .ql-picker) {
+    direction: rtl;
+  }
+
+  :global(.ql-snow .ql-tooltip) {
+    direction: rtl;
+    left: auto !important;
+  }
+
+  /* סגנונות לכפתורי סרגל הכלים */
+  :global(.ql-toolbar) {
+    direction: rtl;
+    border-radius: 10px 10px 0 0;
+    background-color: #f8f8f8;
+    border-color: var(--mainColor);
+  }
+
+  :global(.ql-container) {
+    border-radius: 0 0 10px 10px;
+    border-color: var(--mainColor);
+  }
+}
+
+/* עורך Quill */
+.quillEditor {
+  height: 300px;
+  max-height: 500px;
+  border-radius: 10px;
+  font-family: var(--font);
+  width: 100%;
+}
