@@ -44,8 +44,8 @@ export default function PostItem({ post }) {
               {summary}
             </div>
             <div className={styles.createdAt}>
-              {new Date(createdAt).toLocaleDateString()}
-            </div>
+  {createdAt ? new Date(createdAt).toISOString().split('T')[0].replace(/-/g, '.') : ''}
+</div>
           </div>
           {isAuthenticated && (
             <div className={styles.buttonContainer}>
