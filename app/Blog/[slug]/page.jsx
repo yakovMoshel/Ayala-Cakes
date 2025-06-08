@@ -4,7 +4,7 @@ import { getPostBySlug } from '@/server/BL/postService';
 import SinglePost from '@/Components/SinglePost';
 import { notFound, permanentRedirect } from 'next/navigation';
 
-// מטא-דטה דינמית לכל פוסט
+//dynamic metadata for each post
 export async function generateMetadata({ params }) {
   await connectToMongo();
   const decodedSlug = decodeURIComponent(params.slug);

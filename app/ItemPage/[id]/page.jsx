@@ -23,7 +23,7 @@ export default async function ItemPage({ params }) {
         return <div>Product not found</div>;
     }
 
-    // אם למוצר יש slug, מפנה לכתובת החדשה
+    //if the product has a slug, redirect to the new address
     if (item.slug) {
         permanentRedirect(`/shop/products/${item.slug}`);
     }

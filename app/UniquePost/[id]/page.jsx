@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  // אם יש slug, מפנה לכתובת החדשה
+  //if the post has a slug, redirect to the new address
   if (post.slug) {
     permanentRedirect(`/blog/${post.slug}`);
   }
