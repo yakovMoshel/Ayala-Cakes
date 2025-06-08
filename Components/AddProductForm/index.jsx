@@ -16,12 +16,26 @@ export default function AddProductForm({ categories }) {
     glutenContent: '',
     dairyContent: '',
     height: '',
-    diameter: ''
+    diameter: '',
+    slug: '',
+    seoTitle: '',
+    metaDescription: '',
+    focusKeyword: '',
+    secondaryKeywords: '',
+    altText: '',
+    imageTitle: '',
+    tags: '',
+    canonicalUrl: '',
+    ogImage: '',
+    twitterCard: 'summary_large_image'
   });
   
   const [selectedImages, setSelectedImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingSEO, setIsGeneratingSEO] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const [showSEOSection, setShowSEOSection] = useState(false);
+  // TODO: ADD FAQ state when needed in the future
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +54,67 @@ export default function AddProductForm({ categories }) {
     setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
 
+  const generateSEO = async () => {
+    if (!formData.name || !formData.description) {
+      setFeedback({
+        type: 'error',
+        message: 'אנא מלא לפחות שם מוצר ותיאור לפני ג׳ינרוט SEO'
+      });
+      return;
+    }
+
+    setIsGeneratingSEO(true);
+    setFeedback({ type: '', message: '' });
+
+    try {
+      const response = await axios.post('/api/generate-seo', {
+        type: 'product',
+        data: {
+          name: formData.name,
+          subtitle: formData.subtitle,
+          description: formData.description,
+          category: formData.category,
+          price: formData.price,
+          flavors: formData.flavors ? formData.flavors.split(',').map(f => f.trim()) : [],
+          colors: formData.colors ? formData.colors.split(',').map(c => c.trim()) : []
+        }
+      });
+
+      if (response.data.success) {
+        const seoData = response.data.data;
+        
+        setFormData(prev => ({
+          ...prev,
+          slug: seoData.slug || '',
+          seoTitle: seoData.seoTitle || '',
+          metaDescription: seoData.metaDescription || '',
+          focusKeyword: seoData.focusKeyword || '',
+          secondaryKeywords: seoData.secondaryKeywords ? seoData.secondaryKeywords.join(', ') : '',
+          altText: seoData.altText || '',
+          imageTitle: seoData.imageTitle || '',
+          tags: seoData.tags ? seoData.tags.join(', ') : ''
+        }));
+
+        if (seoData.faqSection) {
+          // TODO: ADD FAQ handling when needed
+        }
+
+        setShowSEOSection(true);
+        setFeedback({
+          type: 'success',
+          message: 'תוכן SEO נוצר בהצלחה! אתה יכול לערוך אותו לפני שמירה.'
+        });
+      }
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: error.response?.data?.error || 'שגיאה בג׳ינרוט תוכן SEO'
+      });
+    } finally {
+      setIsGeneratingSEO(false);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -53,9 +128,22 @@ export default function AddProductForm({ categories }) {
       glutenContent: '',
       dairyContent: '',
       height: '',
-      diameter: ''
+      diameter: '',
+      slug: '',
+      seoTitle: '',
+      metaDescription: '',
+      focusKeyword: '',
+      secondaryKeywords: '',
+      altText: '',
+      imageTitle: '',
+      tags: '',
+      canonicalUrl: '',
+      ogImage: '',
+      twitterCard: 'summary_large_image'
     });
     setSelectedImages([]);
+          // TODO: ADD FAQ reset when needed
+    setShowSEOSection(false);
   };
 
   const handleSubmit = async (e) => {
@@ -64,13 +152,12 @@ export default function AddProductForm({ categories }) {
     setFeedback({ type: '', message: '' });
 
     try {
-      // העלאת התמונות לשרת
       const imageUrls = [];
       for (const image of selectedImages) {
-        const formData = new FormData();
-        formData.append('file', image);
+        const formDataForUpload = new FormData();
+        formDataForUpload.append('file', image);
         
-        const response = await axios.post('/api/upload', formData, {
+        const response = await axios.post('/api/upload', formDataForUpload, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         
@@ -86,7 +173,10 @@ export default function AddProductForm({ categories }) {
         isActive: formData.isActive === 'true',
         height: parseFloat(formData.height),
         diameter: parseFloat(formData.diameter),
-        notDairyOption: formData.dairyContent === 'כן'
+        notDairyOption: formData.dairyContent === 'כן',
+        secondaryKeywords: formData.secondaryKeywords ? formData.secondaryKeywords.split(',').map(k => k.trim()) : [],
+        tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
+        // TODO: ADD FAQ to submission when needed
       };
 
       const response = await axios.post('/api/product', formattedData);
@@ -303,21 +393,154 @@ export default function AddProductForm({ categories }) {
                 placeholder="טעמים מופרדים בפסיקים"
               />
             </div>
-            <div className={styles.formGroup}>
-              <label>
-                פעיל:
-                <select
-                  name="isActive"
-                  value={formData.isActive}
-                  onChange={handleChange}
-                >
-                  <option value="true">כן</option>
-                  <option value="false">לא</option>
-                </select>
-              </label>
-            </div>
+          </div>
+          
+          <div className={styles.formField}>
+            <label>פעיל</label>
+            <select
+              name="isActive"
+              value={formData.isActive}
+              onChange={handleChange}
+            >
+              <option value="true">כן</option>
+              <option value="false">לא</option>
+            </select>
           </div>
         </div>
+
+        <div className={styles.seoGenerateSection}>
+          <div className={styles.seoHeader}>
+            <h4>ג'ינרוט תוכן SEO אוטומטי</h4>
+            <p>צור תוכן SEO מתקדם באמצעות AI עבור המוצר שלך</p>
+          </div>
+          <button
+            type="button"
+            onClick={generateSEO}
+            disabled={isGeneratingSEO || !formData.name || !formData.description}
+            className={styles.generateSEOButton}
+          >
+            {isGeneratingSEO ? 'מייצר תוכן SEO...' : '🤖 ייצר תוכן SEO באמצעות AI'}
+          </button>
+          {!formData.name || !formData.description ? (
+            <p className={styles.requirement}>נדרש שם מוצר ותיאור לג'ינרוט SEO</p>
+          ) : null}
+        </div>
+
+        {(showSEOSection || formData.seoTitle) && (
+          <div className={styles.formSection}>
+            <div className={styles.seoSectionHeader}>
+              <h4>הגדרות SEO מתקדמות</h4>
+              <button
+                type="button"
+                onClick={() => setShowSEOSection(!showSEOSection)}
+                className={styles.toggleButton}
+              >
+                {showSEOSection ? 'הסתר' : 'הצג'}
+              </button>
+            </div>
+            
+            {showSEOSection && (
+              <>
+                <div className={styles.formGrid}>
+                  <div className={styles.formField}>
+                    <label>Slug (כתובת URL)</label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      placeholder="product-url-slug"
+                    />
+                  </div>
+                  
+                  <div className={styles.formField}>
+                    <label>כותרת SEO</label>
+                    <input
+                      type="text"
+                      name="seoTitle"
+                      value={formData.seoTitle}
+                      onChange={handleChange}
+                      placeholder="כותרת למנועי חיפוש"
+                    />
+                    <small>{formData.seoTitle.length}/60 תווים</small>
+                  </div>
+                </div>
+
+                <div className={styles.formField}>
+                  <label>Meta Description</label>
+                  <textarea
+                    name="metaDescription"
+                    value={formData.metaDescription}
+                    onChange={handleChange}
+                    placeholder="תיאור המוצר למנועי חיפוש"
+                  ></textarea>
+                  <small>{formData.metaDescription.length}/155 תווים</small>
+                </div>
+
+                <div className={styles.formGrid}>
+                  <div className={styles.formField}>
+                    <label>מילת מפתח ראשית</label>
+                    <input
+                      type="text"
+                      name="focusKeyword"
+                      value={formData.focusKeyword}
+                      onChange={handleChange}
+                      placeholder="מילת מפתח ראשית"
+                    />
+                  </div>
+                  
+                  <div className={styles.formField}>
+                    <label>מילות מפתח משניות</label>
+                    <input
+                      type="text"
+                      name="secondaryKeywords"
+                      value={formData.secondaryKeywords}
+                      onChange={handleChange}
+                      placeholder="מופרדות בפסיקים"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formGrid}>
+                  <div className={styles.formField}>
+                    <label>Alt Text לתמונה</label>
+                    <input
+                      type="text"
+                      name="altText"
+                      value={formData.altText}
+                      onChange={handleChange}
+                      placeholder="תיאור התמונה לנגישות"
+                    />
+                  </div>
+                  
+                  <div className={styles.formField}>
+                    <label>כותרת התמונה</label>
+                    <input
+                      type="text"
+                      name="imageTitle"
+                      value={formData.imageTitle}
+                      onChange={handleChange}
+                      placeholder="כותרת התמונה"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formField}>
+                  <label>תגיות</label>
+                  <input
+                    type="text"
+                    name="tags"
+                    value={formData.tags}
+                    onChange={handleChange}
+                    placeholder="תגיות מופרדות בפסיקים"
+                  />
+                </div>
+
+                {/* TODO: ADD FAQ display section when needed in the future */}
+              </>
+            )}
+          </div>
+        )}
 
         <div className={styles.formActions}>
           <button 
@@ -332,228 +555,3 @@ export default function AddProductForm({ categories }) {
     </div>
   );
 }
-
-
-// "use client"
-// import { useState } from 'react';
-// import axios from 'axios';
-// import styles from './style.module.scss';
-
-// export default function AddProductForm({ categories }) {
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     subtitle: '',
-//     description: '',
-//     price: '',
-//     category: '',
-//     images: '',
-//     colors: '',
-//     flavors: '',
-//     isActive: true,
-//     glutenContent: '',
-//     dairyContent: '',
-//     height: '',
-//     diameter: ''
-//   });
-//   const [error, setError] = useState(null);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData((prevData) => ({
-//       ...prevData,
-//       [name]: value
-//     }));
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setError(null);
-//     const formattedData = {
-//       ...formData,
-//       price: parseFloat(formData.price),
-//       images: formData.images.split(',').map(img => img.trim()),
-//       colors: formData.colors.split(',').map(color => color.trim()),
-//       flavors: formData.flavors.split(',').map(flavor => flavor.trim()),
-//       isActive: formData.isActive === 'true',
-//       height: parseFloat(formData.height),
-//       diameter: parseFloat(formData.diameter),
-//       notDairyOption: formData.dairyContent === 'כן'
-//     };
-
-//     try {
-//       console.log('Sending data:', JSON.stringify(formattedData, null, 2));
-//       const response = await axios.post('/api/product', formattedData);
-//       console.log('Server response:', response.data);
-//       // Handle success (e.g., clear form, show success message)
-//     } catch (error) {
-//       console.error('Error submitting form:', error.response?.data || error.message);
-//       setError(error.response?.data?.error || 'An error occurred while submitting the form.');
-//     }
-//   };
-
-//   return (
-//     <div className={styles.topProducts}>
-//       <div className={styles.sideTitle}>
-//         הוספת מוצר חדש
-//       </div>
-//       <div className={styles.formContainer}>
-//         <form onSubmit={handleSubmit} className={styles.form}>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="text"
-//                 name="name"
-//                 value={formData.name}
-//                 placeholder="שם המוצר"
-//                 onChange={handleChange}
-//                 required
-//               />
-//             </div>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="text"
-//                 name="subtitle"
-//                 value={formData.subtitle}
-//                 placeholder="כותרת משנה"
-//                 onChange={handleChange}
-//               />
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <textarea
-//                 name="description"
-//                 value={formData.description}
-//                 placeholder="תיאור המוצר"
-//                 onChange={handleChange}
-//                 required
-//               ></textarea>
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="number"
-//                 name="price"
-//                 value={formData.price}
-//                 placeholder="מחיר"
-//                 onChange={handleChange}
-//                 required
-//               />
-//             </div>
-//             <div className={styles.formGroup}>
-//               <select
-//                 name="category"
-//                 value={formData.category}
-//                 onChange={handleChange}
-//                 required
-//               >
-//                 <option value="">בחר קטגוריה</option>
-//                 {categories.map(category => (
-//                   <option key={category._id} value={category._id}>{category.name}</option>
-//                 ))}
-//               </select>
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="text"
-//                 name="images"
-//                 value={formData.images}
-//                 placeholder="תמונות (מופרדות בפסיקים)"
-//                 onChange={handleChange}
-//                 required
-//               />
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="text"
-//                 name="colors"
-//                 value={formData.colors}
-//                 placeholder="צבעים (מופרדים בפסיקים)"
-//                 onChange={handleChange}
-//               />
-//             </div>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="text"
-//                 name="flavors"
-//                 value={formData.flavors}
-//                 placeholder="טעמים (מופרדים בפסיקים)"
-//                 onChange={handleChange}
-//               />
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <label>
-//                 פעיל:
-//                 <select
-//                   name="isActive"
-//                   value={formData.isActive}
-//                   onChange={handleChange}
-//                 >
-//                   <option value="true">כן</option>
-//                   <option value="false">לא</option>
-//                 </select>
-//               </label>
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <select
-//                 name="glutenContent"
-//                 value={formData.glutenContent}
-//                 onChange={handleChange}
-//                 required
-//               >
-//                 <option value="">מכיל גלוטן?</option>
-//                 <option value="מכיל גלוטן">מכיל גלוטן</option>
-//                 <option value="ללא גלוטן">ללא גלוטן</option>
-//               </select>
-//             </div>
-//             <div className={styles.formGroup}>
-//               <select
-//                 name="dairyContent"
-//                 value={formData.dairyContent}
-//                 onChange={handleChange}
-//                 required
-//               >
-//                 <option value="">אופציה לפרווה?</option>
-//                 <option value="כן">כן</option>
-//                 <option value="לא">לא</option>
-//               </select>
-//             </div>
-//           </div>
-//           <div className={styles.formRow}>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="number"
-//                 name="height"
-//                 value={formData.height}
-//                 placeholder="גובה"
-//                 onChange={handleChange}
-//                 required
-//               />
-//             </div>
-//             <div className={styles.formGroup}>
-//               <input
-//                 type="number"
-//                 name="diameter"
-//                 value={formData.diameter}
-//                 placeholder="קוטר"
-//                 onChange={handleChange}
-//                 required
-//               />
-//             </div>
-//           </div>
-//           {error && <div className={styles.error}>{error}</div>}
-//           <button type="submit" className={styles.submitButton}>הוסף מוצר</button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }

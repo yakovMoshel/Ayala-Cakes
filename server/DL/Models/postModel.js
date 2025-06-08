@@ -53,6 +53,57 @@ const PostSchema = new mongoose.Schema({
   socialImage: {
     type: String,
     required: false
+  },
+  altText: {
+    type: String,
+    required: false
+  },
+  imageTitle: {
+    type: String,
+    required: false
+  },
+  structuredData: {
+    type: Object,
+    required: false
+  },
+  breadcrumbs: [{
+    name: String,
+    url: String
+  }],
+  tags: [{
+    type: String,
+    required: false
+  }],
+  relatedPosts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+  // TODO: ADD FAQ fields when needed in the future
+  canonicalUrl: {
+    type: String,
+    required: false
+  },
+  ogImage: {
+    type: String,
+    required: false
+  },
+  twitterCard: {
+    type: String,
+    enum: ['summary', 'summary_large_image', 'app', 'player'],
+    default: 'summary_large_image'
+  },
+  readingTime: {
+    type: Number,
+    required: false
+  },
+  publishDate: {
+    type: Date,
+    default: Date.now
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft'
   }
 });
 

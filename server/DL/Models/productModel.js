@@ -79,7 +79,45 @@ const productSchema = new mongoose.Schema({
   secondaryKeywords: [{
     type: String,
     required: false
-  }]
+  }],
+  altText: {
+    type: String,
+    required: false
+  },
+  imageTitle: {
+    type: String,
+    required: false
+  },
+  structuredData: {
+    type: Object,
+    required: false
+  },
+  breadcrumbs: [{
+    name: String,
+    url: String
+  }],
+  tags: [{
+    type: String,
+    required: false
+  }],
+  relatedProducts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product'
+  }],
+  // TODO: ADD FAQ fields when needed in the future
+  canonicalUrl: {
+    type: String,
+    required: false
+  },
+  ogImage: {
+    type: String,
+    required: false
+  },
+  twitterCard: {
+    type: String,
+    enum: ['summary', 'summary_large_image', 'app', 'player'],
+    default: 'summary_large_image'
+  }
 });
 
 export const productModel = mongoose.models.Product || mongoose.model('Product', productSchema);

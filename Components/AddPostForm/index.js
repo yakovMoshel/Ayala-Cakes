@@ -52,7 +52,7 @@ export default function SeoEditor() {
     title: '',
     summary: '',
     content: '',
-    author: '',
+    author: 'אילה',
     image: '',
     slug: '',
     focusKeyword: '',
@@ -67,8 +67,11 @@ export default function SeoEditor() {
   
   // UI state
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingSEO, setIsGeneratingSEO] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [quillLoaded, setQuillLoaded] = useState(false);
+  const [showSEOSection, setShowSEOSection] = useState(false);
+  // TODO: ADD FAQ state when needed in the future
   const [seoScores, setSeoScores] = useState({
     overall: 0,
     keyword: 0,
@@ -166,6 +169,66 @@ export default function SeoEditor() {
     }));
   };
 
+  // פונקציה לג'ינרוט תוכן SEO
+  const generateSEO = async () => {
+    // בדיקה שיש מספיק מידע לג'ינרוט
+    if (!formData.title || !formData.summary || !formData.content) {
+      setFeedback({
+        type: 'error',
+        message: 'אנא מלא לפחות כותרת, תקציר ותוכן לפני ג׳ינרוט SEO'
+      });
+      return;
+    }
+
+    setIsGeneratingSEO(true);
+    setFeedback({ type: '', message: '' });
+
+    try {
+      const response = await axios.post('/api/generate-seo', {
+        type: 'post',
+        data: {
+          title: formData.title,
+          summary: formData.summary,
+          content: formData.content,
+          author: formData.author
+        }
+      });
+
+      if (response.data.success) {
+        const seoData = response.data.data;
+        
+        setFormData(prev => ({
+          ...prev,
+          slug: seoData.slug || '',
+          seoTitle: seoData.seoTitle || '',
+          metaDescription: seoData.metaDescription || '',
+          focusKeyword: seoData.focusKeyword || '',
+          secondaryKeywords: seoData.secondaryKeywords ? seoData.secondaryKeywords.join(', ') : '',
+          callToAction: seoData.callToAction || '',
+          socialImage: seoData.ogImageDescription || ''
+        }));
+
+        // שמירת FAQ שנוצר
+        if (seoData.faqSection) {
+          // TODO: ADD FAQ handling when needed
+        }
+
+        setShowSEOSection(true);
+        setFeedback({
+          type: 'success',
+          message: 'תוכן SEO נוצר בהצלחה! אתה יכול לערוך אותו לפני שמירה.'
+        });
+      }
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: error.response?.data?.error || 'שגיאה בג׳ינרוט תוכן SEO'
+      });
+    } finally {
+      setIsGeneratingSEO(false);
+    }
+  };
+
   // Update slug automatically from title
   useEffect(() => {
     if (formData.title && !formData.slug) {
@@ -194,7 +257,7 @@ export default function SeoEditor() {
       title: '',
       summary: '',
       content: '',
-      author: '',
+      author: 'אילה',
       image: '',
       slug: '',
       focusKeyword: '',
@@ -630,6 +693,27 @@ export default function SeoEditor() {
                 </div>
               </div>
               
+              {/* AI SEO Generation Section */}
+              <div className={styles.seoGenerateSection}>
+                <div className={styles.seoHeader}>
+                  <h4>ג'ינרוט תוכן SEO אוטומטי</h4>
+                  <p>צור תוכן SEO מתקדם באמצעות AI עבור הפוסט שלך</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={generateSEO}
+                  disabled={isGeneratingSEO || !formData.title || !formData.summary || !formData.content}
+                  className={styles.generateSEOButton}
+                >
+                  {isGeneratingSEO ? 'מייצר תוכן SEO...' : '🤖 ייצר תוכן SEO באמצעות AI'}
+                </button>
+                {(!formData.title || !formData.summary || !formData.content) ? (
+                  <p className={styles.requirement}>נדרש כותרת, תקציר ותוכן לג'ינרוט SEO</p>
+                ) : null}
+              </div>
+
+                             {/* TODO: ADD FAQ display section when needed in the future */}
+
               {/* Publish buttons */}
               <div className={styles.publishActions}>
                 <button 
