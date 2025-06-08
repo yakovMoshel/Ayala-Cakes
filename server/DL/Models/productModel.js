@@ -58,6 +58,28 @@ const productSchema = new mongoose.Schema({
   filling: [{
     type: String
   }],
+  slug: {
+    type: String,
+    required: false,
+    unique: true,
+    sparse: true
+  },
+  seoTitle: {
+    type: String,
+    required: false
+  },
+  metaDescription: {
+    type: String,
+    required: false
+  },
+  focusKeyword: {
+    type: String,
+    required: false
+  },
+  secondaryKeywords: [{
+    type: String,
+    required: false
+  }]
 });
 
 export const productModel = mongoose.models.Product || mongoose.model('Product', productSchema);

@@ -7,7 +7,7 @@ import EditPostModal from '../EditPostModal';
 import useStore from '../../useStore';
 
 export default function PostItem({ post }) {
-  const { _id, title, summary, image, createdAt } = post;
+  const { _id, title, summary, image, createdAt, slug } = post;
 
   const isAuthenticated = useStore((state) => state.isAuthenticated);
 
@@ -29,8 +29,11 @@ export default function PostItem({ post }) {
     }
   };
 
+  // בודק אם יש slug - אם כן משתמש בניתוב החדש, אחרת בישן
+  const postLink = slug ? `/blog/${slug}` : `/UniquePost/${_id}`;
+
   return (
-    <Link href={`/UniquePost/${_id}`} className={styles.itemLink}>
+    <Link href={postLink} className={styles.itemLink}>
       <div className={`${styles.item} ${isDeleted ? styles.deleted : ''}`}>
         <div className={styles.imageContainer}>
           {image && <img src={image} alt={title} className={styles.image} />}

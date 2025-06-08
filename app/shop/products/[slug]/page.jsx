@@ -1,31 +1,48 @@
 import React from 'react';
 import styles from './style.module.scss';
 import { connectToMongo } from '@/server/DL/connectToMongo';
-import { getProduct } from '@/server/BL/productService';
+import { getProductBySlug } from '@/server/BL/productService';
 import ImageGallery from '@/Components/ImageGallery';
 import OrderButton from '@/Components/OrderButton';
-import Head from 'next/head';
-import { redirect, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
-export default async function ItemPage({ params }) {
+// מטא-דטה דינמית לכל מוצר
+export async function generateMetadata({ params }) {
+  await connectToMongo();
+  const product = await getProductBySlug(params.slug);
+  
+  if (!product) {
+    return {
+      title: 'מוצר לא נמצא',
+      description: 'המוצר שחיפשת לא נמצא במערכת'
+    };
+  }
 
+  return {
+    title: product.seoTitle || `${product.name} - עוגות מעוצבות של אילה`,
+    description: product.metaDescription || `הזמינו ${product.name} - עוגה מעוצבת בהתאמה אישית במגוון טעמים וסגנונות לבחירה`,
+    keywords: product.focusKeyword ? 
+      [product.focusKeyword, ...(product.secondaryKeywords || [])].join(', ') 
+      : `עוגה מעוצבת, ${product.name}, עוגות בהזמנה, קונדיטוריה`,
+    openGraph: {
+      title: product.seoTitle || product.name,
+      description: product.metaDescription || `הזמינו ${product.name} - עוגה מעוצבת בהתאמה אישית`,
+      images: product.images?.length > 0 ? [product.images[0]] : [],
+      type: 'website',
+    },
+    alternates: {
+      canonical: `/shop/products/${params.slug}`
+    }
+  };
+}
+
+export default async function ProductPage({ params }) {
     await connectToMongo();
 
-    const productId = params.id;
-
-    if (!productId.match(/^[0-9a-fA-F]{24}$/)) {
-        return <div>Invalid product ID</div>;
-    }
-
-    const item = await getProduct({ _id: productId });
+    const item = await getProductBySlug(params.slug);
 
     if (!item) {
-        return <div>Product not found</div>;
-    }
-
-    // אם למוצר יש slug, מפנה לכתובת החדשה
-    if (item.slug) {
-        permanentRedirect(`/shop/products/${item.slug}`);
+        notFound();
     }
 
     const plainItem = JSON.parse(JSON.stringify(item));
@@ -76,12 +93,7 @@ export default async function ItemPage({ params }) {
     });
 
     return (
-        <div className={styles.ItemPage}>
-            <Head>
-                <title>{name}</title>
-                <meta name="description" content={`הזמינו  ${name} -  בעיצוב אישי במגוון טעמים וסגנונות לבחירה`} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-            </Head>
+        <div className={styles.productPage}>
             <div className={styles.leftSide}>
                 <ImageGallery images={images} />
             </div>
@@ -136,4 +148,4 @@ export default async function ItemPage({ params }) {
             </div>
         </div>
     );
-}
+} 

@@ -7,7 +7,8 @@
     "start": "next start",
     "lint": "next lint",
     "build": "next build",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "migrate:slugs": "node scripts/migrate-products-slug-simple.js"
   },
   "dependencies": {
     "@next-auth/mongodb-adapter": "^1.1.3",

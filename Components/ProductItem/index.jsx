@@ -10,7 +10,7 @@ import EditProductModal from '../EditProductModal/Index';
 
 
 export default function ProductItem({ product }) {
-    const { _id, name, subtitle, images } = product;
+    const { _id, name, subtitle, images, slug } = product;
 
     const isAuthenticated = useStore((state) => state.isAuthenticated);
 
@@ -30,9 +30,12 @@ export default function ProductItem({ product }) {
         }
     };
 
+    // בודק אם יש slug - אם כן משתמש בניתוב החדש, אחרת בישן
+    const productLink = slug ? `/shop/products/${slug}` : `/ItemPage/${_id}`;
+
     return (
         <div className={`${styles.item} ${isDeleted ? styles.deleted : ''}`}>
-            <Link href={`/ItemPage/${_id}`} legacyBehavior>
+            <Link href={productLink} legacyBehavior>
                 <a className={styles.imageLink}>
                     <img src={images[0]} alt={name} className={styles.image} />
                 </a>
