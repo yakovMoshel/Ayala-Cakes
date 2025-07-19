@@ -10,7 +10,7 @@ export async function PUT(req, { params }) {
 
     try {
         const post = await postModel.findByIdAndUpdate(id, data, { new: true });
-        revalidatePath('/Blog');
+        revalidatePath('/blog');
         return NextResponse.json({ success: true, data: post });
     } catch (error) {
         return NextResponse.json({ success: false, error: error.message }, { status: 400 });

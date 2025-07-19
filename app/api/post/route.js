@@ -20,7 +20,7 @@ export async function POST(req) {
 
   try {
       const post = await postModel.create(data);
-      revalidatePath('/Blog');
+              revalidatePath('/blog');
       return NextResponse.json({ success: true, data: post });
   } catch (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
