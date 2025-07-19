@@ -48,8 +48,20 @@ export default async function BlogPostPage({ params }) {
   }
 
   return (
-    <div className={styles.blogPostPage}>
-      <SinglePost post={post} />
-    </div>
+    <>
+      <div className={styles.blogPostPage}>
+        <SinglePost post={post} />
+      </div>
+      
+      {/* Structured Data for SEO */}
+      {post.structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(post.structuredData)
+          }}
+        />
+      )}
+    </>
   );
 } 

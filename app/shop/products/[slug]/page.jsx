@@ -93,59 +93,71 @@ export default async function ProductPage({ params }) {
     });
 
     return (
-        <div className={styles.productPage}>
-            <div className={styles.leftSide}>
-                <ImageGallery images={images} />
-            </div>
-            <div className={styles.rightSide}>
-                <div className={styles.name}>
-                    {name}
+        <>
+            <div className={styles.productPage}>
+                <div className={styles.leftSide}>
+                    <ImageGallery images={images} />
                 </div>
-                <div className={styles.details}>
-                    <div>{formattedDescription}</div>
-                </div>
-                <div className={styles.colorsContainer}>
-                    אופציות צבעים:
-                    {colors.map((color, index) => {
-                        const backgroundColor = colorMap[color] || '#ffffff';
-                        return (
-                            <div key={index} className={styles.colorCircle} style={{ backgroundColor }}></div>
-                        );
-                    })}
-                </div>
-                <div className={styles.infoAndOrder}>
-                    <div className={styles.additionalInfo}>
-                        <div className={styles.infoItem}>
-                            קוטר: {diameter} ס"מ
-                        </div>
-                        <div className={styles.separator}></div>
-
-                        <div className={styles.infoItem}>
-                            גובה: {height} ס"מ
-                        </div>
-                        <div className={styles.separator}></div>
-
-                        <div className={styles.infoItem}>
-                            טעמים: {flavors.join(', ')}
-                        </div>
-                        <div className={styles.separator}></div>
-
-                        <div className={styles.infoItem}>
-                            {glutenFreeOption === true ? 'אופציה ללא גלוטן' : ''}
-                        </div>
-
-                        <div className={styles.separator}></div>
-                        <div className={styles.price}>
-                            {price} ₪
-                        </div>
+                <div className={styles.rightSide}>
+                    <div className={styles.name}>
+                        {name}
                     </div>
+                    <div className={styles.details}>
+                        <div>{formattedDescription}</div>
+                    </div>
+                    <div className={styles.colorsContainer}>
+                        אופציות צבעים:
+                        {colors.map((color, index) => {
+                            const backgroundColor = colorMap[color] || '#ffffff';
+                            return (
+                                <div key={index} className={styles.colorCircle} style={{ backgroundColor }}></div>
+                            );
+                        })}
+                    </div>
+                    <div className={styles.infoAndOrder}>
+                        <div className={styles.additionalInfo}>
+                            <div className={styles.infoItem}>
+                                קוטר: {diameter} ס"מ
+                            </div>
+                            <div className={styles.separator}></div>
 
-                    <OrderButton item={plainItem} />
-                </div>
-                <div className={styles.customization}> ניתן לבחור צבע כיתוב, צבע עיטוף, צבע עוגה, שם, גיל
-                    שתפו אותי בחלומות שלכם בשדה ההערות, ואני אעצב עבורכם {name} מושלמת
+                            <div className={styles.infoItem}>
+                                גובה: {height} ס"מ
+                            </div>
+                            <div className={styles.separator}></div>
+
+                            <div className={styles.infoItem}>
+                                טעמים: {flavors.join(', ')}
+                            </div>
+                            <div className={styles.separator}></div>
+
+                            <div className={styles.infoItem}>
+                                {glutenFreeOption === true ? 'אופציה ללא גלוטן' : ''}
+                            </div>
+
+                            <div className={styles.separator}></div>
+                            <div className={styles.price}>
+                                {price} ₪
+                            </div>
+                        </div>
+
+                        <OrderButton item={plainItem} />
+                    </div>
+                    <div className={styles.customization}> ניתן לבחור צבע כיתוב, צבע עיטוף, צבע עוגה, שם, גיל
+                        שתפו אותי בחלומות שלכם בשדה ההערות, ואני אעצב עבורכם {name} מושלמת
+                    </div>
                 </div>
             </div>
-        </div>
+            
+            {/* Structured Data for SEO */}
+            {item.structuredData && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(item.structuredData)
+                    }}
+                />
+            )}
+        </>
     );
 } 
