@@ -5,6 +5,7 @@ import { getProduct } from '@/server/BL/productService';
 import ImageGallery from '@/Components/ImageGallery';
 import OrderButton from '@/Components/OrderButton';
 import Head from 'next/head';
+import { redirect, permanentRedirect } from 'next/navigation';
 
 export default async function ItemPage({ params }) {
 
@@ -21,6 +22,12 @@ export default async function ItemPage({ params }) {
     if (!item) {
         return <div>Product not found</div>;
     }
+
+    //if the product has a slug, redirect to the new address
+    if (item.slug) {
+        permanentRedirect(`/shop/products/${item.slug}`);
+    }
+
     const plainItem = JSON.parse(JSON.stringify(item));
 
     const {

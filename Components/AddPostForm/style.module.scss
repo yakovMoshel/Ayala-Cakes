@@ -224,6 +224,71 @@
     font-family: var(--font);
     width: 100%;
   }
+
+  // סגנונות לסקציית ג'ינרוט SEO
+  .seoGenerateSection {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 30px 0;
+    color: white;
+    text-align: center;
+
+    .seoHeader {
+      margin-bottom: 20px;
+
+      h4 {
+        color: white;
+        margin-bottom: 8px;
+        font-size: 1.3rem;
+      }
+
+      p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 14px;
+      }
+    }
+
+    .generateSEOButton {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      font-family: var(--font);
+
+      &:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+    .requirement {
+      margin-top: 15px;
+      font-size: 13px;
+      opacity: 0.8;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+  }
+
+  // TODO: ADD FAQ styles when needed in the future
   
   // Submit button
   .submitButton {

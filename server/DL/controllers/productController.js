@@ -29,6 +29,16 @@ export const getOneProduct = async (id) => {
   }
 };
 
+export const getProductBySlug = async (slug) => {
+  try {
+    const product = await productModel.findOne({ slug, isActive: true }).lean();
+    return serializeData(product);
+  } catch (error) {
+    console.error('Error fetching product by slug:', error);
+    throw error;
+  }
+};
+
 export const getSomeProducts = async (ids) => {
   try {
     const products = await productModel.find({ _id: { $in: ids }, isActive: true }).lean();

@@ -45,8 +45,8 @@ export default function Header() {
         { href: '/', label: 'בית' },
         { href: '/about', label: 'אודות' },
         { href: '/shop', label: 'חנות' },
-        { href: '/Blog', label: 'בלוג' },
-        { href: '/Favorites', label: 'מועדפים', isFavorites: true },
+        { href: '/blog', label: 'בלוג' },
+        { href: '/favorites', label: 'מועדפים', isFavorites: true },
     ];
 
     const renderMenuItem = (item) => (
