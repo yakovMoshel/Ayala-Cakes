@@ -30,8 +30,12 @@ export default function ProductItem({ product }) {
         }
     };
 
-    // בודק אם יש slug - אם כן משתמש בניתוב החדש, אחרת בישן
-    const productLink = slug ? `/shop/products/${slug}` : `/ItemPage/${_id}`;
+    // כל המוצרים צריכים לכם slug עכשיו
+    if (!slug) {
+        console.error(`Product ${name} (${_id}) doesn't have a slug`);
+        return null; // או אפשר להציג הודעת שגיאה
+    }
+    const productLink = `/shop/products/${slug}`;
 
     return (
         <div className={`${styles.item} ${isDeleted ? styles.deleted : ''}`}>

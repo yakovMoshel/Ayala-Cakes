@@ -47,19 +47,6 @@
     flex-direction: row;
     gap: 10px;
     animation: fadeInLeft 0.8s ease;
-
-    img {
-      width: 350px;
-      height: 300px;
-      object-fit: fill;
-      border-radius: 15px;
-      box-shadow: 0 6px 9px rgba(0, 0, 0, 0.1);
-    }
-
-    .pic2 img {
-      width: 100px;
-      height: 100px;
-    }
   }
 
   .rightSide {
@@ -233,11 +220,6 @@
     .leftSide {
       width: 100%;
       animation: fadeInUp 0.8s ease;
-
-      img {
-        width: 100%;
-        height: auto;
-      }
 
       .name {
         text-align: center;
