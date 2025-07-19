@@ -17,7 +17,7 @@ export default function Footer() {
     { name: "בית", path: "/" },
     { name: "אודות", path: "/about" },
     { name: "חנות", path: "/shop" },
-    { name: "בלוג", path: "/Blog" },
+            { name: "בלוג", path: "/blog" },
     { name: "מועדפים", path: "/Favorites" }
   ];
 
