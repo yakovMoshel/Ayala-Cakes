@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import styles from './style.module.scss';
+import dynamic from 'next/dynamic';
+const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
 export default function AddProductForm({ categories }) {
   const [formData, setFormData] = useState({
@@ -35,6 +37,8 @@ export default function AddProductForm({ categories }) {
   const [isGeneratingSEO, setIsGeneratingSEO] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [showSEOSection, setShowSEOSection] = useState(false);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [selectedImageUrls, setSelectedImageUrls] = useState([]);
   // TODO: ADD FAQ state when needed in the future
 
   const handleChange = (e) => {
@@ -52,6 +56,15 @@ export default function AddProductForm({ categories }) {
 
   const removeImage = (index) => {
     setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+    setSelectedImageUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const openMediaPicker = () => setShowMediaPicker(true);
+  const closeMediaPicker = () => setShowMediaPicker(false);
+  const handleMediaConfirm = (selection) => {
+    const urls = selection.map(s => s.secure_url);
+    setSelectedImageUrls(prev => [...prev, ...urls]);
+    closeMediaPicker();
   };
 
   const generateSEO = async () => {
@@ -152,17 +165,7 @@ export default function AddProductForm({ categories }) {
     setFeedback({ type: '', message: '' });
 
     try {
-      const imageUrls = [];
-      for (const image of selectedImages) {
-        const formDataForUpload = new FormData();
-        formDataForUpload.append('file', image);
-        
-        const response = await axios.post('/api/upload', formDataForUpload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        
-        imageUrls.push(response.data.url);
-      }
+      const imageUrls = [...selectedImageUrls];
 
       const formattedData = {
         ...formData,
@@ -287,17 +290,13 @@ export default function AddProductForm({ categories }) {
         <div className={styles.formSection}>
           <h4>העלאת תמונות</h4>
           <div className={styles.imageUploadContainer}>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageChange}
-              className={styles.fileInput}
-            />
+            <button type="button" className={styles.generateSEOButton} onClick={openMediaPicker}>
+              בחר תמונות מספריית המדיה
+            </button>
             <div className={styles.selectedImages}>
-              {selectedImages.map((image, index) => (
+              {selectedImageUrls.map((url, index) => (
                 <div key={index} className={styles.imagePreview}>
-                  <img src={URL.createObjectURL(image)} alt={`תמונה ${index + 1}`} />
+                  <img src={url} alt={`תמונה ${index + 1}`} />
                   <button type="button" onClick={() => removeImage(index)}>
                     הסר
                   </button>
@@ -552,6 +551,15 @@ export default function AddProductForm({ categories }) {
           </button>
         </div>
       </form>
+
+      {showMediaPicker && (
+        <MediaPickerModal
+          isOpen={showMediaPicker}
+          onClose={closeMediaPicker}
+          onConfirm={handleMediaConfirm}
+          multiple
+        />
+      )}
     </div>
   );
 }

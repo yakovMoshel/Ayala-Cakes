@@ -4,10 +4,13 @@ import styles from './style.module.scss';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import useStore from '../../useStore';
+// Rely on server HttpOnly cookie; verify via API
 
 export default function Header() {
     const isAuthenticated = useStore((state) => state.isAuthenticated);
     const favorites = useStore((state) => state.favorites);
+    const setAuthenticated = useStore((state) => state.setAuthenticated);
+    const setUser = useStore((state) => state.setUser);
     const [isOpen, setIsOpen] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
@@ -24,6 +27,26 @@ export default function Header() {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+    // Initialize auth state from server (HttpOnly cookie)
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch('/api/auth/verify-token', { method: 'POST' });
+                const data = await res.json();
+                if (data?.success) {
+                    setAuthenticated(true);
+                    setUser(data.user);
+                } else {
+                    setAuthenticated(false);
+                    setUser(null);
+                }
+            } catch (e) {
+                setAuthenticated(false);
+                setUser(null);
+            }
+        })();
+    }, [setAuthenticated, setUser]);
 
     useEffect(() => {
         if (favorites.length > 0) {

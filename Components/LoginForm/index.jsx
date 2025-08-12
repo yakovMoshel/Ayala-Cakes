@@ -33,17 +33,26 @@ export default function LoginForm() {
     setLoading(false);
 
     if (data.success) {
-      // שמירת הטוקן ב-Cookie (או LocalStorage אם תעדיף)
-      document.cookie = `sessionToken=${data.token}; path=/; Secure; SameSite=Strict`;
+      // The server sets HttpOnly cookie. Now verify via API to get user payload.
+      try {
+        const verifyRes = await fetch('/api/auth/verify-token', { method: 'POST' });
+        const verifyData = await verifyRes.json();
+        if (verifyData?.success) {
+          setUser(verifyData.user);
+        } else {
+          setUser(null);
+        }
+      } catch (e) {
+        setUser(null);
+      }
 
       // הצגת הודעת הצלחה
       setSuccessMessage('Login successful');
       setAuthenticated(true);
-      setUser(data.user);
       // מעבר לעמוד Admin
       setTimeout(() => {
         router.push('/admin');
-      }, 1000);
+      }, 500);
     } else {
       // טיפול בשגיאה
       setErrorMessage(data.message);

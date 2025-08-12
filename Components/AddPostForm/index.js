@@ -20,6 +20,7 @@ import {
   Send
 } from 'lucide-react';
 import styles from './style.module.scss';
+const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
 // Load React Quill dynamically to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { 
@@ -84,6 +85,7 @@ export default function SeoEditor() {
     contentReadability: false,
     publishing: false
   });
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
   
   // SEO analysis results
   const [seoAnalysis, setSeoAnalysis] = useState({
@@ -269,6 +271,16 @@ export default function SeoEditor() {
       status: 'draft',
       publishDate: `${year}-${month}-${day}`
     });
+  };
+
+  const openMediaPicker = () => setShowMediaPicker(true);
+  const closeMediaPicker = () => setShowMediaPicker(false);
+  const handleMediaConfirm = (selection) => {
+    const first = Array.isArray(selection) ? selection[0] : selection;
+    if (first?.secure_url) {
+      setFormData(prev => ({ ...prev, image: first.secure_url }));
+    }
+    closeMediaPicker();
   };
 
   // Calculate length status (too short, optimal, too long)
@@ -683,13 +695,19 @@ export default function SeoEditor() {
                 
                 <div className={styles.formGroup}>
                   <label>תמונה ראשית</label>
-                  <input
-                    type="text"
-                    name="image"
-                    value={formData.image}
-                    placeholder="URL של תמונה ראשית"
-                    onChange={handleChange}
-                  />
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      name="image"
+                      value={formData.image}
+                      placeholder="URL של תמונה ראשית"
+                      onChange={handleChange}
+                      style={{ flex: 1 }}
+                    />
+                    <button type="button" className={styles.publishButton} onClick={openMediaPicker}>
+                      בחר מספריית המדיה
+                    </button>
+                  </div>
                 </div>
               </div>
               
@@ -1136,6 +1154,14 @@ export default function SeoEditor() {
           </div>
         </div>
       </div>
+      {showMediaPicker && (
+        <MediaPickerModal
+          isOpen={showMediaPicker}
+          onClose={closeMediaPicker}
+          onConfirm={handleMediaConfirm}
+          multiple={false}
+        />
+      )}
     </div>
   );
 }

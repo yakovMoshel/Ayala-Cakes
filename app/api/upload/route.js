@@ -18,12 +18,20 @@ export async function POST(req) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // העלאה ל-Cloudinary
+    // העלאה ל-Cloudinary עם אופטימיזציה ברירת מחדל
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          resource_type: "auto",
-          folder: "your-folder-name" // שנה לשם התיקייה שתרצה
+          resource_type: "image",
+          folder: process.env.CLOUDINARY_UPLOAD_FOLDER || "ayala-media",
+          format: "webp", // המרה ל-WEBP כבר בעלאה
+          quality: "auto", // דחיסה חכמה
+          transformation: [
+            { width: 2000, crop: "limit" } // מגביל רוחב מירבי כדי לשמור על משקל
+          ],
+          use_filename: true,
+          unique_filename: true,
+          overwrite: false,
         },
         (error, result) => {
           if (error) reject(error);
@@ -32,7 +40,7 @@ export async function POST(req) {
       ).end(buffer);
     });
 
-    return NextResponse.json({ url: result.secure_url });
+    return NextResponse.json({ url: result.secure_url, public_id: result.public_id });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(

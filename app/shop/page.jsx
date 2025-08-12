@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react';
 import styles from './style.module.scss';
-import SideBar from '@/Components/SideBar';
+import FilterToolbar from '@/Components/Toolbar';
 import ProductsList from '@/Components/ProductsList';
 import { getProducts } from '@/server/actions/getProdacts.actions';
 import Head from 'next/head';
@@ -9,6 +9,13 @@ export const dynamic = 'force-dynamic'
 
 
 export default function Shop() {
+    const categories = [
+        { label: 'הכל', icon: null, value: '' },
+        { label: 'עוגות בנטו', icon: null, value: 'עוגות בנטו' },
+        { label: 'עוגת מוס', icon: null, value: 'עוגת מוס' },
+        { label: 'מארזים', icon: null, value: 'מארזים' },
+        { label: 'עוגות מעוצבות', icon: null, value: 'עוגות מעוצבות' },
+    ];
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [category, setCategory] = useState('');
@@ -38,10 +45,12 @@ export default function Shop() {
                 <meta name="description" content="העוגות המעוצבות של אילה. עוגות בנטו, עוגות לימי הולדת, מארזים, והכל בהתאמה אישית בקריות והסביבה. הזמינו עכשיו" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
-            <SideBar
+            <FilterToolbar
                 setCategory={setCategory}
                 searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm} />
+                setSearchTerm={setSearchTerm}
+                categories={categories}
+            />
             <div className={styles.content}>
                 <ProductsList productByCat={filteredProducts} isLoading={isLoading} />
             </div>

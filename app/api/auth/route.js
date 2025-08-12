@@ -10,7 +10,16 @@ export async function POST(req) {
 
     const token = await login(email, password);
 
-    return NextResponse.json({ success: true, token, message: 'Login successful' });
+    // Set HttpOnly cookie for 60 days (in seconds)
+    const res = NextResponse.json({ success: true, message: 'Login successful' });
+    res.cookies.set('sessionToken', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 24 * 60 * 60, // 60 days
+    });
+    return res;
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message || 'Server error' }, { status: 400 });
   }
