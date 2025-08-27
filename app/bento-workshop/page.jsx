@@ -18,43 +18,51 @@ import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules';
 const BentoWorkshopPage = () => {
     const carouselImages = [
         {
-            src: 'https://i.imgur.com/FViEwgt.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991228/ayala-media/file_wf3r95.webp',
             alt: 'בנות יוצרות עוגות בנטו בסדנה'
         },
         {
-            src: 'https://i.imgur.com/uonanZZ.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991226/ayala-media/file_cw2orb.webp',
             alt: 'עוגות בנטו מעוצבות מעשה ידי המשתתפות'
         },
         {
-            src: 'https://i.imgur.com/XWReb3t.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991225/ayala-media/file_pllstj.webp',
             alt: 'תהליך למידה והתנסות בסדנת בנטו'
         },
         {
-            src: 'https://i.imgur.com/f47wSwp.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991224/ayala-media/file_cubdxc.webp',
             alt: 'עוגות בנטו מרשימות שנוצרו בסדנה'
         },
         {
-            src: 'https://i.imgur.com/vI3hbeD.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991222/ayala-media/file_m5xqlx.webp',
             alt: 'תוצרים מרהיבים של המשתתפות'
         },
         {
-            src: 'https://i.imgur.com/pkrSJ8r.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991220/ayala-media/file_wwcuxr.webp',
             alt: 'עבודה מקצועית על עוגות בנטו'
         },
         {
-            src: 'https://i.imgur.com/UFpBpPg.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991218/ayala-media/file_nh16ji.webp',
             alt: 'תהליכי עיצוב ועבודה על עוגות בנטו'
         },
         {
-            src: 'https://i.imgur.com/WZY14rd.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991217/ayala-media/file_qvwhjj.webp',
             alt: 'עוגות בנטו מעוצבות בסגנונות שונים'
         },
         {
-            src: 'https://i.imgur.com/QHqTBbj.jpeg',
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991215/ayala-media/file_mdgurv.webp',
             alt: 'הדגמת טכניקות עיצוב מתקדמות לעוגות בנטו'
+        },
+        {
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991212/ayala-media/file_cztkjp.webp',
+            alt: 'תוצרים מיוחדים מעוגות בנטו'
+        },
+        {
+            src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1754991209/ayala-media/file_dluyoe.webp',
+            alt: 'חוויה יצירתית בסדנת הבנטו'
         }
     ];
-
+    
     return (
         <div className={styles.landingPage} role="main">
             {/* Hero Section */}
@@ -143,8 +151,9 @@ const BentoWorkshopPage = () => {
                             spaceBetween={30}
                             centeredSlides={true}
                             effect={'fade'}
+                            loop={true}
                             autoplay={{
-                                delay: 3500,
+                                delay: 4000,
                                 disableOnInteraction: false,
                                 pauseOnMouseEnter: true
                             }}
@@ -175,6 +184,10 @@ const BentoWorkshopPage = () => {
                                     </div>
                                 </SwiperSlide>
                             ))}
+                            
+                            {/* Navigation Arrows */}
+                            <div className={`swiper-button-prev ${styles.customNavButton}`}></div>
+                            <div className={`swiper-button-next ${styles.customNavButton}`}></div>
                         </Swiper>
                     </div>
                 </div>
