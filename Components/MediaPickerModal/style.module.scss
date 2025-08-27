@@ -1,0 +1,370 @@
+@import '/app/mixins.scss';
+
+.mediaModal {
+  .modalContent {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 900px;
+    max-width: 90vw;
+    max-height: 90vh;
+    @include shadow;
+    position: relative;
+    animation: modalFadeIn 0.3s ease;
+    font-family: var(--font);
+    direction: rtl;
+  }
+
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--grayColor);
+    padding-bottom: 15px;
+
+    h2 {
+      @include subtitle;
+      margin: 0;
+    }
+
+    .closeButton {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--secColor);
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: var(--grayColor);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .tabContainer {
+    background-color: var(--grayColor);
+    border-radius: 20px;
+    padding: 8px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 15px;
+    background-color: transparent;
+    color: var(--darkGrayColor);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font);
+    text-align: center;
+
+    &:hover {
+      background-color: rgba(173, 128, 128, 0.1);
+    }
+
+    &.active {
+      background-color: var(--midColor);
+      color: var(--mainColor);
+      @include shadow;
+      transform: translateY(-2px);
+    }
+  }
+
+  .uploadSection {
+    text-align: center;
+    padding: 40px 20px;
+    border: 2px dashed var(--midColor);
+    border-radius: 20px;
+    background-color: var(--grayColor);
+    margin-bottom: 20px;
+
+    .uploadInput {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid var(--brightGrayColor);
+      border-radius: 10px;
+      background-color: white;
+      font-family: var(--font);
+      width: 100%;
+      max-width: 300px;
+
+      &:focus {
+        outline: none;
+        border-color: var(--midColor);
+      }
+    }
+
+    .uploadDescription {
+      color: var(--darkGrayColor);
+      font-size: 14px;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    .uploadButton {
+      background-color: var(--midColor);
+      color: var(--mainColor);
+      border: none;
+      padding: 12px 25px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font);
+      @include shadow;
+
+      &:hover {
+        background-color: var(--midColorHover);
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+
+  .librarySection {
+    max-height: 500px;
+    overflow-y: auto;
+
+    .imageGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .imageCard {
+      border: 2px solid var(--grayColor);
+      border-radius: 15px;
+      padding: 15px;
+      background-color: white;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+
+      &:hover {
+        @include shadow;
+        transform: translateY(-3px);
+      }
+
+      &.selected {
+        border-color: var(--midColor);
+        background-color: var(--grayColor);
+        @include shadow;
+      }
+
+      .imageWrapper {
+        position: relative;
+        margin-bottom: 12px;
+
+        img {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          border-radius: 10px;
+        }
+
+        .selectionOverlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(173, 128, 128, 0.8);
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+
+          .checkIcon {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+          }
+        }
+
+        &.selected .selectionOverlay {
+          opacity: 1;
+        }
+      }
+
+      .imageMeta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+
+        .imageName {
+          font-size: 12px;
+          color: var(--darkGrayColor);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          flex: 1;
+          text-align: right;
+        }
+
+        .imageActions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .actionButton {
+          background-color: var(--midColor);
+          color: var(--mainColor);
+          border: none;
+          padding: 6px 12px;
+          border-radius: 15px;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: var(--font);
+
+          &:hover {
+            background-color: var(--midColorHover);
+            transform: scale(1.05);
+          }
+
+          &.danger {
+            background-color: #dc3545;
+
+            &:hover {
+              background-color: #c82333;
+            }
+          }
+        }
+      }
+    }
+
+    .loadMoreButton {
+      width: 100%;
+      background-color: var(--grayColor);
+      color: var(--darkGrayColor);
+      border: 2px solid var(--brightGrayColor);
+      padding: 12px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font);
+
+      &:hover {
+        background-color: var(--brightGrayColor);
+        border-color: var(--midColor);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid var(--grayColor);
+
+    .cancelButton {
+      background-color: var(--grayColor);
+      color: var(--darkGrayColor);
+      border: 2px solid var(--brightGrayColor);
+      padding: 12px 25px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font);
+
+      &:hover {
+        background-color: var(--brightGrayColor);
+        border-color: var(--midColor);
+      }
+    }
+
+    .confirmButton {
+      background-color: var(--midColor);
+      color: var(--mainColor);
+      border: none;
+      padding: 12px 25px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font);
+      @include shadow;
+
+      &:hover {
+        background-color: var(--midColorHover);
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .mediaModal {
+    .modalContent {
+      width: 95vw;
+      padding: 20px;
+    }
+
+    .librarySection {
+      .imageGrid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+
+    .modalActions {
+      flex-direction: column;
+      gap: 10px;
+
+      .cancelButton,
+      .confirmButton {
+        width: 100%;
+      }
+    }
+  }
+}

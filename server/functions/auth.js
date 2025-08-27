@@ -13,7 +13,11 @@ async function login(email, password) {
     throw new Error('Invalid password');
   }
 
-  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.SECRET_CODE, { expiresIn: '30d' });
+  const token = jwt.sign(
+    { userId: user._id, role: user.role },
+    process.env.SECRET_CODE,
+    { expiresIn: '60d' }
+  );
   return token;
 }
 
