@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaPhone, FaWhatsapp, FaComments } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
+import WorkshopOption from '../../Components/WorkshopOption';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
@@ -268,62 +269,69 @@ const BentoWorkshopPage = () => {
 
             {/* Course Options */}
             <section id="features" className={styles.courseOptions}>
-                <h2>אפשרויות וסוגי סדנאות</h2>
+                <h2>איזו סדנה מתאימה לך?</h2>
                 <div className={styles.optionsGrid}>
-                    <div className={`${styles.option} ${styles.optionGreen}`}>
-                        <h3>טעימה ראשונה</h3>
-                        <div className={styles.duration}>שעה</div>
-                        <div className={styles.emphasis}>המסלול המושלם לפעילות קלילה וחמודה</div>
-                        <ul>
-                            <li>מינימום 10 משתתפות</li>
-                            <li>קצפת לבנה + צבע נוסף</li>
-                            <li>3 תוספות קישוט</li>
-                            <li>ערכת עבודה אישית</li>
-                        </ul>
-                        <div className={styles.bonus}>
-                            <strong>בסיום הסדנה:</strong>
-                            <p>כל משתתפת יוצאת עם עוגה שהיא גאה בה, ארוזה יפה, ועם חיוך ענק</p>
-                        </div>
-                        <div className={styles.price}>180 ₪ למשתתפת</div>
-                    </div>
+                    <WorkshopOption
+                        packageType="בייסיק"
+                        packageTitle="טעימה ראשונה"
+                        duration="טעימה ראשונה באורך שעה"
+                        emphasis="המסלול המושלם לפעילות קלילה וחמודה"
+                        features={[
+                            "עוגת בנטו בטעם וניל בקוטר 10 ס''מ",
+                            "קצפת לבנה + צבע נוסף",
+                            "3 תוספות קישוט",
+                            "ערכת עבודה אישית",
+                            "מינימום 10 משתתפות"
+                        ]}
+                        bonus="כל משתתפת יוצאת עם עוגה שההרכיבה ועיצבה בעצמה, ארוזה יפה, ועם חיוך ענק"
+                        price="180 ₪ למשתתפת"
+                        color="green"
+                    />
 
-                    <div className={`${styles.option} ${styles.optionBlue} ${styles.recommended}`}>
-                        <div className={styles.badge}>מומלצת!</div>
-                        <h3>החוויה המתוקה</h3>
-                        <div className={styles.duration}>שעה וחצי</div>
-                        <div className={styles.emphasis}>המסלול הכי מבוקש ליום הולדת ביתי קלאסי</div>
-                        <ul>
-                            <li>מינימום 8 משתתפות</li>
-                            <li>עד 5 צבעי קצפת</li>
-                            <li>6 תוספות קישוט</li>
-                            <li>קובץ טיפים אישי</li>
-                            <li>אפשרות לעוגת שוקולד/וניל</li>
-                        </ul>
-                        <div className={styles.bonus}>
-                            <strong>בסיום הסדנה:</strong>
-                            <p>עוגה מעוצבת, ארוזה יפה, קובץ טיפים לתזכורת, ותעודה לגאווה</p>
-                        </div>
-                        <div className={styles.price}>220 ₪ למשתתפת</div>
-                    </div>
+                    <WorkshopOption
+                        packageType="קלאסיק"
+                        packageTitle="החוויה המתוקה"
+                        duration="החוויה המתוקה באורך שעה וחצי"
+                        emphasis="המסלול  המבוקש ליום הולדת ביתי קלאסי"
+                        features={[
+                            "כל מה שמקבלים בחבילת הבייסיק, ובנוסף:",
+                            "עוגה בקוטר 10 ס''מ",
+                            "עד 5 צבעי קצפת",
+                            "6 תוספות קישוט",
+                            "קובץ טיפים אישי",
+                            "אפשרות לעוגת שוקולד/וניל",
+                            "מינימום 8 משתתפות"
+                        ]}
+                        bonus="כל מה שמקבלים בחבילת הבייסיק + קובץ טיפים חשובים לעיצוב עוגות בנטו"
+                        price="220 ₪ למשתתפת"
+                        color="blue"
+                        recommended={true}
+                        badge="מומלצת!"
+                    />
 
-                    <div className={`${styles.option} ${styles.optionPink}`}>
-                        <h3>החגיגה המלאה</h3>
-                        <div className={styles.duration}>שעתיים</div>
-                        <div className={styles.emphasis}>החוויה המלאה עם כל הפינוקים</div>
-                        <ul>
-                            <li>מינימום 6 משתתפות</li>
-                            <li>קופסת בנטו בקוטר 12 ס"מ</li>
-                            <li>קופסה שקופה</li>
-                            <li>עבודה עם צימקאו לכתיבה</li>
-                            <li>טקס עוגה חינמי</li>
-                        </ul>
-                        <div className={styles.bonus}>
-                            <strong>בסיום הסדנה:</strong>
-                            <p>כל מה שמקבלים ב"חוויה המתוקה" + קופסה פרימיום + טקס עוגה מרגש</p>
-                        </div>
-                        <div className={styles.price}>270 ₪ למשתתפת</div>
-                    </div>
+                    <WorkshopOption
+                        packageType="פרימיום"
+                        packageTitle="החגיגה המלאה"
+                        duration="החגיגה המלאה באורך שעתיים"
+                        emphasis="החוויה המלאה עם כל הפינוקים"
+                        features={[
+                            "כל מה שמקבלים בחבילת הקלאסיק, ובנוסף:",
+                            "עוגה גדולה בקוטר 12 ס״מ",
+                            "מארז שקוף מהמם",
+                            "עבודה עם צימקאו לכתיבה",
+                            "טקס עוגה במתנה",
+                            "מינימום 6 משתתפות",
+                        ]}
+                        bonus='כל מה שמקבלים בחבילת הקלאסיק + קופסה פרימיום + טקס עוגה מרגש'
+                        price="270 ₪ למשתתפת"
+                        color="pink"
+                    />
                 </div>
+                <div className={styles.optionsSummary}>
+                    <h3>כל משתתפת יוצאת עם עוגה שההרכיבה ועיצבה בעצמה, ארוזה יפה, ועם חיוך ענק</h3>
+                </div>
+
+
             </section>
 
             {/* About Section */}
