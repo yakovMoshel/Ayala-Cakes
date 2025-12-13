@@ -1,10 +1,11 @@
 .option {
   background-color: white;
   padding: 1.5rem;
-  border-radius: 15px;
+  border-radius: 30px;
   position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -12,7 +13,7 @@
 
   &:hover {
     transform: translateY(-5px);
-    cursor: pointer;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
   }
 
   &.optionGreen {
@@ -32,6 +33,11 @@
 
   &.recommended {
     border: 2px solid var(--secColor);
+    transform: scale(1.05);
+
+    @media (max-width: 968px) {
+      transform: scale(1);
+    }
 
     .badge {
       position: absolute;
@@ -56,11 +62,11 @@
   .headerSection {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
   }
 
   .packageHeader {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.3rem;
 
     .packageType {
       display: block;
@@ -85,7 +91,7 @@
   .duration {
     color: var(--text-color);
     font-size: 1rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
   }
 
   .emphasis {
@@ -93,21 +99,21 @@
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-size: 0.85rem;
-    margin-bottom: 1.2rem;
     color: var(--secColor);
     font-weight: 600;
     text-align: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     display: inline-block;
+    margin-bottom: 0.8rem;
   }
 
   ul {
     list-style: none;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
     text-align: right;
 
     li {
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
       color: var(--text-color);
       position: relative;
       padding-right: 1.5rem;
@@ -119,6 +125,11 @@
         color: var(--secColor);
         font-weight: bold;
       }
+
+      strong {
+        color: var(--secColor);
+        font-weight: 700;
+      }
     }
   }
 
@@ -126,7 +137,7 @@
     background-color: white;
     padding: 0.8rem;
     border-radius: 8px;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
     border: 1px solid rgba(0, 0, 0, 0.1);
 
     strong {
@@ -144,14 +155,67 @@
     }
   }
 
-  .price {
-    background-color: var(--secColor);
-    color: white;
-    padding: 0.7rem;
-    border-radius: 8px;
-    margin-bottom: 1.2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
+  .priceContainer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+
+    .amount {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--secColor);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .per {
+      font-size: 0.9rem;
+      color: #888;
+      font-weight: 500;
+    }
+  }
+
+  // תמיכה במינימום גובה דינמי - רק עבור כרטיסים עם minHeight prop
+  &.hasMinHeight {
+    .headerSection {
+      flex-shrink: 0;
+    }
+
+    ul {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      
+      // סגנון scrollbar עדין (אם צריך)
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+      }
+    }
+
+    .bonus {
+      flex-shrink: 0;
+    }
+
+    .priceContainer {
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 968px) {
+      min-height: auto !important;
+    }
   }
 }
