@@ -54,13 +54,21 @@ const WorkshopOption = ({
                         const per = parts.slice(2).join(' '); // "למשתתפת"
                         return (
                             <>
-                                <span className={styles.amount}>{amount}</span>
+                                <div className={styles.amountWrapper}>
+                                    <span className={styles.amount}>{amount}</span>
+                                    <span className={styles.vat}>+ מע"מ</span>
+                                </div>
                                 <span className={styles.per}>{per}</span>
                             </>
                         );
                     }
                     // אם הפורמט לא צפוי, מציג את המחיר המלא
-                    return <span className={styles.amount}>{price}</span>;
+                    return (
+                        <div className={styles.amountWrapper}>
+                            <span className={styles.amount}>{price}</span>
+                            <span className={styles.vat}>+ מע"מ</span>
+                        </div>
+                    );
                 })()}
             </div>
         </div>

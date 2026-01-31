@@ -165,12 +165,25 @@
     align-items: center;
     gap: 0.2rem;
 
+    .amountWrapper {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      justify-content: center;
+    }
+
     .amount {
       font-size: 2rem;
       font-weight: 600;
       color: var(--secColor);
       line-height: 1;
       font-variant-numeric: tabular-nums;
+    }
+
+    .vat {
+      font-size: 0.75rem;
+      color: var(--secColor);
+      font-weight: 600;
     }
 
     .per {
