@@ -1,11 +1,10 @@
 .landingPage {
   width: 100%;
-//   max-width: 1200px;
   margin: 0 auto;
   direction: rtl;
 
   section {
-    padding: 2rem;
+    padding: 4rem 2rem;
   }
 
   h1 {
@@ -44,224 +43,344 @@
 
 .hero {
   position: relative;
-  min-height: 50vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  border-radius: 20px;
-  margin-top: 0 !important;
+  background: linear-gradient(135deg, #fff0f5 0%, #fff 100%); 
+  padding: 4rem 2rem;
+  border-radius: 30px;
   overflow: hidden;
-
-  .heroBackground {
+  &::before {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-
-    &:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background:linear-gradient(rgba(255, 255, 255, 0.9), rgba(247, 231, 226, 0.7));
-      z-index: 2;
-    }
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(var(--mainColor-rgb), 0.15) 0%, rgba(255,255,255,0) 70%);
+    z-index: 0;
   }
 
-  .heroContent {
+  .heroContainer {
     position: relative;
-    z-index: 3;
-    max-width: 800px;
-    text-align: center;
+    z-index: 1;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 0.9fr; 
+    gap: 2rem;
+    align-items: center;
 
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 400;
-      margin-bottom: 2rem;
-      text-align: center;
+    @media (max-width: 968px) {
+      grid-template-columns: 1fr;
+      gap: 0;
     }
   }
 
+  // --- צד התמונה ---
+  .heroImageWrapper {
+    position: relative;
+    width: 100%;
+    height: 500px; // גובה קבוע ומרשים בדסקטופ
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    order: 1; // בדסקטופ: תמונה משמאל (כי זה RTL, אז היא שנייה בקוד אבל ויזואלית משמאל)
+
+    @media (max-width: 968px) {
+      height: 320px; // הקטנת גובה במובייל
+      min-height: auto;
+      order: 1; // תמונה ראשונה
+      border-radius: 20px 20px 0 0; // רק למעלה עגול
+    }
+
+    .heroImage {
+      transition: transform 0.5s ease;
+    }
+    
+    &:hover .heroImage {
+        transform: scale(1.03); // זום עדין
+    }
+  }
+
+  // --- צד התוכן (הכרטיס הלבן) ---
+  .heroContent {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(105, 55, 67, 0.08); 
+    border: 1px solid rgba(255,255,255,0.5);
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @media (max-width: 968px) {
+      padding: 2rem 1.5rem;
+      border-radius: 24px;
+      margin-top: -40px; 
+      margin-left: 1rem;
+      margin-right: 1rem;
+      position: relative;
+      z-index: 2; // עולה מעל התמונה
+      box-shadow: 0 -10px 20px rgba(0,0,0,0.05); // צללית כלפי מעלה
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--secColor);
+      margin-bottom: 1rem; // צמצום רווח
+      text-align: right;
+
+      @media (max-width: 968px) {
+        font-size: 1.8rem; // התאמה למובייל
+        margin-bottom: 0.8rem;
+      }
+    }
+
+    p {
+      font-size: 1.15rem;
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--text-color);
+      margin-bottom: 1.5rem; // צמצום רווח
+      text-align: right;
+      opacity: 0.9;
+
+      @media (max-width: 968px) {
+        font-size: 1rem;
+        margin-bottom: 1.2rem;
+      }
+    }
+  }
+
+  // --- כפתורים ו-Trust ---
   .ctaButtons {
     display: flex;
-    gap: 1rem;
     justify-content: center;
-    margin-top: 2rem;
+    align-items: center;
+    ;
+    margin-bottom: 1rem;
 
-    button, .phoneButton {
-      padding: 1rem 2rem;
+    @media (max-width: 968px) {
+      justify-content: center; // במובייל מרכז
+      width: 100%;
+    }
+
+    button {
+      padding: 1rem 2.5rem;
       border-radius: 50px;
       font-size: 1.1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
-      text-decoration: none;
+      background-color: var(--secColor);
+      color: white;
+      border: none;
+      box-shadow: 0 8px 20px rgba(var(--secColor-rgb), 0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
 
-      &:first-child {
-        background-color: var(--secColor);
-        color: white;
-        border: none;
-
-        &:hover {
-          background-color: darken(#693743, 10%);
-        }
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(var(--secColor-rgb), 0.35);
       }
 
-      &:last-child {
-        background-color: white;
-        color: var(--secColor);
-        border: 2px solid var(--secColor);
-
-        &:hover {
-          background-color: var(--secColor);
-          color: white;
-        }
+      @media (max-width: 968px) {
+        width: 100%;
+        justify-content: center;
+        padding: 0.9rem;
       }
+    }
+  }
+
+  .trustBadge {
+    text-align: center; // או right לפי העדפה
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    
+    @media (max-width: 968px) {
+        text-align: center;
+        font-size: 0.85rem;
     }
   }
 }
 
 .socialProof {
-  background-color: var(--grayColor);
-  border-radius: 20px;
-  padding: 3rem 2rem !important;
-  overflow: hidden;
-  text-align: center;
+  padding: 5rem 2rem;
+  background-color: #f2f2f2; // רקע אפור בהיר כמו רקע של וואטסאפ
+  direction: rtl;
 
-  h2 {
-    font-size: 2.5rem;
-    color: var(--secColor);
-    margin-bottom: 2rem;
-    font-weight: 700;
-  }
+  .sectionHeader {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3rem;
 
-  .testimonials {
-    display: flex;
-    gap: 1.5rem;
-    overflow-x: auto;
-    padding: 1rem 0.5rem;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-    
-    &::-webkit-scrollbar {
-      display: none; /* Chrome, Safari and Opera */
+    h2 {
+      font-size: 2.2rem;
+      color: var(--secColor);
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
-
-    .testimonial {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 15px;
-      text-align: right;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-      flex: 0 0 400px;
-      scroll-snap-align: start;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      p {
-        font-size: 1.1rem;
-        color: var(--text-color);
-        margin-bottom: 1rem;
-        line-height: 1.6;
-      }
-
-      .testimonialHeader {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .stars {
-        font-size: 1.2rem;
-        color: #FFD700;
-        flex-shrink: 0;
-      }
-
-      cite {
-        color: var(--secColor);
-        font-style: normal;
-        font-weight: 600;
-        flex-shrink: 0;
-      }
+    p {
+      color: var(--text-color);
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
   }
-}
 
-.features {
-  text-align: center;
-
-  .featureGrid {
+  .wallOfLove {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
+    // גריד רספונסיבי חכם
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
 
-    .feature {
-      padding: 2rem;
-      background-color: var(--grayColor);
-      border-radius: 15px;
-      transition: transform 0.3s ease;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      .icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        display: block;
-      }
-
-      h3 {
-        color: var(--secColor);
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-      }
-
-      p {
-        color: var(--text-color);
-        line-height: 1.6;
-        text-align: right;
-        margin: 0;
-      }
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr; // במובייל טור אחד
+      padding: 0 1rem;
     }
   }
+
+  // --- עיצוב הבועה הבסיסי ---
+  .messageBubble {
+    padding: 1.5rem;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-bottom-right-radius: 2px; // הזנב של הבועה (צד ימין למטה כי זה RTL)
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    .messageHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+
+      .senderName {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .roleTag {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background-color: rgba(255,255,255,0.6); // שקוף למחצה
+        font-weight: 600;
+        white-space: nowrap;
+      }
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+      margin: 0;
+    }
+
+    .time {
+      align-self: flex-end;
+      font-size: 0.75rem;
+      color: rgba(0,0,0,0.4);
+      margin-top: 0.5rem;
+    }
+  }
+
+  // --- צבעים לפי תפקיד (WhatsApp Vibe) ---
+  
+  // בועות של אמהות (לבן/בז' נקי)
+  .momBubble {
+    background-color: white;
+    .senderName { color: var(--secColor); }
+    .roleTag { color: var(--secColor); border: 1px solid rgba(0,0,0,0.05); }
+  }
+
+  // בועות של ילדות (ירוק וואטסאפ בהיר מאוד)
+  .girlBubble {
+    background-color: #dcf8c6; 
+    .senderName { color: #075e54; } // ירוק כהה יותר
+    .roleTag { color: #075e54; }
+  }
+
+  // בועות של משתתפות (ורדרד עדין)
+  .guestBubble {
+    background-color: #fff0f5; 
+    .senderName { color: #c2185b; }
+    .roleTag { color: #c2185b; }
+  }
 }
+
 
 .courseOptions {
   text-align: center;
-  padding: 3rem 2rem !important;
-  background-color: var(--grayColor);
-  border-radius: 20px;
+  padding: 4rem 2rem !important;
+  background-color: white;
+    @media (max-width: 768px) {
+      padding: 2rem 1rem !important;
+    }
+  
+
+  .pricingHeader {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    
+    h2 {
+      font-size: 2.2rem;
+      color: var(--secColor);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      color: var(--text-color);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+  }
 
   .optionsGrid {
-    display: flex ;
+    display: flex;
     flex-direction: row;
-    // grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
     margin-top: 2rem;
-    justify-content: center;
-    align-items: center;
-  
+    justify-content: center; // יישור אופקי לאמצע
+    align-items: center; // יישור אנכי לאמצע
+
+    @media (max-width: 968px) {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  // Bento Style for workshop option cards
+  :global(.option) {
+    border-radius: 30px !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05) !important;
   }
 
   .optionsSummary {
-    margin-top: 2rem;
+    margin-top: 3rem;
     text-align: center;
     padding: 1.5rem;
     background-color: rgba(var(--mainColor-rgb), 0.05);
-    border-radius: 15px;
+    border-radius: 20px;
     border: 2px solid rgba(var(--secColor-rgb), 0.1);
 
     h3 {
@@ -334,7 +453,6 @@
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.85rem;
-        margin-bottom: 1.2rem;
         color: white;
         font-weight: 600;
         text-align: center;
@@ -415,440 +533,454 @@
   }
 }
 
-.benefits {
-//   padding: 4rem 2rem !important;
-//   background-color: var(--grayColor);
-  background: linear-gradient(to bottom, var(--mainColor), white);
-
-  .benefitsContent {
-    max-width: 1200px;
-    margin: 0 auto;
-
-    h2 {
-      margin-bottom: 3rem;
-    }
-
-    .benefitsGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-      gap: 2rem;
-
-      .benefitCard {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 15px;
-        display: flex;
-        align-items: flex-start;
-        gap: 1.5rem;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-
-        &:hover {
-          transform: translateY(-5px);
-        }
-
-        .benefitIcon {
-          font-size: 2rem;
-          flex-shrink: 0;
-          background-color: var(--mainColor);
-          width: 60px;
-          height: 60px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .benefitText {
-          flex-grow: 1;
-
-          h3 {
-            margin-bottom: 0.8rem;
-          }
-
-          p {
-            color: var(--text-color);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin: 0;
-          }
-        }
-      }
-    }
-  }
-}
 
 .faq {
-  background-color: var(--grayColor);
-  border-radius: 20px;
-  padding: 4rem 2rem !important;
+  padding: 5rem 2rem;
+  background-color: white; // רקע נקי
+  direction: rtl;
 
-  .faqList {
-    max-width: 800px;
-    margin: 3rem auto 0;
-
-    details {
-      background-color: white;
-      border-radius: 10px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-      cursor: pointer;
-
-      &[open] {
-        summary {
-          margin-bottom: 1rem;
-
-          &:after {
-            transform: rotate(180deg);
-          }
-        }
-      }
-
-      summary {
-        font-weight: 600;
-        color: var(--secColor);
-        position: relative;
-        padding-left: 2rem;
-        list-style: none;
-
-        &::-webkit-details-marker {
-          display: none;
-        }
-
-        &:after {
-          content: "▼";
-          position: absolute;
-          left: 0;
-          top: 0;
-          font-size: 0.8rem;
-          transition: transform 0.3s ease;
-        }
-      }
-
-      p {
-        color: var(--text-color);
-        line-height: 1.6;
-      }
-    }
-  }
-}
-
-.contactDetails {
-  background-color: var(--mainColor);
-  border-radius: 20px;
-  padding: 3rem 2rem !important;
-  text-align: center;
-
-  h2 {
-    margin-bottom: 2rem;
-  }
-
-  .detailsContainer {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    flex-wrap: wrap;
-    max-width: 800px;
-    margin: 0 auto;
-
-    .detail {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      padding: 2rem;
-      background-color: white;
-      border-radius: 15px;
-      min-width: 200px;
-      transition: transform 0.3s ease;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      .icon {
-        font-size: 2rem;
-        color: var(--secColor);
-      }
-
-      .info {
-        text-align: center;
-
-        h3 {
-          color: var(--secColor);
-          margin-bottom: 0.5rem;
-          font-size: 1.2rem;
-        }
-
-        a {
-          color: var(--text-color);
-          text-decoration: none;
-          font-size: 1.1rem;
-          transition: color 0.3s ease;
-
-          &:hover {
-            color: var(--secColor);
-          }
-        }
-      }
-    }
-  }
-}
-
-.gallery {
-  padding: 2rem 2rem 4rem !important;
-  background-color: white;
-  margin-top: 0 !important;
-  overflow: hidden;
-
-  .galleryWrapper {
-    display: flex;
-    flex-direction: row-reverse;
-    gap: 2rem;
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .galleryTitle {
-    flex: 0 0 30%;
-    text-align: right;
-    padding-right: 2rem;
-    min-width: 300px;
+  .sectionHeader {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3rem;
 
     h2 {
+      font-size: 2.2rem;
+      color: var(--secColor);
+      font-weight: 700;
       margin-bottom: 1rem;
     }
 
     p {
-      text-align: right;
+      color: var(--text-color);
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
   }
 
-  .galleryContainer {
-    flex: 0 0 70%;
-    max-width: 70%;
-    width: 100%;
-    position: relative;
-    
-    .gallerySwiper {
-      width: 100%;
-      height: 500px;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-
-      :global(.swiper-wrapper) {
-        height: 100%;
-      }
-
-      :global(.swiper-slide) {
-        width: 100% !important;
-        height: 100% !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      :global(.swiper-button-next),
-      :global(.swiper-button-prev) {
-        color: white;
-        background: rgba(105, 55, 67, 0.8);
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        
-        &:after {
-          font-size: 1.8rem;
-          font-weight: bold;
-        }
-
-        &:hover {
-          background: var(--secColor);
-          transform: scale(1.1);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-      }
-
-      .customNavButton {
-        z-index: 10;
-      }
-
-      :global(.swiper-pagination-bullet) {
-        background: white;
-        opacity: 0.7;
-      }
-
-      :global(.swiper-pagination-bullet-active) {
-        background: var(--secColor);
-        opacity: 1;
-      }
-    }
-
-    .imageWrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      
-      img {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-}
-
-.about {
-  padding: 4rem 2rem 2rem !important;
-  background: linear-gradient(to bottom, var(--mainColor), white);
-  margin-bottom: 0 !important;
-
-  .aboutContent {
-    max-width: 1000px;
+  .faqContainer {
+    max-width: 800px;
     margin: 0 auto;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; // רווח בין השאלות
+  }
 
-    h2 {
-      color: var(--secColor);
-      font-size: 2rem;
-      margin-bottom: 2rem;
+  .faqItem {
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px; // Bento Style
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+
+    &:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transform: translateY(-2px);
     }
 
-    .aboutText {
-      text-align: right;
-      margin-bottom: 3rem;
+    // כשהשאלה פתוחה
+    &[open] {
+      border-color: var(--secColor); // מסגרת צבעונית
+      background-color: #fffbfc; // רקע ורדרד ממש עדין
+      
+      summary {
+        margin-bottom: 1rem;
+        border-bottom: 1px dashed rgba(0,0,0,0.1);
+        padding-bottom: 0.8rem;
+        
+        .icon {
+          transform: rotate(180deg);
+        }
+      }
+    }
 
+    summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+      font-weight: 700;
+      color: var(--secColor);
+      font-size: 1.1rem;
+      
+      // העלמת משולש דיפולטיבי של דפדפנים
+      &::-webkit-details-marker { display: none; }
+      &::marker { display: none; }
+
+      .question {
+        flex: 1;
+      }
+
+      .icon {
+        color: var(--mainColor);
+        transition: transform 0.3s ease;
+        font-size: 0.8rem;
+        margin-right: 0.5rem;
+      }
+    }
+
+    .answer {
       p {
+        margin: 0 0 1rem 0;
+        line-height: 1.6;
         color: var(--text-color);
-        font-size: 1.1rem;
-        line-height: 1.8;
-        margin-bottom: 1.5rem;
+        font-size: 1rem;
+        animation: fadeIn 0.5s ease;
 
         &:last-child {
           margin-bottom: 0;
         }
       }
-    }
 
-    .aboutHighlights {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
+      ul {
+        margin: 0;
+        padding-right: 1.5rem;
+        list-style: none;
+        animation: fadeIn 0.5s ease;
 
-      .highlight {
-        background-color: white;
-        padding: 0.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-
-        &:hover {
-          transform: translateY(-5px);
-        }
-
-        .icon {
-          font-size: 2rem;
+        li {
           margin-bottom: 0.8rem;
-          display: block;
-        }
-
-        h3 {
-          color: var(--secColor);
-          font-size: 1rem;
-          margin-bottom: 0.3rem;
-        }
-
-        p {
           color: var(--text-color);
-          font-size: 0.9rem;
-          text-align: center;
+          position: relative;
+          padding-right: 1.5rem;
+          line-height: 1.6;
+
+          &:before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: var(--secColor);
+            font-weight: bold;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
       }
     }
   }
 }
 
-.aboutInstructor {
-  padding: 4rem 2rem;
-//   background: linear-gradient(to bottom, white, var(--mainColor));
+// אנימציה פשוטה להופעת הטקסט
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  .aboutWrapper {
+// Process Section - Editorial Style (The Story)
+.workshopProcess {
+  padding: 6rem 2rem;
+  background-color: white; // רקע נקי לחלוטין כדי לתת קונטרסט
+  direction: rtl;
+
+  .processContainer {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    gap: 3rem;
-    align-items: center;
-    flex-direction: row-reverse;
-  }
+    align-items: center; // מרכז את הטקסט מול התמונה
+    gap: 5rem; // רווח גדול ויוקרתי ("אוויר")
 
-  .instructorImage {
-    flex: 0 0 300px;
-    position: relative;
-    
-    img {
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(105, 55, 67, 0.15);
+    // Mobile Layout
+    @media (max-width: 968px) {
+      flex-direction: column;
+      gap: 2.5rem;
     }
   }
 
-  .instructorContent {
+  // --- Image Side ---
+  .processImage {
+    flex: 1;
+    position: relative;
+    height: 500px; // תמונה גבוהה ומרשימה
+    width: 100%;
+    border-radius: 20px; // עיגול עדין, לא מוגזם
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+
+    @media (max-width: 968px) {
+      height: 350px;
+      flex: none;
+    }
+  }
+
+  // --- Text Side ---
+  .processText {
     flex: 1;
     text-align: right;
 
     h2 {
+      font-size: 2.5rem;
+      color: var(--secColor);
+      font-weight: 700;
       margin-bottom: 2rem;
+      line-height: 1.2;
+      position: relative;
+      text-align: center; // כותרת במרכז
+      
+      // קו דקורטיבי קטן מתחת לכותרת - במרכז
+      &:after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background-color: var(--mainColor); // ורוד/צבע מותג
+        margin: 1rem auto 0; // מרכז את הקו
+        border-radius: 2px;
+      }
     }
 
-    h3 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+    .storyContent {
+      p {
+        font-size: 1.15rem; // פונט קצת יותר גדול לקריאה נוחה
+        line-height: 1.8; // ריווח שורות נדיב
+        color: var(--text-color);
+        margin-bottom: 1.5rem; // רווח בין פסקאות
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
     }
+  }
+}
 
-    .title {
-      font-size: 1.2rem;
-      color: var(--text-color);
+// Final CTA Section - The Closer
+.finalCta {
+  // עיצוב הבלוק - היפוך צבעים
+  background: linear-gradient(135deg, var(--secColor) 0%, #8a4b5a 100%); // גרדיינט בורדו עשיר
+  padding: 6rem 2rem 8rem; // הרבה מרווח, במיוחד למטה (כדי שהפוטר לא יידבק)
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden; // חותך את העיגולים הדקורטיביים
+  
+  // עיגול החלק העליון בלבד - נותן מראה של "דף שיוצא מהדף"
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  margin-top: 4rem; // מפריד מהסקשן הקודם
+
+  .ctaContainer {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2; // מעל האלמנטים הדקורטיביים
+    text-align: center;
+
+    h2 {
+      font-size: 2.8rem;
+      color: white; // דורס את צבעי הבסיס
       margin-bottom: 1.5rem;
     }
 
-    .description {
+    p {
+      font-size: 1.25rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9); // לבן מעט שקוף למראה רך
+      margin-bottom: 3rem;
+    }
+
+    .pulsingButton {
+      background-color: white;
+      color: var(--secColor);
+      font-size: 1.2rem;
+      font-weight: 700;
+      padding: 1.2rem 3rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3); // צללית חזקה
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      }
+      
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  // --- דקורציה ברקע (עיגולים שקופים) ---
+  .decorationCircle1, .decorationCircle2 {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.05); // שקוף מאוד
+    z-index: 1;
+  }
+
+  .decorationCircle1 {
+    width: 300px;
+    height: 300px;
+    top: -50px;
+    left: -50px;
+  }
+
+  .decorationCircle2 {
+    width: 400px;
+    height: 400px;
+    bottom: -100px;
+    right: -100px;
+  }
+  
+  // התאמה למובייל
+  @media (max-width: 768px) {
+    padding: 4rem 1.5rem 6rem;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+
+    .ctaContainer {
+      h2 { 
+        font-size: 2rem; 
+      }
+      
+      p { 
+        font-size: 1.1rem; 
+        
+        br { 
+          display: none; // ביטול ירידת שורה כפויה במובייל
+        } 
+      }
+      
+      .pulsingButton {
+        width: 100%; // כפתור רחב במובייל
+        justify-content: center;
+        font-size: 1.1rem;
+        padding: 1rem 2rem;
+      }
+    }
+  }
+}
+
+
+
+.aboutInstructor {
+  padding: 6rem 2rem;
+  background: linear-gradient(to bottom, #fff9fb 0%, #fff 100%);
+  direction: rtl;
+
+  .aboutContainer {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    flex-direction: row-reverse;
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+  }
+
+  // --- Image Styling ---
+  .imageWrapper {
+    flex: 0 0 400px;
+    height: 450px;
+    position: relative;
+    z-index: 1;
+
+    @media (max-width: 900px) {
+      flex: none;
+      width: 100%;
+      max-width: 350px;
+      height: 350px;
+    }
+
+    .imageFrame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 40px 40px 40px 4px;
+      box-shadow: 0 20px 40px rgba(105, 55, 67, 0.15);
+      z-index: 2;
+      background-color: white;
+
+      img {
+        transition: transform 0.5s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.03);
+      }
+    }
+
+    // הכתם הדקורטיבי מאחורי התמונה
+    .blobDecoration {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(var(--mainColor-rgb), 0.15);
+      border-radius: 40px 40px 40px 4px;
+      z-index: -1;
+      transform: rotate(3deg);
+    }
+  }
+
+  // --- Text Styling ---
+  .textContent {
+    flex: 1;
+    text-align: right;
+
+    @media (max-width: 900px) {
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      color: var(--secColor);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--secColor);
+      font-weight: 600;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .bioText {
       p {
         font-size: 1.1rem;
         line-height: 1.8;
         color: var(--text-color);
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
+      }
 
-        &:last-child {
-          margin-bottom: 2rem;
+      .highlightParagraph {
+        font-weight: 600;
+        color: var(--secColor);
+        border-right: 4px solid var(--mainColor);
+        padding-right: 1rem;
+
+        @media (max-width: 900px) {
+          border-right: none;
+          border-bottom: 4px solid var(--mainColor);
+          padding-right: 0;
+          padding-bottom: 1rem;
         }
       }
     }
 
-    .stats {
-      display: flex;
-      gap: 3rem;
+    .signature {
       margin-top: 2rem;
-
-      .stat {
-        text-align: center;
-
-        .number {
-          display: block;
-          font-size: 2.5rem;
-          font-weight: bold;
-          color: var(--secColor);
-          margin-bottom: 0.5rem;
-        }
-
-        .label {
-          font-size: 1rem;
-          color: var(--text-color);
-        }
-      }
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--secColor);
+      font-style: italic;
     }
   }
 }
@@ -884,21 +1016,44 @@
   }
 
   .hero {
-    min-height: 70vh;
-    
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+
+    .heroImageWrapper {
+      height: 320px;
+    }
+
     .heroContent {
-      padding: 1rem;
+      padding: 2rem 1.5rem;
+      margin-top: -40px;
+      margin-left: 1rem;
+      margin-right: 1rem;
+
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+        margin-bottom: 1.2rem;
+      }
     }
 
     .ctaButtons {
-      flex-direction: column;
-      gap: 0.8rem;
-      padding: 0 1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
 
-      button, .phoneButton {
+      button {
         width: 100%;
-        padding: 0.8rem 1.5rem;
+        padding: 0.9rem;
+        font-size: 1rem;
       }
+    }
+
+    .trustBadge {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
     }
   }
 
@@ -907,8 +1062,12 @@
   }
 
   .courseOptions {
+    @media (max-width: 768px) {
+      padding: 2rem 1rem !important;
+    }
     .optionsGrid {
-      grid-template-columns: 1fr;
+      flex-direction: column;
+      align-items: center;
     }
 
     .optionsSummary {
@@ -921,95 +1080,99 @@
     }
   }
 
-  .benefits {
-    padding: 2rem 1rem !important;
-
-    .benefitsContent {
-      h2 {
-        font-size: 1.8rem;
-        margin-bottom: 2rem;
-      }
-
-      .benefitsGrid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-
-        .benefitCard {
-          padding: 1.5rem;
-          gap: 1rem;
-
-          .benefitIcon {
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
-          }
-
-          .benefitText {
-            h3 {
-              font-size: 1.2rem;
-              margin-bottom: 0.8rem;
-            }
-
-            p {
-              font-size: 0.95rem;
-            }
-          }
-        }
-      }
-    }
-  }
 
   .faq {
-    .faqList {
-      details {
-        summary {
-          padding-left: 1.5rem;
+    padding: 3rem 1rem !important;
+
+    .sectionHeader {
+      margin-bottom: 2rem;
+
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .faqContainer {
+      gap: 0.8rem;
+    }
+
+    .faqItem {
+      padding: 0.8rem 1.2rem;
+
+      summary {
+        font-size: 1rem;
+      }
+
+      .answer p {
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .workshopProcess {
+    padding: 4rem 1rem !important;
+
+    .processContainer {
+      gap: 2rem;
+    }
+
+    .processImage {
+      height: 300px;
+    }
+
+    .processText {
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+
+        &:after {
+          width: 50px;
+          height: 3px;
+          margin-top: 0.8rem;
         }
       }
-    }
-  }
 
-  .contactDetails {
-    padding: 2rem 1rem !important;
-
-    .detailsContainer {
-      gap: 1.5rem;
-
-      .detail {
-        width: 100%;
-        padding: 1.5rem;
-      }
-    }
-  }
-
-  .gallery {
-    padding: 1rem !important;
-
-    .galleryContainer {
-      .gallerySwiper {
-        height: 300px;
+      .storyContent {
+        p {
+          font-size: 1rem;
+          line-height: 1.7;
+          margin-bottom: 1.2rem;
+        }
       }
     }
   }
 
   .socialProof {
-    padding: 2rem 1rem !important;
+    padding: 3rem 1rem !important;
 
-    .testimonials {
-      .testimonial {
-        flex: 0 0 85vw;
-        padding: 1.5rem;
-        
-        p {
-          margin-bottom: 0.8rem;
-        }
-        
-        .testimonialHeader {
+    .sectionHeader {
+      margin-bottom: 2rem;
+
+      h2 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .wallOfLove {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+      padding: 0;
+
+      .messageBubble {
+        padding: 1.2rem;
+
+        .messageHeader {
+          flex-direction: column;
+          align-items: flex-start;
           gap: 0.5rem;
-        }
-        
-        p {
-          font-size: 1rem;
         }
       }
     }
@@ -1127,358 +1290,32 @@
   }
 }
 
-// Mobile responsiveness for gallery
-@media (max-width: 1024px) {
-  .gallery {
-    .galleryWrapper {
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .galleryTitle {
-      flex: none;
-      width: 100%;
-      max-width: 100%;
-      padding-right: 0;
-      text-align: center;
-      min-width: unset;
-
-      h2 {
-        font-size: 1.8rem;
-      }
-
-      p {
-        font-size: 1rem;
-      }
-    }
-
-    .galleryContainer {
-      flex: none;
-      width: 100%;
-      max-width: 100%;
-
-      .gallerySwiper {
-        height: 400px;
-      }
-    }
-  }
-
-  .aboutInstructor {
-    padding: 3rem 2rem;
-
-    .aboutWrapper {
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .instructorImage {
-      flex: none;
-      width: 100%;
-      max-width: 250px;
-      margin: 0 auto;
-    }
-
-    .instructorContent {
-      text-align: center;
-
-      h2 {
-        font-size: 2rem;
-      }
-
-      .stats {
-        justify-content: center;
-        gap: 2rem;
-      }
-    }
-  }
-}
 
 @media (max-width: 768px) {
-  .gallery {
-    padding: 1rem !important;
-
-    .galleryContainer {
-      .gallerySwiper {
-        height: 300px;
-
-        :global(.swiper-button-next),
-        :global(.swiper-button-prev) {
-          width: 45px;
-          height: 45px;
-          
-          &:after {
-            font-size: 1.4rem;
-          }
-        }
-      }
-    }
-  }
 
   .aboutInstructor {
-    padding: 2rem 1rem;
+    padding: 3rem 1rem;
 
-    .instructorContent {
-      h2 {
-        font-size: 1.8rem;
-      }
+    .aboutContainer {
+      .textContent {
+        h2 {
+          font-size: 1.8rem;
+        }
 
-      h3 {
-        font-size: 1.5rem;
-      }
+        h3 {
+          font-size: 1.1rem;
+        }
 
-      .title {
-        font-size: 1.1rem;
-      }
-
-      .description p {
-        font-size: 1rem;
-        line-height: 1.6;
-      }
-
-      .stats {
-        flex-direction: column;
-        gap: 1.5rem;
-
-        .stat {
-          .number {
-            font-size: 2rem;
+        .bioText {
+          p {
+            font-size: 1rem;
           }
+        }
+
+        .signature {
+          font-size: 1.1rem;
         }
       }
     }
-  }
-} 
-
-/* FAQ Section */
-.faq {
-  padding: 4rem 2rem;
-  background-color: var(--grayColor);
-  border-radius: 20px;
-
-  .faqMainDropdown {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px);
-    }
-
-    &[open] {
-      background-color: var(--mainColor);
-    }
-  }
-
-  .faqMainSummary {
-    padding: 2rem;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background-color: var(--grayColor);
-    }
-
-    h2 {
-      font-size: 2.5rem;
-      color: var(--secColor);
-      margin: 0;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    .faqHint {
-      font-size: 1rem;
-      color: var(--text-color);
-      font-style: italic;
-      opacity: 0.8;
-    }
-
-    &::marker {
-      display: none;
-    }
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-  }
-
-  .faqList {
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 2rem;
-  }
-
-  .faqList details {
-    background-color: white;
-    padding: 0.5rem;
-    border-radius: 10px;
-    position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    border: 1px solid var(--brightGrayColor);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    &[open] {
-      background-color: var(--grayColor);
-    }
-  }
-
-  .faqList summary {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--secColor);
-    cursor: pointer;
-    // margin-bottom: 1rem;
-    display: block;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: var(--midColor);
-    }
-
-    &::marker {
-      color: var(--secColor);
-      font-size: 1.1rem;
-    }
-
-    &::-webkit-details-marker {
-      color: var(--secColor);
-      font-size: 1.1rem;
-    }
-  }
-
-  .faqList p, .faqList ul {
-    margin: 0;
-    line-height: 1.6;
-    color: var(--text-color);
-    text-align: right;
-  }
-
-  .faqList ul {
-    list-style: none;
-    text-align: right;
-
-    li {
-      margin-bottom: 0.8rem;
-      color: var(--text-color);
-      position: relative;
-      padding-right: 1.5rem;
-
-      &:before {
-        content: "✓";
-        position: absolute;
-        right: 0;
-        color: var(--secColor);
-        font-weight: bold;
-      }
-    }
-  }
-
-  .faqTable {
-    margin: 1rem 0;
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .faqTableRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 2fr;
-    background: white;
-
-    &:nth-child(even) {
-      background-color: var(--grayColor);
-    }
-
-    &:first-child {
-      background-color: var(--secColor);
-      color: white;
-      font-weight: 600;
-    }
-  }
-
-  .faqTableHeader {
-    padding: 1rem;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .faqTableRow > div {
-    padding: 1rem;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 60px;
-  }
-
-  strong {
-    color: var(--secColor);
-    font-weight: 600;
-  }
-
-  @media (max-width: 768px) {
-    padding: 3rem 1rem;
-
-    .faqMainSummary {
-      padding: 1.5rem;
-
-      h2 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .faqHint {
-        font-size: 0.9rem;
-      }
-    }
-
-    .faqList {
-      padding: 1.5rem;
-    }
-
-    .faqList details {
-      padding: 1rem;
-    }
-
-    .faqList summary {
-      font-size: 1rem;
-    }
-
-    .faqTableRow {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-    }
-
-    .faqTableRow > div {
-      padding: 0.8rem;
-      min-height: auto;
-    }
-
-    .faqTableHeader {
-      background-color: var(--secColor);
-      color: white;
-      font-weight: 600;
-      padding: 0.8rem;
-    }
-  }
-  .optionsGrid{
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
   }
 } 
