@@ -68,6 +68,7 @@ export default function Header() {
         { href: '/', label: 'בית' },
         { href: '/about', label: 'אודות' },
         { href: '/shop', label: 'חנות' },
+        { href: '/bento-workshop', label: 'סדנת בנטו' },
         { href: '/blog', label: 'בלוג' },
         { href: '/favorites', label: 'מועדפים', isFavorites: true },
     ];

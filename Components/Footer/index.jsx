@@ -13,6 +13,7 @@ import ContactForm from '../ContactForm';
 
 export default function Footer() {
   const path = usePathname();
+  const year = new Date().getFullYear();
   const links = [
     { name: "בית", path: "/" },
     { name: "אודות", path: "/about" },
@@ -86,7 +87,7 @@ export default function Footer() {
       </div>
       <div className={styles.endFooter}>
         <p>
-          כל הזכויות שמורות <FaRegCopyright /> 2024
+          כל הזכויות שמורות <FaRegCopyright /> {year}
         </p>
       </div>
     </div>
