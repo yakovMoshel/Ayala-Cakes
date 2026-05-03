@@ -62,7 +62,7 @@ const BentoWorkshopPage = () => {
                 <div className={styles.heroContainer}>
                     <div className={styles.heroImageWrapper}>
                         <Image
-                            src="/images/summer-hero.png"
+                            src="/images/bento%20workshop.png"
                             alt="סדנת עוגות בנטו - חוויה יצירתית ומגבשת"
                             fill
                             style={{ objectFit: 'cover' }}
@@ -140,7 +140,7 @@ const BentoWorkshopPage = () => {
                     
                     {/* <div className={styles.processImage}>
                         <Image
-                            src="/images/summer-hero.png"
+                            src="/images/bento%20workshop.png"
                             alt="תהליך היצירה בסדנת הבנטו"
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
@@ -293,7 +293,7 @@ const BentoWorkshopPage = () => {
                             "👩‍🍳 ערכת עבודה אישית",
                             "מינימום 10 משתתפות"
                         ]}
-                        price="180 ₪ למשתתפת"
+                        price="215 ₪ למשתתפת"
                         color="green"
                         minHeight={450}
 
@@ -312,7 +312,7 @@ const BentoWorkshopPage = () => {
                             "🎉 טכניקות קישוט מתקדמות",
                             "מינימום 8 משתתפות"
                         ]}
-                        price="220 ₪ למשתתפת"
+                        price="260 ₪ למשתתפת"
                         color="blue"
                         recommended={true}
                         badge="מומלצת!"
@@ -332,7 +332,7 @@ const BentoWorkshopPage = () => {
                             "📸 טקס עוגה חגיגי במתנה!",
                             "מינימום 6 משתתפות",
                         ]}
-                        price="270 ₪ למשתתפת"
+                        price="320 ₪ למשתתפת"
                         color="pink"
                         minHeight={450}
 

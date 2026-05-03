@@ -13,7 +13,8 @@ const WorkshopOption = ({
     color = 'green', // green, blue, pink
     recommended = false,
     badge = null,
-    minHeight = null // מינימום גובה בפיקסלים (למשל 500)
+    minHeight = null, // מינימום גובה בפיקסלים (למשל 500)
+    showVat = false,
 }) => {
     const minHeightStyle = minHeight ? { minHeight: `${minHeight}px` } : {};
     const hasMinHeight = minHeight !== null;
@@ -56,7 +57,7 @@ const WorkshopOption = ({
                             <>
                                 <div className={styles.amountWrapper}>
                                     <span className={styles.amount}>{amount}</span>
-                                    <span className={styles.vat}>+ מע"מ</span>
+                                    {showVat && <span className={styles.vat}>+ מע"מ</span>}
                                 </div>
                                 <span className={styles.per}>{per}</span>
                             </>
@@ -66,7 +67,7 @@ const WorkshopOption = ({
                     return (
                         <div className={styles.amountWrapper}>
                             <span className={styles.amount}>{price}</span>
-                            <span className={styles.vat}>+ מע"מ</span>
+                            {showVat && <span className={styles.vat}>+ מע"מ</span>}
                         </div>
                     );
                 })()}
