@@ -108,7 +108,24 @@ const PostSchema = new mongoose.Schema({
   views: {
     type: Number,
     default: 0
-  }
+  },
+  postCta: {
+    enabled: { type: Boolean, default: false },
+    title: { type: String, default: '' },
+    description: { type: String, default: '' },
+    buttons: [{
+      label: { type: String, default: '' },
+      url: { type: String, default: '' },
+      openInNewTab: { type: Boolean, default: false },
+      linkType: { type: String, enum: ['internal', 'external'], default: 'internal' },
+    }],
+    productIds: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+    }],
+    image: { type: String, default: '' },
+    embedHtml: { type: String, default: '' },
+  },
 });
 
 export const postModel = mongoose.models.Post || mongoose.model('Post', PostSchema);

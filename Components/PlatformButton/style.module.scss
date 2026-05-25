@@ -1,0 +1,54 @@
+@import '/app/mixins.scss';
+
+/* Matches homepage CTA buttons (app/style.module.scss .btn button) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background-color: var(--midColor);
+  color: var(--mainColor);
+  padding: 10px 28px;
+  border-radius: 15px;
+  text-decoration: none;
+  font-size: 16px;
+  font-family: var(--font);
+  font-weight: 600;
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: none;
+    background-color: transparent;
+    outline: 1.5px solid var(--midColor);
+    color: var(--midColor);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--secColor);
+    outline-offset: 2px;
+  }
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--secColor);
+  outline: 1.5px solid var(--midColor);
+  box-shadow: none;
+
+  &:hover {
+    background-color: var(--mainColor);
+    color: var(--secColor);
+    outline-color: var(--secColor);
+  }
+}

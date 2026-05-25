@@ -7,7 +7,7 @@ import axios from 'axios';
 import useStore from '../../useStore';
 
 
-export default function ProductItem({ product }) {
+export default function ProductItem({ product, hideAdminActions = false }) {
     const { _id, name, subtitle, images, slug } = product;
 
     const router = useRouter();
@@ -61,7 +61,7 @@ export default function ProductItem({ product }) {
                     <FavButton productId={product._id} />
                 </div> */}
             </div>
-            {isAuthenticated && (
+            {isAuthenticated && !hideAdminActions && (
                 <div className={styles.buttonContainer}>
                     <button onClick={handleDeactivate} className={styles.deactivateButton}>מחק מוצר</button>
                     <button onClick={handleEdit} className={styles.editButton}>עריכת מוצר</button>

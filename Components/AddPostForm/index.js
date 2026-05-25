@@ -21,6 +21,8 @@ import {
   Send
 } from 'lucide-react';
 import styles from './style.module.scss';
+import PostCtaEditor from '@/Components/PostCtaBlock/PostCtaEditor';
+import { DEFAULT_POST_CTA, mapPostCtaFromPost, normalizePostCtaForDb } from '@/utils/postCta';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
 // Load React Quill dynamically to avoid SSR issues
@@ -74,6 +76,7 @@ const mapPostToFormData = (post) => ({
   socialImage: post.socialImage || '',
   status: post.status === 'deleted' ? 'draft' : (post.status || 'draft'),
   publishDate: formatPublishDate(post.publishDate || post.createdAt),
+  postCta: mapPostCtaFromPost(post),
 });
 
 const STATUS_LABELS = {
@@ -101,7 +104,8 @@ export default function SeoEditor({ postId }) {
     callToAction: '',
     socialImage: '',
     status: 'draft', // added status field for publishing
-    publishDate: '' // added publishDate field
+    publishDate: '', // added publishDate field
+    postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
   });
   
   // UI state
@@ -338,7 +342,8 @@ export default function SeoEditor({ postId }) {
       callToAction: '',
       socialImage: '',
       status: 'draft',
-      publishDate: `${year}-${month}-${day}`
+      publishDate: `${year}-${month}-${day}`,
+      postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
     });
   };
 
@@ -603,6 +608,7 @@ export default function SeoEditor({ postId }) {
       status: targetStatus,
       image: formData.image.trim(),
       seoTitle: formData.seoTitle || formData.title,
+      postCta: normalizePostCtaForDb(formData.postCta),
     };
 
     try {
@@ -838,6 +844,13 @@ export default function SeoEditor({ postId }) {
                   )}
                 </div>
               </div>
+
+              <PostCtaEditor
+                value={formData.postCta}
+                onChange={(postCta) =>
+                  setFormData((prev) => ({ ...prev, postCta }))
+                }
+              />
               
               {/* Author and image fields */}
               <div className={styles.formRow}>

@@ -1,7 +1,9 @@
 import styles from './style.module.scss';
 import { connectToMongo } from '@/server/DL/connectToMongo';
 import { getPostBySlug } from '@/server/BL/postService';
+import { getPostCtaProducts } from '@/server/BL/postCtaService';
 import SinglePost from '@/Components/SinglePost';
+import { serializeData } from '@/utils/serialization';
 import { notFound, permanentRedirect } from 'next/navigation';
 
 //dynamic metadata for each post
@@ -47,10 +49,12 @@ export default async function BlogPostPage({ params }) {
     notFound();
   }
 
+  const ctaProducts = serializeData(await getPostCtaProducts(post));
+
   return (
     <>
       <div className={styles.blogPostPage}>
-        <SinglePost post={post} />
+        <SinglePost post={post} ctaProducts={ctaProducts || []} />
       </div>
       
       {/* Structured Data for SEO */}
