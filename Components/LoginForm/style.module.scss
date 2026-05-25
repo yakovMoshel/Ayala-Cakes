@@ -1,85 +1,258 @@
-.squareForm {
-  max-width: 600px;
-  margin: 0 auto;
+@import '/app/mixins.scss';
+
+.loginPageContainer {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--mainColor); /* Warm peach background */
   padding: 20px;
-  background: var(--mainColor);
-  border-radius: 10px;
-  text-align: center;
+  box-sizing: border-box;
   font-family: var(--font);
   direction: rtl;
+  position: relative;
+  overflow: hidden;
+
+  /* Abstract background decorative blobs */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(80px);
+    z-index: 1;
+  }
+
+  &::before {
+    top: -10%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background-color: rgba(105, 55, 67, 0.08);
+  }
+
+  &::after {
+    bottom: -10%;
+    left: -10%;
+    width: 350px;
+    height: 350px;
+    background-color: rgba(173, 128, 128, 0.15);
+  }
+}
+
+.squareForm {
+  background: white;
+  border-radius: 24px;
+  padding: 45px 35px;
+  width: 100%;
+  max-width: 460px;
+  text-align: center;
+  box-shadow: 0px 20px 40px rgba(109, 55, 67, 0.08);
+  border: 1px solid rgba(109, 55, 67, 0.04);
+  z-index: 2;
+  position: relative;
+
+  .loginHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+
+    .logoRing {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--mainColor);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      @include shadow;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 50%;
+      }
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--secColor);
+      margin: 0 0 8px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
   .formRow {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 16px;
+  }
 
-    .formGroup {
-      width: 100%;
-      margin-bottom: 15px;
-      text-align: right;
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: right;
 
-      label {
-        display: block;
-        margin-bottom: 5px;
-        color: var(--secColor);
+    label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--secColor);
+    }
+
+    .inputWrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .inputIcon {
+        position: absolute;
+        right: 14px;
+        color: var(--midColor);
+        pointer-events: none;
       }
 
       input {
         width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        box-sizing: border-box;
+        padding: 12px 42px 12px 14px; /* Space for icon on the right */
+        border: 1.5px solid rgba(173, 128, 128, 0.2);
+        border-radius: 12px;
+        font-size: 0.95rem;
         font-family: var(--font);
+        color: var(--secColor);
+        background-color: var(--grayColor);
+        transition: all 0.2s ease;
         text-align: right;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: var(--midColor);
+          background-color: white;
+          box-shadow: 0 0 0 4px rgba(173, 128, 128, 0.1);
+        }
+
+        &::placeholder {
+          color: var(--brightGrayColor);
+        }
+
+        &:disabled {
+          background-color: #f1f5f9;
+          cursor: not-allowed;
+        }
       }
     }
   }
 
   .errorMessage {
-    color: red;
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 12px;
+    color: #ef4444;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-align: right;
+    animation: shake 0.4s ease;
+
+    svg {
+      flex-shrink: 0;
+    }
   }
 
   .successMessage {
-    color: green;
-    font-weight: bold;
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background-color: #f0fdf4;
+    border: 1px solid #dcfce7;
+    border-radius: 12px;
+    color: #16a34a;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-align: right;
+
+    svg {
+      flex-shrink: 0;
+    }
   }
 
-  button {
-    padding: 10px 20px;
+  .submitButton {
+    padding: 14px 20px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: var(--secColor);
     color: white;
-    font-size: 16px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s ease;
     font-family: var(--font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    @include shadow;
 
-    &:hover {
-      background-color: #532d34;
+    &:hover:not(:disabled) {
+      background-color: var(--midColor);
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
     }
 
     &:disabled {
       cursor: not-allowed;
-      background-color: #013165;
+      opacity: 0.6;
+      background-color: var(--brightGrayColor);
+      box-shadow: none;
+    }
+
+    .buttonSpinner {
+      animation: spin 1s linear infinite;
     }
   }
+}
 
-  .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-    margin: 10px auto;
-  }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@media (max-width: 480px) {
+  .squareForm {
+    padding: 30px 20px;
+    border-radius: 20px;
   }
 }

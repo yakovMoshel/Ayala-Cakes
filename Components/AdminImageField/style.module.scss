@@ -1,0 +1,149 @@
+@import '/app/mixins.scss';
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right;
+
+  label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--secColor);
+  }
+
+  .required {
+    color: #ef4444;
+  }
+
+  .hint {
+    font-size: 0.82rem;
+    color: var(--darkGrayColor);
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.preview {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(109, 55, 67, 0.1);
+  @include shadow;
+
+  img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    display: block;
+    background: var(--grayColor);
+  }
+
+  .clearPreview {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    color: #ef4444;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include shadow;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background: #fef2f2;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.inputRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.urlInputWrap {
+  flex: 1;
+  min-width: 180px;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .inputIcon {
+    position: absolute;
+    right: 14px;
+    color: var(--midColor);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 42px 12px 14px;
+    border: 1.5px solid rgba(173, 128, 128, 0.2);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-family: var(--font);
+    color: var(--secColor);
+    background-color: var(--grayColor);
+    transition: all 0.2s ease;
+    text-align: right;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: var(--midColor);
+      background-color: white;
+      box-shadow: 0 0 0 4px rgba(173, 128, 128, 0.1);
+    }
+
+    &::placeholder {
+      color: var(--brightGrayColor);
+    }
+
+    &:disabled {
+      background-color: #f1f5f9;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.libraryBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--secColor);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  @include shadow;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--midColor);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

@@ -6,15 +6,24 @@ import styles from './style.module.scss';
 import Link from 'next/link';
 import useStore from '../../useStore';
 import Toolbar from '@/Components/Toolbar';
+import { 
+  LayoutDashboard, 
+  ShoppingBag, 
+  FolderTree, 
+  FileText, 
+  Image as ImageIcon, 
+  BarChart3, 
+  LogOut, 
+  Globe,
+  Loader2
+} from 'lucide-react';
 
 export default function AdminWrapper({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
-  // const [user, setUser] = useState(null); // שמירת פרטי המשתמש אם יש בטוקן
 
   const { setAuthenticated, setUser, user } = useStore();
-
 
   useEffect(() => {
     fetch('/api/auth/verify-token', { method: 'POST' })
@@ -43,7 +52,14 @@ export default function AdminWrapper({ children }) {
   };
 
   if (isLoading) {
-    return <div>בודקים את ההרשאות שלך...</div>;
+    return (
+      <div className={styles.loadingScreen}>
+        <div className={styles.loaderCard}>
+          <Loader2 className={styles.spinner} size={48} />
+          <p>בודקים את ההרשאות שלך...</p>
+        </div>
+      </div>
+    );
   }
 
   const isPostsActive =
@@ -52,42 +68,100 @@ export default function AdminWrapper({ children }) {
   const isProductsActive =
     pathname.startsWith('/admin/products') || pathname === '/admin/addProduct';
 
+  const isDashboardActive = pathname === '/admin';
+
   return (
     <div className={styles.shop}>
       <div className={styles.sidebar}>
-        <h2>ממשק ניהול</h2>
+        <div className={styles.logoContainer}>
+          <img src="/AYALA CAKES LOGO.png" alt="AYALA CAKES LOGO" />
+          <span className={styles.logoText}>ממשק ניהול</span>
+        </div>
+
+        <div className={styles.userProfile}>
+          <div className={styles.avatar}>
+            {user?.name ? user.name[0].toUpperCase() : 'A'}
+          </div>
+          <div className={styles.userInfo}>
+            <span className={styles.userName}>שלום, {user?.name || 'אילה'}</span>
+            <span className={styles.userRole}>מנהלת מערכת</span>
+          </div>
+        </div>
+
         <nav>
           <ul>
+            <li>
+              <Link
+                href="/admin"
+                className={`${styles.navLink} ${isDashboardActive ? styles.active : ''}`}
+              >
+                <LayoutDashboard size={18} />
+                <span>לוח בקרה</span>
+              </Link>
+            </li>
             <li>
               <Link
                 href="/admin/products"
                 className={`${styles.navLink} ${isProductsActive ? styles.active : ''}`}
               >
-                ניהול מוצרים
+                <ShoppingBag size={18} />
+                <span>ניהול מוצרים</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/categories" className={`${styles.navLink} ${pathname === '/admin/categories' ? styles.active : ''}`}>ניהול קטגוריות</Link>
+              <Link 
+                href="/admin/categories" 
+                className={`${styles.navLink} ${pathname === '/admin/categories' ? styles.active : ''}`}
+              >
+                <FolderTree size={18} />
+                <span>ניהול קטגוריות</span>
+              </Link>
             </li>
             <li>
               <Link
                 href="/admin/posts"
                 className={`${styles.navLink} ${isPostsActive ? styles.active : ''}`}
               >
-                ניהול פוסטים
+                <FileText size={18} />
+                <span>ניהול פוסטים</span>
               </Link>
             </li>
             <li>
-              <Link href="/admin/media" className={`${styles.navLink} ${pathname === '/admin/media' ? styles.active : ''}`}>ספריית מדיה</Link>
+              <Link 
+                href="/admin/media" 
+                className={`${styles.navLink} ${pathname === '/admin/media' ? styles.active : ''}`}
+              >
+                <ImageIcon size={18} />
+                <span>ספריית מדיה</span>
+              </Link>
             </li>
             <li>
-              <Link href="/admin/metrics" className={`${styles.navLink} ${pathname === '/admin/metrics' ? styles.active : ''}`}>מדדים</Link>
+              <Link 
+                href="/admin/metrics" 
+                className={`${styles.navLink} ${pathname === '/admin/metrics' ? styles.active : ''}`}
+              >
+                <BarChart3 size={18} />
+                <span>מדדים ואנליטיקה</span>
+              </Link>
+            </li>
+            <li className={styles.divider}></li>
+            <li>
+              <Link 
+                href="/" 
+                className={styles.navLinkOut}
+                target="_blank"
+              >
+                <Globe size={18} />
+                <span>חזרה לאתר</span>
+              </Link>
             </li>
           </ul>
         </nav>
+        
         <div className={styles.sidebarFooter}>
           <button onClick={handleLogout} className={styles.logoutButton}>
-            התנתק
+            <LogOut size={16} />
+            <span>התנתק</span>
           </button>
         </div>
       </div>
@@ -98,28 +172,32 @@ export default function AdminWrapper({ children }) {
             showSearch={false}
             defaultOpen={false}
             categories={[
-              { label: 'ניהול מוצרים', value: '/admin/addProduct' },
+              { label: 'לוח בקרה', value: '/admin' },
+              { label: 'ניהול מוצרים', value: '/admin/products' },
               { label: 'ניהול קטגוריות', value: '/admin/categories' },
               { label: 'ניהול פוסטים', value: '/admin/posts' },
               { label: 'ספריית מדיה', value: '/admin/media' },
               { label: 'מדדים', value: '/admin/metrics' },
+              { label: 'חזרה לאתר', value: '/' },
               { label: 'התנתק', value: '__logout__' },
             ]}
             onCategoryChange={(val) => {
               if (val === '__logout__') {
                 handleLogout();
               } else if (typeof val === 'string') {
-                router.push(val);
+                if (val === '/') {
+                  window.open('/', '_blank');
+                } else {
+                  router.push(val);
+                }
               }
             }}
           />
         </div>
-        {/* <div className={styles.header}>
-          <h3>ברוך הבא לממשק הניהול</h3>
-          <p>שלום, {user?.name || 'משתמש'}!</p>
-        </div> */}
         {/* Page content injected here */}
-        {children}
+        <div className={styles.contentInner}>
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import styles from "./style.module.scss";
+import layout from "../layoutShared.module.scss";
 
 export default function MediaLibraryPage() {
   const [images, setImages] = useState([]);
@@ -156,7 +157,8 @@ export default function MediaLibraryPage() {
   }, [preview, images]);
 
   return (
-    <div className={styles.mediaPage}>
+    <div className={`${styles.mediaPage} ${layout.listPage}`}>
+      <div className={layout.stickyChrome}>
       <div className={styles.header}>
         <h1 className={styles.title}>ספריית מדיה</h1>
         <div className={styles.actions}>
@@ -196,6 +198,8 @@ export default function MediaLibraryPage() {
           )}
         </div>
       </div>
+      </div>
+      <div className={layout.listScroller}>
       {error && <div className={styles.error}>{error}</div>}
       {isLoading && (
         <div className={styles.skeletonGrid} aria-hidden>
@@ -250,6 +254,7 @@ export default function MediaLibraryPage() {
             טען תמונות נוספות
           </button>
         )}
+      </div>
       </div>
 
       {preview && (
