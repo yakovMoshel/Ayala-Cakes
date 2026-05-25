@@ -1,57 +1,411 @@
-.shop {
-    display: flex;
-    width: 100%;
-    
-    .sidebar {
-        width: 250px;
-        background-color: #f5f5f5;
-        padding: 20px;
-        height: 100vh;
-        
-        h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        nav {
-            ul {
-                list-style: none;
-                padding: 0;
-                
-                li {
-                    margin: 10px 0;
-                    
-                    a {
-                        text-decoration: none;
-                        color: #333;
-                        display: block;
-                        padding: 8px;
-                        
-                        &:hover {
-                            background-color: #e0e0e0;
-                            border-radius: 4px;
-                        }
-                    }
-                }
-            }
-        }
+@import '/app/mixins.scss';
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  direction: rtl;
+  text-align: right;
+  font-family: var(--font);
+}
+
+.welcomeBanner {
+  background: linear-gradient(135deg, var(--secColor) 0%, #4a212c 100%);
+  border-radius: 24px;
+  padding: 35px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  @include shadow;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(247, 231, 226, 0.05);
+    pointer-events: none;
+  }
+
+  .bannerText {
+    flex: 1;
+
+    h2 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--mainColor);
     }
 
-    .content {
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        text-align: center;
-        
-        .items {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 30px;
-            align-items: center;
-            justify-content: center;
-            padding: 50px;
-        }
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0;
+      max-width: 700px;
     }
+  }
+
+  .bannerBadge {
+    background-color: rgba(247, 231, 226, 0.15);
+    color: var(--mainColor);
+    padding: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include shadow;
+    border: 1px solid rgba(247, 231, 226, 0.1);
+  }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.statsCard {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid rgba(109, 55, 67, 0.06);
+  @include shadow;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(87, 43, 43, 0.12);
+  }
+
+  .statsIcon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include shadow;
+    flex-shrink: 0;
+
+    &.blue {
+      background-color: #ecf3fe;
+      color: #3b82f6;
+    }
+    &.purple {
+      background-color: #f3e8ff;
+      color: #a855f7;
+    }
+    &.pink {
+      background-color: #fce7f3;
+      color: #ec4899;
+    }
+    &.green {
+      background-color: #f0fdf4;
+      color: #22c55e;
+    }
+  }
+
+  .statsInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .label {
+      font-size: 0.88rem;
+      color: var(--darkGrayColor);
+      font-weight: 500;
+    }
+
+    .value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--secColor);
+      margin: 0;
+    }
+  }
+}
+
+.quickLinksSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--secColor);
+    margin: 0;
+  }
+}
+
+.quickLinksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.quickLinkCard {
+  background: white;
+  border: 1px solid rgba(109, 55, 67, 0.06);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  @include shadow;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  .quickLinkIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: var(--mainColor);
+    color: var(--secColor);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .quickLinkInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--secColor);
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.82rem;
+      color: var(--darkGrayColor);
+      margin: 0;
+      line-height: 1.35;
+    }
+  }
+
+  .chevron {
+    color: var(--brightGrayColor);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover {
+    border-color: var(--midColor);
+    box-shadow: 0 10px 24px rgba(173, 128, 128, 0.15);
+    transform: translateY(-2px);
+
+    .quickLinkIcon {
+      transform: scale(1.05);
+      background-color: var(--midColor);
+      color: var(--mainColor);
+    }
+
+    .chevron {
+      color: var(--midColor);
+      transform: translateX(-4px);
+    }
+  }
+}
+
+.insightsSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.insightColumn {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  @include shadow;
+  border: 1px solid rgba(109, 55, 67, 0.06);
+
+  .columnHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(109, 55, 67, 0.08);
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--secColor);
+      margin: 0;
+    }
+
+    .viewAll {
+      font-size: 0.88rem;
+      color: var(--midColor);
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+        color: var(--midColorHover);
+      }
+    }
+  }
+}
+
+.insightList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insightRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background-color: var(--grayColor);
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(247, 231, 226, 0.4);
+  }
+
+  .rank {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--midColor);
+    width: 25px;
+    text-align: center;
+  }
+
+  .title {
+    flex: 1;
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .metricValue {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--secColor);
+    background-color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(109, 55, 67, 0.06);
+  }
+
+  .emptyText {
+    font-size: 0.9rem;
+    color: var(--darkGrayColor);
+    text-align: center;
+    margin: 20px 0;
+  }
+}
+
+/* Dashboard Skeleton loading state */
+.welcomeBannerSkeleton {
+  height: 140px;
+  border-radius: 24px;
+  background: linear-gradient(90deg, #f3eae6 25%, #e6dad5 50%, #f3eae6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.skeletonCard {
+  height: 106px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonSection {
+  height: 250px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  background: white;
+  border-radius: 20px;
+  @include shadow;
+  text-align: center;
+  max-width: 500px;
+  margin: 50px auto;
+  border: 1px solid rgba(220, 53, 69, 0.1);
+
+  h3 {
+    color: #b91c1c;
+    margin: 0 0 10px;
+    font-size: 1.25rem;
+  }
+
+  p {
+    color: var(--darkGrayColor);
+    margin: 0 0 20px;
+  }
+
+  .retryBtn {
+    background-color: var(--midColor);
+    color: var(--mainColor);
+    border: none;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--midColorHover);
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }

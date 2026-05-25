@@ -1,7 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
+import ConditionalSiteShell from "@/Components/ConditionalSiteShell";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ['100', '200', '400', '800'] });
 
@@ -14,9 +13,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="he" dir="rtl">
       <body className={poppins.className} suppressHydrationWarning>
-        <Header />
-        {children}
-        <Footer />
+        <ConditionalSiteShell>{children}</ConditionalSiteShell>
       </body>
     </html>
   );

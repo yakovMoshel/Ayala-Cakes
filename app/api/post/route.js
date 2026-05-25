@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 export const GET = async () => {
   await connectToMongo();
-  const posts = await postModel.find().sort({ createdAt: 1 });
+  const posts = await postModel.find({ status: { $ne: 'deleted' } }).sort({ createdAt: 1 });
 
   // const headers = new Headers({
   //   "Cache-Control": "no-store",

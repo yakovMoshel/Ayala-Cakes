@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { 
@@ -20,6 +21,8 @@ import {
   Send
 } from 'lucide-react';
 import styles from './style.module.scss';
+import PostCtaEditor from '@/Components/PostCtaBlock/PostCtaEditor';
+import { DEFAULT_POST_CTA, mapPostCtaFromPost, normalizePostCtaForDb } from '@/utils/postCta';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
 // Load React Quill dynamically to avoid SSR issues
@@ -47,7 +50,45 @@ const SEO_GUIDELINES = {
   keywordDensity: { min: 0.5, max: 3.0, optimal: 1.5 }, // Updated density range per Yoast
 };
 
-export default function SeoEditor() {
+const formatPublishDate = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const mapPostToFormData = (post) => ({
+  title: post.title || '',
+  summary: post.summary || '',
+  content: post.content || '',
+  author: post.author || 'אילה',
+  image: post.image || '',
+  slug: post.slug || '',
+  focusKeyword: post.focusKeyword || '',
+  secondaryKeywords: Array.isArray(post.secondaryKeywords)
+    ? post.secondaryKeywords.join(', ')
+    : (post.secondaryKeywords || ''),
+  seoTitle: post.seoTitle || '',
+  metaDescription: post.metaDescription || '',
+  callToAction: post.callToAction || '',
+  socialImage: post.socialImage || '',
+  status: post.status === 'deleted' ? 'draft' : (post.status || 'draft'),
+  publishDate: formatPublishDate(post.publishDate || post.createdAt),
+  postCta: mapPostCtaFromPost(post),
+});
+
+const STATUS_LABELS = {
+  draft: 'טיוטה',
+  published: 'מפורסם',
+};
+
+export default function SeoEditor({ postId }) {
+  const router = useRouter();
+  const [editingPostId, setEditingPostId] = useState(postId || null);
+  const [isLoadingPost, setIsLoadingPost] = useState(!!postId);
+
   // State for form data
   const [formData, setFormData] = useState({
     title: '',
@@ -63,7 +104,8 @@ export default function SeoEditor() {
     callToAction: '',
     socialImage: '',
     status: 'draft', // added status field for publishing
-    publishDate: '' // added publishDate field
+    publishDate: '', // added publishDate field
+    postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
   });
   
   // UI state
@@ -110,8 +152,9 @@ export default function SeoEditor() {
     mobileOptimization: { status: 'info', message: 'יש לבדוק תאימות למובייל ומהירות טעינה' }
   });
 
-  // Set current date for publish date field
+  // Set current date for publish date field (new posts only)
   useEffect(() => {
+    if (postId) return;
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -120,7 +163,37 @@ export default function SeoEditor() {
       ...prev,
       publishDate: `${year}-${month}-${day}`
     }));
-  }, []);
+  }, [postId]);
+
+  // Load existing post for editing
+  useEffect(() => {
+    if (!postId) {
+      setEditingPostId(null);
+      setIsLoadingPost(false);
+      return;
+    }
+
+    setEditingPostId(postId);
+    const loadPost = async () => {
+      setIsLoadingPost(true);
+      setFeedback({ type: '', message: '' });
+      try {
+        const response = await axios.get(`/api/post/${postId}`);
+        if (response.data.success) {
+          setFormData(mapPostToFormData(response.data.data));
+        }
+      } catch (error) {
+        setFeedback({
+          type: 'error',
+          message: error.response?.data?.error || 'שגיאה בטעינת הפוסט לעריכה'
+        });
+      } finally {
+        setIsLoadingPost(false);
+      }
+    };
+
+    loadPost();
+  }, [postId]);
 
   // Toggle expanded sections
   const toggleSection = (section) => {
@@ -269,7 +342,8 @@ export default function SeoEditor() {
       callToAction: '',
       socialImage: '',
       status: 'draft',
-      publishDate: `${year}-${month}-${day}`
+      publishDate: `${year}-${month}-${day}`,
+      postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
     });
   };
 
@@ -525,46 +599,81 @@ export default function SeoEditor() {
     }));
   };
 
-  // Form submission handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const savePost = async (targetStatus) => {
     setIsLoading(true);
     setFeedback({ type: '', message: '' });
-  
+
     const formattedData = {
       ...formData,
+      status: targetStatus,
       image: formData.image.trim(),
-      seoTitle: formData.seoTitle || formData.title, // Use title as fallback for SEO title
+      seoTitle: formData.seoTitle || formData.title,
+      postCta: normalizePostCtaForDb(formData.postCta),
     };
-  
+
     try {
-      const response = await axios.post('/api/post', formattedData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      const successMessage = formData.status === 'published' 
-        ? 'הפוסט פורסם בהצלחה!' 
-        : 'הפוסט נשמר בהצלחה!';
-        
+      const response = editingPostId
+        ? await axios.put(`/api/post/${editingPostId}`, formattedData, {
+            headers: { 'Content-Type': 'application/json' },
+          })
+        : await axios.post('/api/post', formattedData, {
+            headers: { 'Content-Type': 'application/json' },
+          });
+
+      if (!editingPostId && response.data?.data?._id) {
+        setEditingPostId(response.data.data._id);
+        router.replace(`/admin/posts/${response.data.data._id}/edit`);
+      }
+
+      setFormData((prev) => ({ ...prev, status: targetStatus }));
+
+      const successMessages = {
+        published: editingPostId ? 'הפוסט עודכן ופורסם!' : 'הפוסט פורסם בהצלחה!',
+        draft: editingPostId ? 'הפוסט נשמר כטיוטה.' : 'הפוסט נשמר כטיוטה.',
+      };
+
       setFeedback({
         type: 'success',
-        message: successMessage
+        message: successMessages[targetStatus] || 'הפוסט נשמר בהצלחה!',
       });
-      resetForm();
+
+      if (!editingPostId && !response.data?.data?._id) {
+        resetForm();
+      }
     } catch (error) {
       setFeedback({
         type: 'error',
-        message: error.response?.data?.error || 'אירעה שגיאה בשמירת הפוסט'
+        message: error.response?.data?.error || 'אירעה שגיאה בשמירת הפוסט',
       });
     } finally {
       setIsLoading(false);
-      window.scrollTo({
-        top: document.querySelector(`.${styles.feedback}`)?.offsetTop - 100,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleDeletePost = async () => {
+    if (!editingPostId) return;
+    const confirmed = window.confirm('האם למחוק את הפוסט? הוא יוסר מהאתר אך יישמר במערכת.');
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    setFeedback({ type: '', message: '' });
+
+    try {
+      await axios.put(`/api/post/${editingPostId}`, { status: 'deleted' });
+      router.push('/admin/posts');
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: error.response?.data?.error || 'שגיאה במחיקת הפוסט',
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    savePost(formData.status);
   };
 
   // Helper for SEO score indicator color
@@ -603,13 +712,70 @@ export default function SeoEditor() {
     };
   };
 
+  if (isLoadingPost) {
+    return (
+      <div className={styles.seoEditor}>
+        <p className={styles.editorLoading}>טוען פוסט לעריכה...</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.seoEditor}>
+      <div className={styles.editorToolbar}>
+        <div className={styles.toolbarStart}>
+          <span className={styles.toolbarLabel}>סטטוס נוכחי</span>
+          <span className={`${styles.statusBadge} ${styles[`status_${formData.status}`]}`}>
+            {STATUS_LABELS[formData.status] || formData.status}
+          </span>
+        </div>
+        <div className={styles.toolbarActions}>
+          {editingPostId && formData.status === 'published' && formData.slug && (
+            <a
+              href={`/blog/${formData.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.toolbarBtnGhost}
+            >
+              צפייה באתר
+            </a>
+          )}
+          <button
+            type="button"
+            className={styles.toolbarBtnDraft}
+            onClick={() => savePost('draft')}
+            disabled={isLoading}
+          >
+            {isLoading ? 'שומר...' : formData.status === 'published' ? 'העבר לטיוטה' : 'שמור טיוטה'}
+          </button>
+          <button
+            type="button"
+            className={styles.toolbarBtnPublish}
+            onClick={() => savePost('published')}
+            disabled={isLoading}
+          >
+            {isLoading ? 'שומר...' : formData.status === 'published' ? 'עדכן פרסום' : 'פרסם'}
+          </button>
+          {editingPostId && (
+            <button
+              type="button"
+              className={styles.toolbarBtnDanger}
+              onClick={handleDeletePost}
+              disabled={isLoading}
+            >
+              מחק
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Main editor layout with content + sidebar */}
       <div className={styles.editorLayout}>
         {/* Content editing area */}
         <div className={styles.contentArea}>
-          <div className={styles.sectionTitle}>תוכן הפוסט</div>
+          <div className={styles.sectionTitle}>
+            {editingPostId ? 'עריכת תוכן הפוסט' : 'תוכן הפוסט'}
+          </div>
           
           {feedback.message && (
             <div className={`${styles.feedback} ${styles[feedback.type]}`}>
@@ -617,7 +783,7 @@ export default function SeoEditor() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleFormSubmit}>
             <div className={styles.mainFields}>
               {/* Title field */}
               <div className={styles.formGroup}>
@@ -678,6 +844,13 @@ export default function SeoEditor() {
                   )}
                 </div>
               </div>
+
+              <PostCtaEditor
+                value={formData.postCta}
+                onChange={(postCta) =>
+                  setFormData((prev) => ({ ...prev, postCta }))
+                }
+              />
               
               {/* Author and image fields */}
               <div className={styles.formRow}>
@@ -732,26 +905,9 @@ export default function SeoEditor() {
 
                              {/* TODO: ADD FAQ display section when needed in the future */}
 
-              {/* Publish buttons */}
-              <div className={styles.publishActions}>
-                <button 
-                  type="submit" 
-                  className={`${styles.actionButton} ${styles.saveButton}`}
-                  onClick={() => handleStatusChange('draft')}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'שומר טיוטה...' : 'שמור טיוטה'}
-                </button>
-                
-                <button 
-                  type="submit" 
-                  className={`${styles.actionButton} ${styles.publishButton}`}
-                  onClick={() => handleStatusChange('published')}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'מפרסם...' : 'פרסם פוסט'}
-                </button>
-              </div>
+              <p className={styles.toolbarHint}>
+                שמירה ופרסום מתבצעות מהסרגל העליון. ניתן גם לשנות סטטוס בלשונית &quot;פרסום&quot; בצד.
+              </p>
             </div>
           </form>
         </div>
@@ -790,7 +946,7 @@ export default function SeoEditor() {
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label>סטטוס</label>
+                  <label>סטטוס (תצוגה מקדימה)</label>
                   <div className={styles.statusButtons}>
                     <button
                       type="button"
@@ -807,7 +963,11 @@ export default function SeoEditor() {
                       מפורסם
                     </button>
                   </div>
-                </div><div className={styles.publishTip}>
+                  <p className={styles.sidebarStatusNote}>
+                    לשמירה בפועל השתמשי בכפתורים בסרגל העליון.
+                  </p>
+                </div>
+                <div className={styles.publishTip}>
                   <div className={styles.tipIcon}>
                     <Info size={14} />
                   </div>

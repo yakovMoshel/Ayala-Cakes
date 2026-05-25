@@ -8,6 +8,9 @@
     width: 900px;
     max-width: 90vw;
     max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     @include shadow;
     position: relative;
     animation: modalFadeIn 0.3s ease;
@@ -15,7 +18,16 @@
     direction: rtl;
   }
 
+  .modalBody {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
   .modalHeader {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -46,6 +58,7 @@
   }
 
   .tabContainer {
+    flex-shrink: 0;
     background-color: var(--grayColor);
     border-radius: 20px;
     padding: 8px;
@@ -138,8 +151,12 @@
   }
 
   .librarySection {
-    max-height: 500px;
+    flex: 1;
+    min-height: 0;
+    max-height: min(420px, calc(90vh - 260px));
     overflow-y: auto;
+    overflow-x: hidden;
+    padding-inline-end: 4px;
 
     .imageGrid {
       display: grid;
@@ -280,12 +297,17 @@
   }
 
   .modalActions {
+    flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
     gap: 15px;
-    margin-top: 25px;
+    margin-top: 20px;
     padding-top: 20px;
     border-top: 2px solid var(--grayColor);
+    background-color: white;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
 
     .cancelButton {
       background-color: var(--grayColor);
@@ -351,6 +373,8 @@
     }
 
     .librarySection {
+      max-height: min(360px, calc(90vh - 240px));
+
       .imageGrid {
         grid-template-columns: 1fr;
         gap: 15px;
