@@ -219,23 +219,57 @@ export default function PostCtaEditor({ value, onChange }) {
                           ))}
                         </select>
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className={styles.formGroup}>
+                        <label>יעד חיצוני</label>
+                        <select
+                          value={
+                            EXTERNAL_LINK_OPTIONS.some((o) => o.value === btn.url)
+                              ? btn.url
+                              : "__custom__"
+                          }
+                          onChange={(e) => {
+                            if (e.target.value === "__custom__") {
+                              updateButton(index, { url: "", openInNewTab: true });
+                            } else {
+                              updateButton(index, {
+                                url: e.target.value,
+                                openInNewTab: true,
+                              });
+                            }
+                          }}
+                        >
+                          <option value="__custom__">כתובת מותאמת...</option>
+                          {EXTERNAL_LINK_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
                   <div className={styles.formGroup}>
                     <label>
                       {btn.linkType === "external" ? "כתובת URL חיצונית" : "נתיב (URL)"}
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       value={btn.url}
                       onChange={(e) => updateButton(index, { url: e.target.value })}
                       placeholder={
                         btn.linkType === "external"
-                          ? "https://example.com"
+                          ? "https://api.whatsapp.com/send?phone=..."
                           : "/shop או /blog"
                       }
                       dir="ltr"
                     />
+                    {btn.linkType === "external" && (
+                      <p className={styles.hint}>
+                        ל-WhatsApp השתמשי בקישור &quot;שליחת הודעה&quot; (api.whatsapp.com), לא
+                        ב-web.whatsapp.com.
+                      </p>
+                    )}
                   </div>
                   {btn.linkType === "external" && (
                     <label className={styles.enableToggle}>
