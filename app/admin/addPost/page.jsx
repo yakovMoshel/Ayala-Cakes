@@ -1,11 +1,8 @@
-import AddPostForm from '@/Components/AddPostForm';
-import styles from './style.module.scss';
+import { redirect } from 'next/navigation';
 
-export default function PostsAdminPage() {
-  return (
-    <div className={styles.postsAdmin}>
-      <h1>ניהול פוסטים</h1>
-      <AddPostForm />
-    </div>
-  );
+export default function LegacyAddPostPage({ searchParams }) {
+  if (searchParams?.id) {
+    redirect(`/admin/posts/${searchParams.id}/edit`);
+  }
+  redirect('/admin/posts');
 }

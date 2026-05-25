@@ -4,6 +4,7 @@ import { connectToMongo } from '@/server/DL/connectToMongo';
 import { getProductBySlug } from '@/server/BL/productService';
 import ImageGallery from '@/Components/ImageGallery';
 import OrderButton from '@/Components/OrderButton';
+import ProductPageTracker from '@/Components/ProductPageTracker';
 import { notFound } from 'next/navigation';
 
 // מטא-דטה דינמית לכל מוצר
@@ -94,6 +95,7 @@ export default async function ProductPage({ params }) {
 
     return (
         <>
+            {item.slug && <ProductPageTracker slug={item.slug} />}
             <div className={styles.productPage}>
                 <div className={styles.leftSide}>
                     <ImageGallery images={images} />

@@ -102,8 +102,12 @@ const PostSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['draft', 'published'],
+    enum: ['draft', 'published', 'deleted'],
     default: 'draft'
+  },
+  views: {
+    type: Number,
+    default: 0
   }
 });
 

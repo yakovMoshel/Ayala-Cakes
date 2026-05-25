@@ -49,8 +49,27 @@
     h2 { font-size: 1.5em; margin-bottom: 0.5em; color: var(--secColor); }
     h3 { font-size: 1.2em; margin-bottom: 0.5em; color: var(--secColor); }
     
-    ul { margin: 1em 2em; }
-    li { list-style-type: disc; margin-bottom: 0.5em; }
+    ul,
+    ol {
+      margin: 1em 0;
+      padding-right: 1.5em;
+      padding-left: 0;
+    }
+
+    ul li,
+    ol li {
+      list-style-position: outside;
+      margin-bottom: 0.5em;
+      padding-right: 0.25em;
+    }
+
+    ul li {
+      list-style-type: disc;
+    }
+
+    ol li {
+      list-style-type: decimal;
+    }
     
     strong { 
       color: var(--text-color);

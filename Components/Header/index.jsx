@@ -8,11 +8,13 @@ import useStore from '../../useStore';
 
 export default function Header() {
     const isAuthenticated = useStore((state) => state.isAuthenticated);
-    const favorites = useStore((state) => state.favorites);
+    // Favorites menu disabled for now — uncomment when re-enabling /favorites
+    // const favorites = useStore((state) => state.favorites);
     const setAuthenticated = useStore((state) => state.setAuthenticated);
     const setUser = useStore((state) => state.setUser);
     const [isOpen, setIsOpen] = useState(false);
-    const [isPulsing, setIsPulsing] = useState(false);
+    // Pulse animation for favorites menu item — restore with favorites below
+    // const [isPulsing, setIsPulsing] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const path = usePathname();
 
@@ -48,13 +50,14 @@ export default function Header() {
         })();
     }, [setAuthenticated, setUser]);
 
-    useEffect(() => {
-        if (favorites.length > 0) {
-            setIsPulsing(true);
-            const timer = setTimeout(() => setIsPulsing(false), 500);
-            return () => clearTimeout(timer);
-        }
-    }, [favorites.length]);
+    // Favorites pulse effect — uncomment together with favorites state and menu item
+    // useEffect(() => {
+    //     if (favorites.length > 0) {
+    //         setIsPulsing(true);
+    //         const timer = setTimeout(() => setIsPulsing(false), 500);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [favorites.length]);
 
     const handleToggleBurger = () => {
         setIsOpen(!isOpen);
@@ -70,15 +73,17 @@ export default function Header() {
         { href: '/shop', label: 'חנות' },
         { href: '/bento-workshop', label: 'סדנת בנטו' },
         { href: '/blog', label: 'בלוג' },
-        { href: '/favorites', label: 'מועדפים', isFavorites: true },
+        // Favorites nav link disabled for now — uncomment to show "מועדפים" in menu again
+        // { href: '/favorites', label: 'מועדפים', isFavorites: true },
     ];
 
     const renderMenuItem = (item) => (
-        <div key={item.href} className={`${styles.menuItem} ${item.isFavorites ? styles.favorites : ''}`}>
+        // When favorites menu is back: add ${item.isFavorites ? styles.favorites : ''} to className below
+        <div key={item.href} className={styles.menuItem}>
             <Link 
                 href={item.href} 
-                className={`${path === item.href ? styles.active : ''} 
-                            ${item.isFavorites && isPulsing ? styles.pulse : ''}`}
+                // When favorites menu is back: add ${item.isFavorites && isPulsing ? styles.pulse : ''} to className below
+                className={path === item.href ? styles.active : ''}
                 onClick={handleMenuItemClick}
             >
                 {item.label}

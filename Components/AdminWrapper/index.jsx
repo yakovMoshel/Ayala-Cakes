@@ -46,6 +46,12 @@ export default function AdminWrapper({ children }) {
     return <div>בודקים את ההרשאות שלך...</div>;
   }
 
+  const isPostsActive =
+    pathname.startsWith('/admin/posts') || pathname === '/admin/addPost';
+
+  const isProductsActive =
+    pathname.startsWith('/admin/products') || pathname === '/admin/addProduct';
+
   return (
     <div className={styles.shop}>
       <div className={styles.sidebar}>
@@ -53,16 +59,29 @@ export default function AdminWrapper({ children }) {
         <nav>
           <ul>
             <li>
-              <Link href="/admin/addProduct" className={`${styles.navLink} ${pathname === '/admin/addProduct' ? styles.active : ''}`}>ניהול מוצרים</Link>
+              <Link
+                href="/admin/products"
+                className={`${styles.navLink} ${isProductsActive ? styles.active : ''}`}
+              >
+                ניהול מוצרים
+              </Link>
             </li>
             <li>
               <Link href="/admin/categories" className={`${styles.navLink} ${pathname === '/admin/categories' ? styles.active : ''}`}>ניהול קטגוריות</Link>
             </li>
             <li>
-              <Link href="/admin/addPost" className={`${styles.navLink} ${pathname === '/admin/addPost' ? styles.active : ''}`}>ניהול פוסטים</Link>
+              <Link
+                href="/admin/posts"
+                className={`${styles.navLink} ${isPostsActive ? styles.active : ''}`}
+              >
+                ניהול פוסטים
+              </Link>
             </li>
             <li>
               <Link href="/admin/media" className={`${styles.navLink} ${pathname === '/admin/media' ? styles.active : ''}`}>ספריית מדיה</Link>
+            </li>
+            <li>
+              <Link href="/admin/metrics" className={`${styles.navLink} ${pathname === '/admin/metrics' ? styles.active : ''}`}>מדדים</Link>
             </li>
           </ul>
         </nav>
@@ -81,8 +100,9 @@ export default function AdminWrapper({ children }) {
             categories={[
               { label: 'ניהול מוצרים', value: '/admin/addProduct' },
               { label: 'ניהול קטגוריות', value: '/admin/categories' },
-              { label: 'ניהול פוסטים', value: '/admin/addPost' },
+              { label: 'ניהול פוסטים', value: '/admin/posts' },
               { label: 'ספריית מדיה', value: '/admin/media' },
+              { label: 'מדדים', value: '/admin/metrics' },
               { label: 'התנתק', value: '__logout__' },
             ]}
             onCategoryChange={(val) => {

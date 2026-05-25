@@ -135,85 +135,87 @@ export default function MediaPickerModal({
             </button>
           </div>
 
-          {activeTab === "upload" && (
-            <div className={styles.uploadSection}>
-              <h3>העלאת תמונות חדשות</h3>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple={multiple}
-                onChange={handleUpload}
-                disabled={uploading}
-                className={styles.uploadInput}
-              />
-              <div className={styles.uploadDescription}>
-                קבצים יועלו עם אופטימיזציה אוטומטית:<br/>
-                • המרה ל-WEBP לטעינה מהירה<br/>
-                • דחיסה חכמה לאיכות מושלמת<br/>
-                • הגבלת רוחב מקסימלי לביצועים מיטביים
-              </div>
-              {uploading && (
+          <div className={styles.modalBody}>
+            {activeTab === "upload" && (
+              <div className={styles.uploadSection}>
+                <h3>העלאת תמונות חדשות</h3>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple={multiple}
+                  onChange={handleUpload}
+                  disabled={uploading}
+                  className={styles.uploadInput}
+                />
                 <div className={styles.uploadDescription}>
-                  מעלה קבצים...
+                  קבצים יועלו עם אופטימיזציה אוטומטית:<br/>
+                  • המרה ל-WEBP לטעינה מהירה<br/>
+                  • דחיסה חכמה לאיכות מושלמת<br/>
+                  • הגבלת רוחב מקסימלי לביצועים מיטביים
                 </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === "library" && (
-            <div className={styles.librarySection}>
-              <div className={styles.imageGrid}>
-                {images.map((img) => (
-                  <div
-                    key={img.public_id}
-                    className={`${styles.imageCard} ${selectedIds.includes(img.public_id) ? styles.selected : ""}`}
-                    onClick={() => toggleSelect(img.public_id)}
-                  >
-                    <div className={`${styles.imageWrapper} ${selectedIds.includes(img.public_id) ? styles.selected : ""}`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img.secure_url} alt={img.public_id} />
-                      <div className={styles.selectionOverlay}>
-                        <div className={styles.checkIcon}>✓</div>
-                      </div>
-                    </div>
-                    <div className={styles.imageMeta}>
-                      <div className={styles.imageName}>{img.public_id}</div>
-                      <div className={styles.imageActions}>
-                        <button
-                          className={styles.actionButton}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleSelect(img.public_id);
-                          }}
-                        >
-                          {selectedIds.includes(img.public_id) ? "בטל" : "בחר"}
-                        </button>
-                        <button
-                          className={`${styles.actionButton} ${styles.danger}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteSingle(img.public_id);
-                          }}
-                        >
-                          מחק
-                        </button>
-                      </div>
-                    </div>
+                {uploading && (
+                  <div className={styles.uploadDescription}>
+                    מעלה קבצים...
                   </div>
-                ))}
+                )}
               </div>
-              {nextCursor && (
-                <button
-                  className={styles.loadMoreButton}
-                  onClick={() => fetchImages(nextCursor)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "טוען..." : "טען תמונות נוספות"}
-                </button>
-              )}
-            </div>
-          )}
+            )}
+
+            {activeTab === "library" && (
+              <div className={styles.librarySection}>
+                <div className={styles.imageGrid}>
+                  {images.map((img) => (
+                    <div
+                      key={img.public_id}
+                      className={`${styles.imageCard} ${selectedIds.includes(img.public_id) ? styles.selected : ""}`}
+                      onClick={() => toggleSelect(img.public_id)}
+                    >
+                      <div className={`${styles.imageWrapper} ${selectedIds.includes(img.public_id) ? styles.selected : ""}`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img.secure_url} alt={img.public_id} />
+                        <div className={styles.selectionOverlay}>
+                          <div className={styles.checkIcon}>✓</div>
+                        </div>
+                      </div>
+                      <div className={styles.imageMeta}>
+                        <div className={styles.imageName}>{img.public_id}</div>
+                        <div className={styles.imageActions}>
+                          <button
+                            className={styles.actionButton}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSelect(img.public_id);
+                            }}
+                          >
+                            {selectedIds.includes(img.public_id) ? "בטל" : "בחר"}
+                          </button>
+                          <button
+                            className={`${styles.actionButton} ${styles.danger}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteSingle(img.public_id);
+                            }}
+                          >
+                            מחק
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {nextCursor && (
+                  <button
+                    className={styles.loadMoreButton}
+                    onClick={() => fetchImages(nextCursor)}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "טוען..." : "טען תמונות נוספות"}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
           <div className={styles.modalActions}>
             <button className={styles.cancelButton} onClick={onClose}>

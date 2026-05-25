@@ -1,11 +1,43 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import styles from './style.module.scss';
 import dynamic from 'next/dynamic';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
-export default function AddProductForm({ categories }) {
+const mapProductToForm = (product) => ({
+  name: product.name || '',
+  subtitle: product.subtitle || '',
+  description: product.description || '',
+  price: product.price?.toString() || '',
+  category: product.category || '',
+  colors: Array.isArray(product.colors) ? product.colors.join(', ') : '',
+  flavors: Array.isArray(product.flavors) ? product.flavors.join(', ') : '',
+  isActive: product.isActive ? 'true' : 'false',
+  glutenContent: product.glutenFreeOption ? 'ללא גלוטן' : 'מכיל גלוטן',
+  dairyContent: product.notDairyOption ? 'כן' : 'לא',
+  height: product.height?.toString() || '',
+  diameter: product.diameter?.toString() || '',
+  slug: product.slug || '',
+  seoTitle: product.seoTitle || '',
+  metaDescription: product.metaDescription || '',
+  focusKeyword: product.focusKeyword || '',
+  secondaryKeywords: Array.isArray(product.secondaryKeywords)
+    ? product.secondaryKeywords.join(', ')
+    : '',
+  altText: product.altText || '',
+  imageTitle: product.imageTitle || '',
+  tags: Array.isArray(product.tags) ? product.tags.join(', ') : '',
+  canonicalUrl: product.canonicalUrl || '',
+  ogImage: product.ogImage || '',
+  twitterCard: product.twitterCard || 'summary_large_image',
+});
+
+export default function AddProductForm({ categories, productId }) {
+  const router = useRouter();
+  const [editingProductId, setEditingProductId] = useState(productId || null);
+  const [isLoadingProduct, setIsLoadingProduct] = useState(!!productId);
   const [formData, setFormData] = useState({
     name: '',
     subtitle: '',
@@ -40,6 +72,37 @@ export default function AddProductForm({ categories }) {
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   const [selectedImageUrls, setSelectedImageUrls] = useState([]);
   // TODO: ADD FAQ state when needed in the future
+
+  useEffect(() => {
+    if (!productId) {
+      setEditingProductId(null);
+      setIsLoadingProduct(false);
+      return;
+    }
+
+    setEditingProductId(productId);
+    const loadProduct = async () => {
+      setIsLoadingProduct(true);
+      setFeedback({ type: '', message: '' });
+      try {
+        const response = await axios.get(`/api/product/${productId}`);
+        if (response.data.success) {
+          const product = response.data.data;
+          setFormData(mapProductToForm(product));
+          setSelectedImageUrls(product.images || []);
+        }
+      } catch (error) {
+        setFeedback({
+          type: 'error',
+          message: error.response?.data?.error || 'שגיאה בטעינת המוצר',
+        });
+      } finally {
+        setIsLoadingProduct(false);
+      }
+    };
+
+    loadProduct();
+  }, [productId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -159,53 +222,151 @@ export default function AddProductForm({ categories }) {
     setShowSEOSection(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const buildPayload = (isActive) => {
+    const { glutenContent, dairyContent, isActive: _ignored, ...rest } = formData;
+    return {
+      ...rest,
+      price: parseFloat(formData.price),
+      images: [...selectedImageUrls],
+      colors: formData.colors ? formData.colors.split(',').map((c) => c.trim()) : [],
+      flavors: formData.flavors ? formData.flavors.split(',').map((f) => f.trim()) : [],
+      isActive,
+      height: parseFloat(formData.height),
+      diameter: parseFloat(formData.diameter),
+      glutenFreeOption: formData.glutenContent === 'ללא גלוטן',
+      notDairyOption: formData.dairyContent === 'כן',
+      secondaryKeywords: formData.secondaryKeywords
+        ? formData.secondaryKeywords.split(',').map((k) => k.trim())
+        : [],
+      tags: formData.tags ? formData.tags.split(',').map((t) => t.trim()) : [],
+    };
+  };
+
+  const saveProduct = async (active) => {
     setIsLoading(true);
     setFeedback({ type: '', message: '' });
 
     try {
-      const imageUrls = [...selectedImageUrls];
+      const formattedData = buildPayload(active);
 
-      const formattedData = {
-        ...formData,
-        price: parseFloat(formData.price),
-        images: imageUrls,
-        colors: formData.colors ? formData.colors.split(',').map(color => color.trim()) : [],
-        flavors: formData.flavors ? formData.flavors.split(',').map(flavor => flavor.trim()) : [],
-        isActive: formData.isActive === 'true',
-        height: parseFloat(formData.height),
-        diameter: parseFloat(formData.diameter),
-        notDairyOption: formData.dairyContent === 'כן',
-        secondaryKeywords: formData.secondaryKeywords ? formData.secondaryKeywords.split(',').map(k => k.trim()) : [],
-        tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
-        // TODO: ADD FAQ to submission when needed
-      };
+      const response = editingProductId
+        ? await axios.put(`/api/product/${editingProductId}`, formattedData)
+        : await axios.post('/api/product', formattedData);
 
-      const response = await axios.post('/api/product', formattedData);
+      if (!editingProductId && response.data?.data?._id) {
+        setEditingProductId(response.data.data._id);
+        router.replace(`/admin/products/${response.data.data._id}/edit`);
+      }
+
+      setFormData((prev) => ({ ...prev, isActive: active ? 'true' : 'false' }));
+
       setFeedback({
         type: 'success',
-        message: 'המוצר נוסף בהצלחה!'
+        message: active
+          ? editingProductId
+            ? 'המוצר עודכן ופעיל בחנות!'
+            : 'המוצר נוסף ופעיל בחנות!'
+          : editingProductId
+            ? 'המוצר נשמר כלא פעיל.'
+            : 'המוצר נשמר כלא פעיל.',
       });
-      resetForm();
+
+      if (!editingProductId && !response.data?.data?._id) {
+        resetForm();
+      }
     } catch (error) {
       setFeedback({
         type: 'error',
-        message: error.response?.data?.error || 'אירעה שגיאה בהוספת המוצר'
+        message: error.response?.data?.error || 'אירעה שגיאה בשמירת המוצר',
       });
     } finally {
       setIsLoading(false);
-      window.scrollTo({
-        top: document.querySelector(`.${styles.feedback}`)?.offsetTop - 100,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
+  const handleDeactivate = async () => {
+    if (!editingProductId) return;
+    if (!window.confirm('האם להסיר את המוצר מהחנות?')) return;
+    setIsLoading(true);
+    try {
+      await axios.put(`/api/product/${editingProductId}`, { isActive: false });
+      router.push('/admin/products');
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: error.response?.data?.error || 'שגיאה בהסרת המוצר',
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    saveProduct(formData.isActive === 'true');
+  };
+
+  if (isLoadingProduct) {
+    return (
+      <div className={styles.formWrapper}>
+        <p className={styles.loadingProduct}>טוען מוצר לעריכה...</p>
+      </div>
+    );
+  }
+
+  const isActive = formData.isActive === 'true';
+
   return (
     <div className={styles.formWrapper}>
+      <div className={styles.editorToolbar}>
+        <div className={styles.toolbarStart}>
+          <span className={styles.toolbarLabel}>סטטוס</span>
+          <span className={`${styles.statusBadge} ${isActive ? styles.statusActive : styles.statusInactive}`}>
+            {isActive ? 'פעיל בחנות' : 'לא פעיל'}
+          </span>
+        </div>
+        <div className={styles.toolbarActions}>
+          {editingProductId && isActive && formData.slug && (
+            <a
+              href={`/shop/products/${formData.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.toolbarBtnGhost}
+            >
+              צפייה בחנות
+            </a>
+          )}
+          <button
+            type="button"
+            className={styles.toolbarBtnDraft}
+            onClick={() => saveProduct(false)}
+            disabled={isLoading}
+          >
+            {isLoading ? 'שומר...' : isActive ? 'השבת מוצר' : 'שמור לא פעיל'}
+          </button>
+          <button
+            type="button"
+            className={styles.toolbarBtnPublish}
+            onClick={() => saveProduct(true)}
+            disabled={isLoading}
+          >
+            {isLoading ? 'שומר...' : isActive ? 'עדכן מוצר' : 'הפעל בחנות'}
+          </button>
+          {editingProductId && (
+            <button
+              type="button"
+              className={styles.toolbarBtnDanger}
+              onClick={handleDeactivate}
+              disabled={isLoading}
+            >
+              הסר מהחנות
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className={styles.formHeader}>
-        <h3>הוספת מוצר חדש</h3>
+        <h3>{editingProductId ? 'עריכת מוצר' : 'הוספת מוצר חדש'}</h3>
         {feedback.message && (
           <div className={`${styles.feedback} ${styles[feedback.type]}`}>
             {feedback.message}
@@ -213,7 +374,7 @@ export default function AddProductForm({ categories }) {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleFormSubmit} className={styles.form}>
         <div className={styles.formSection}>
           <h4>פרטים בסיסיים</h4>
           <div className={styles.formGrid}>
@@ -541,15 +702,9 @@ export default function AddProductForm({ categories }) {
           </div>
         )}
 
-        <div className={styles.formActions}>
-          <button 
-            type="submit" 
-            className={styles.submitButton}
-            disabled={isLoading}
-          >
-            {isLoading ? 'מוסיף מוצר...' : 'הוסף מוצר'}
-          </button>
-        </div>
+        <p className={styles.toolbarHint}>
+          שמירה והפעלה מתבצעות מהסרגל העליון.
+        </p>
       </form>
 
       {showMediaPicker && (

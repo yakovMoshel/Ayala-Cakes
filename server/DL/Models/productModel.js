@@ -117,6 +117,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     enum: ['summary', 'summary_large_image', 'app', 'player'],
     default: 'summary_large_image'
+  },
+  views: {
+    type: Number,
+    default: 0
   }
 });
 

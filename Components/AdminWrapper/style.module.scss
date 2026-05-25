@@ -23,7 +23,7 @@
                 li {
                     margin: 10px 0;
                     
-                    a {
+                    a, .navLink {
                         text-decoration: none;
                         color: #333;
                         display: block;
@@ -33,6 +33,42 @@
                             background-color: #e0e0e0;
                             border-radius: 4px;
                         }
+
+                        &.active {
+                            background-color: #e0e0e0;
+                            border-radius: 4px;
+                            font-weight: 600;
+                        }
+                    }
+                }
+
+                .navGroup {
+                    margin: 14px 0;
+                }
+
+                .navGroupTitle {
+                    display: block;
+                    padding: 8px;
+                    font-weight: 700;
+                    color: #333;
+
+                    &.active {
+                        color: var(--secColor, #693743);
+                    }
+                }
+
+                .subNav {
+                    list-style: none;
+                    padding: 0 12px 0 0;
+                    margin: 4px 0 0;
+
+                    li {
+                        margin: 4px 0;
+                    }
+
+                    .navLink {
+                        font-size: 0.95rem;
+                        padding: 6px 10px;
                     }
                 }
             }
