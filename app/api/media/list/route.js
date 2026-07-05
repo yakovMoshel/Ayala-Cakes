@@ -1,8 +1,14 @@
 // app/api/media/list/route.js
 import { NextResponse } from "next/server";
 import cloudinary from "@/utils/cloudinary";
+import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 
 export async function GET(req) {
+  const auth = await verifyAdminSession();
+  if (!auth.ok) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: auth.status });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const nextCursor = searchParams.get("next_cursor") || undefined;

@@ -6,6 +6,9 @@ import SinglePost from '@/Components/SinglePost';
 import { serializeData } from '@/utils/serialization';
 import { notFound, permanentRedirect } from 'next/navigation';
 
+// ISR: revalidated hourly + on demand when a post is edited (see API routes)
+export const revalidate = 3600;
+
 //dynamic metadata for each post
 export async function generateMetadata({ params }) {
   await connectToMongo();

@@ -4,6 +4,9 @@ import PostItem from '@/Components/PostItem';
 import { getAllPosts } from '@/server/BL/postService';
 import { connectToMongo } from '@/server/DL/connectToMongo';
 
+// ISR: revalidated hourly + on demand when posts change (revalidatePath in API routes)
+export const revalidate = 3600;
+
 // מטא-דטה סטטית לדף הבלוג הראשי
 export async function generateMetadata() {
     return {
@@ -28,9 +31,9 @@ export default async function Blog() {
     return (
         <div className={styles.blog}>
             <div className={styles.content}>
-                <div className={styles.title}>
+                <h1 className={styles.title}>
                     טיפים, מתכונים ועוד
-                </div>
+                </h1>
                 <div className={styles.items}>
                     {posts && posts.map((post) => (
                         <PostItem key={post._id} post={post} />

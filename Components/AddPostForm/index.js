@@ -23,6 +23,7 @@ import {
 import styles from './style.module.scss';
 import PostCtaEditor from '@/Components/PostCtaBlock/PostCtaEditor';
 import { DEFAULT_POST_CTA, mapPostCtaFromPost, normalizePostCtaForDb } from '@/utils/postCta';
+import { analyzePost } from '@/utils/seoScore';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
 // Load React Quill dynamically to avoid SSR issues
@@ -30,25 +31,6 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p className={styles.editorLoading}>טוען עורך...</p>
 });
-
-// SEO guidelines for various fields - updated to 2025 standards
-const SEO_GUIDELINES = {
-  title: { min: 30, max: 70, optimal: 55 }, // Updated: Yoast allows up to 70 chars in some cases
-  seoTitle: { min: 30, max: 70, optimal: 55 },
-  metaDescription: { min: 120, max: 155, optimal: 145 }, // Updated: Yoast recommends 155 max
-  // Content is now measured in WORDS, not characters
-  content: { min: 300, max: null, optimal: 900 }, // Updated: 300 words min, 900+ optimal
-  summary: { min: 100, max: 155, optimal: 130 },
-  focusKeyword: { min: 1, max: 4, optimal: 2 }, // For natural, not forced keyword phrases
-  
-  // New guidelines for additional SEO factors
-  headings: { min: 2, max: null, optimal: 4 }, // At least 2 subheadings recommended
-  internalLinks: { min: 2, max: null, optimal: 4 }, // At least 2 internal links recommended
-  externalLinks: { min: 1, max: null, optimal: 2 }, // At least 1 external link recommended
-  paragraphLength: { max: 150 }, // Words per paragraph for readability
-  sentenceLength: { max: 25 }, // Words per sentence for readability
-  keywordDensity: { min: 0.5, max: 3.0, optimal: 1.5 }, // Updated density range per Yoast
-};
 
 const formatPublishDate = (date) => {
   if (!date) return '';
@@ -122,6 +104,7 @@ export default function SeoEditor({ postId }) {
     metadata: 0,
     ux: 0
   });
+  const [seoRecommendations, setSeoRecommendations] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
     seo: true,
     contentReadability: false,
@@ -129,9 +112,11 @@ export default function SeoEditor({ postId }) {
   });
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   
-  // SEO analysis results
+  // SEO analysis results (shape produced by utils/seoScore analyzePost)
   const [seoAnalysis, setSeoAnalysis] = useState({
     keywordDensity: 0,
+    keywordDensityStatus: { status: 'pending', message: '' },
+    keywordStuffing: { status: 'pending', message: '' },
     keywordInTitle: false,
     keywordInDescription: false,
     keywordInContent: false,
@@ -142,12 +127,18 @@ export default function SeoEditor({ postId }) {
     contentLength: { status: 'pending', message: '' },
     summaryLength: { status: 'pending', message: '' },
     focusKeywordCount: { status: 'pending', message: '' },
-    // New analysis fields
     headings: { status: 'pending', message: '' },
+    h1InContent: { status: 'pending', message: '' },
+    questionHeadings: { status: 'pending', message: '' },
+    directAnswer: { status: 'pending', message: '' },
+    lists: { status: 'pending', message: '' },
     images: { status: 'pending', message: '' },
     imageAlt: { status: 'pending', message: '' },
     links: { status: 'pending', message: '' },
+    internalLinks: { status: 'pending', message: '' },
+    externalLinks: { status: 'pending', message: '' },
     sentenceLength: { status: 'pending', message: '' },
+    paragraphLength: { status: 'pending', message: '' },
     socialImage: { status: 'pending', message: '' },
     mobileOptimization: { status: 'info', message: 'יש לבדוק תאימות למובייל ומהירות טעינה' }
   });
@@ -349,6 +340,9 @@ export default function SeoEditor({ postId }) {
 
   const openMediaPicker = () => setShowMediaPicker(true);
   const closeMediaPicker = () => setShowMediaPicker(false);
+  const clearFeaturedImage = () => {
+    setFormData((prev) => ({ ...prev, image: '' }));
+  };
   const handleMediaConfirm = (selection) => {
     const first = Array.isArray(selection) ? selection[0] : selection;
     if (first?.secure_url) {
@@ -357,234 +351,13 @@ export default function SeoEditor({ postId }) {
     closeMediaPicker();
   };
 
-  // Calculate length status (too short, optimal, too long)
-  const calculateLengthStatus = (field, value) => {
-    const guideline = SEO_GUIDELINES[field];
-    if (!guideline) return { status: 'neutral', message: '' };
-    
-    // Determine if we need word count or character count based on the field
-    const isWordCountField = field === 'focusKeyword' || field === 'content';
-    
-    const length = isWordCountField
-      ? value.split(/\s+/).filter(word => word.trim() !== '').length // Word count
-      : value.length; // Character count for other fields
-    
-    // For content, we need to strip HTML tags first
-    const contentLength = field === 'content' 
-      ? value.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.trim() !== '').length
-      : length;
-    
-    const actualLength = field === 'content' ? contentLength : length;
-    
-    if (actualLength === 0) {
-      return { status: 'pending', message: 'לא הוזן תוכן' };
-    } else if (actualLength < guideline.min) {
-      const unit = isWordCountField ? 'מילים' : 'תווים';
-      return { status: 'bad', message: `קצר מדי (${actualLength} ${unit}, מינימום ${guideline.min})` };
-    } else if (guideline.max && actualLength > guideline.max) {
-      const unit = isWordCountField ? 'מילים' : 'תווים';
-      return { status: 'warning', message: `ארוך מדי (${actualLength} ${unit}, מקסימום ${guideline.max})` };
-    } else if (actualLength >= guideline.min && (!guideline.max || actualLength <= guideline.max)) {
-      if (Math.abs(actualLength - guideline.optimal) <= (guideline.optimal * 0.1)) {
-        const unit = isWordCountField ? 'מילים' : 'תווים';
-        return { status: 'good', message: `אורך אופטימלי (${actualLength} ${unit})` };
-      }
-      const unit = isWordCountField ? 'מילים' : 'תווים';
-      return { status: 'ok', message: `אורך טוב (${actualLength} ${unit})` };
-    }
-    
-    return { status: 'neutral', message: '' };
-  };
-
-  // Calculate keyword density
-  const calculateKeywordDensity = useCallback((content, keyword) => {
-    if (!keyword || !content) return 0;
-    
-    // Strip HTML tags and convert to lowercase
-    const strippedContent = content.replace(/<[^>]*>/g, '').toLowerCase();
-    const keywordLower = keyword.toLowerCase();
-    
-    // Count occurrences
-    const keywordRegex = new RegExp(`\\b${keywordLower}\\b`, 'g');
-    const keywordCount = (strippedContent.match(keywordRegex) || []).length;
-    
-    // Count total words
-    const totalWords = strippedContent.split(/\s+/).filter(word => word.trim() !== '').length;
-    
-    // Calculate density
-    return totalWords > 0 ? (keywordCount / totalWords) * 100 : 0;
-  }, []);
-
-  // Full SEO analysis - updated with more comprehensive checks
+  // Full SEO/AIO analysis — logic lives in utils/seoScore.js (Hebrew-aware)
   const analyzeSEO = useCallback(() => {
-    const { title, seoTitle, metaDescription, content, summary, focusKeyword, slug, image, socialImage } = formData;
-    
-    // Length analyses
-    const titleLengthStatus = calculateLengthStatus('title', title);
-    const seoTitleLengthStatus = calculateLengthStatus('seoTitle', seoTitle || title);
-    const descriptionLengthStatus = calculateLengthStatus('metaDescription', metaDescription);
-    const contentLengthStatus = calculateLengthStatus('content', content);
-    const summaryLengthStatus = calculateLengthStatus('summary', summary);
-    const focusKeywordCountStatus = calculateLengthStatus('focusKeyword', focusKeyword);
-    
-    // Keyword analyses
-    const keywordDensity = calculateKeywordDensity(content, focusKeyword);
-    const keywordInTitle = focusKeyword && (title.toLowerCase().includes(focusKeyword.toLowerCase()));
-    const keywordInDescription = focusKeyword && (metaDescription.toLowerCase().includes(focusKeyword.toLowerCase()));
-    const keywordInContent = focusKeyword && (content.toLowerCase().includes(focusKeyword.toLowerCase()));
-    
-    // First paragraph check (rough approximation)
-    const firstParagraphMatch = content.match(/<p>(.*?)<\/p>/);
-    const firstParagraph = firstParagraphMatch ? firstParagraphMatch[1] : '';
-    const keywordInFirstParagraph = focusKeyword && firstParagraph.toLowerCase().includes(focusKeyword.toLowerCase());
-    
-    // URL slug check
-    const urlSlugOptimal = slug && focusKeyword && slug.toLowerCase().includes(
-      focusKeyword.toLowerCase().replace(/\s+/g, '-')
-    );
-    
-    // NEW: Readability checks
-    // Count paragraphs
-    const paragraphCount = (content.match(/<p>/g) || []).length;
-    
-    // Check headings
-    const h2Count = (content.match(/<h2/g) || []).length;
-    const h3Count = (content.match(/<h3/g) || []).length;
-    const totalHeadings = h2Count + h3Count;
-    const headingsStatus = totalHeadings < SEO_GUIDELINES.headings.min 
-      ? { status: 'warning', message: `יש להוסיף כותרות משנה (יש ${totalHeadings}, מומלץ לפחות ${SEO_GUIDELINES.headings.min})` }
-      : { status: 'good', message: `כמות כותרות משנה טובה (${totalHeadings})` };
-    
-    // Check for images
-    const hasImages = content.includes('<img');
-    const imagesCount = (content.match(/<img/g) || []).length;
-    const mainImageStatus = image 
-      ? { status: 'good', message: 'תמונה ראשית קיימת' }
-      : { status: 'warning', message: 'חסרה תמונה ראשית' };
-    
-    // Check for alt text in images
-    const imagesWithAlt = (content.match(/alt="[^"]+"/g) || []).length;
-    const imageAltStatus = hasImages && imagesWithAlt < imagesCount 
-      ? { status: 'warning', message: `לא לכל התמונות יש טקסט חלופי (${imagesWithAlt}/${imagesCount})` }
-      : hasImages ? { status: 'good', message: 'כל התמונות כוללות טקסט חלופי' } 
-      : { status: 'neutral', message: 'אין תמונות בתוכן' };
-    
-    // Check for internal/external links
-    const hasLinks = content.includes('<a href=');
-    const linksCount = (content.match(/<a href=/g) || []).length;
-    const linksStatus = !hasLinks 
-      ? { status: 'warning', message: 'אין קישורים בתוכן' }
-      : linksCount < 2 
-        ? { status: 'warning', message: `מעט קישורים (${linksCount})` }
-        : { status: 'good', message: `כמות קישורים טובה (${linksCount})` };
-    
-    // Check sentence length - approximate check
-    const strippedContent = content.replace(/<[^>]*>/g, '');
-    const sentences = strippedContent.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const longSentences = sentences.filter(s => 
-      s.split(/\s+/).filter(w => w.trim().length > 0).length > SEO_GUIDELINES.sentenceLength.max
-    );
-    const sentenceLengthStatus = longSentences.length > sentences.length * 0.2
-      ? { status: 'warning', message: `יותר מדי משפטים ארוכים (${longSentences.length}/${sentences.length})` }
-      : { status: 'good', message: 'אורך המשפטים טוב לקריאות' };
-    
-    // Social media optimization
-    const socialImageStatus = socialImage
-      ? { status: 'good', message: 'תמונה לרשתות חברתיות קיימת' }
-      : { status: 'warning', message: 'חסרה תמונה לרשתות חברתיות' };
-    
-    // Mobile optimization - just a reminder, not actually checked
-    const mobileOptimizationStatus = { 
-      status: 'info', 
-      message: 'יש לבדוק תאימות למובייל ומהירות טעינה' 
-    };
-    
-    // Store all analysis results
-    setSeoAnalysis({
-      keywordDensity,
-      keywordInTitle,
-      keywordInDescription,
-      keywordInContent,
-      keywordInFirstParagraph,
-      urlSlugOptimal,
-      titleLength: titleLengthStatus,
-      seoTitleLength: seoTitleLengthStatus,
-      descriptionLength: descriptionLengthStatus,
-      contentLength: contentLengthStatus,
-      summaryLength: summaryLengthStatus,
-      focusKeywordCount: focusKeywordCountStatus,
-      
-      // New analysis items
-      headings: headingsStatus,
-      images: mainImageStatus,
-      imageAlt: imageAltStatus,
-      links: linksStatus,
-      sentenceLength: sentenceLengthStatus,
-      socialImage: socialImageStatus,
-      mobileOptimization: mobileOptimizationStatus,
-    });
-    
-    // Calculate scores - Updated approach with more factors
-    
-    // Keywords score (25% of total)
-    let keywordScore = 0;
-    if (keywordInTitle) keywordScore += 20;
-    if (keywordInDescription) keywordScore += 15;
-    if (keywordInContent) keywordScore += 10;
-    if (keywordInFirstParagraph) keywordScore += 15;
-    if (urlSlugOptimal) keywordScore += 10;
-    if (keywordDensity >= SEO_GUIDELINES.keywordDensity.min && 
-        keywordDensity <= SEO_GUIDELINES.keywordDensity.max) {
-      keywordScore += 30;
-    }
-    
-    // Content quality score (30% of total)
-    let contentScore = 0;
-    if (contentLengthStatus.status === 'good') contentScore += 25;
-    else if (contentLengthStatus.status === 'ok') contentScore += 15;
-    
-    if (totalHeadings >= SEO_GUIDELINES.headings.min) contentScore += 15;
-    if (hasImages) contentScore += 15;
-    if (imagesWithAlt === imagesCount && imagesCount > 0) contentScore += 10;
-    if (linksCount >= 2) contentScore += 15;
-    if (paragraphCount >= 3) contentScore += 10;
-    if (longSentences.length <= sentences.length * 0.2) contentScore += 10;
-    
-    // Metadata score (25% of total)
-    let metadataScore = 0;
-    if (titleLengthStatus.status === 'good') metadataScore += 20;
-    else if (titleLengthStatus.status === 'ok') metadataScore += 15;
-    
-    if (descriptionLengthStatus.status === 'good') metadataScore += 20;
-    else if (descriptionLengthStatus.status === 'ok') metadataScore += 15;
-    
-    if (slug) metadataScore += 20;
-    if (image) metadataScore += 20;
-    if (socialImage) metadataScore += 20;
-    
-    // User experience score (20% of total)
-    let uxScore = 0;
-    if (summaryLengthStatus.status === 'good' || summaryLengthStatus.status === 'ok') uxScore += 40;
-    if (sentences.length > 0 && longSentences.length <= sentences.length * 0.1) uxScore += 30;
-    if (paragraphCount >= 5) uxScore += 30;
-    
-    // Calculate overall score with revised weights
-    const overallScore = Math.round(
-      (keywordScore * 0.25) + 
-      (contentScore * 0.30) + 
-      (metadataScore * 0.25) + 
-      (uxScore * 0.20)
-    );
-    
-    setSeoScores({
-      overall: overallScore,
-      keyword: keywordScore,
-      content: contentScore,
-      metadata: metadataScore,
-      ux: uxScore
-    });
-    
-  }, [formData, calculateKeywordDensity]);
+    const { analysis, scores, recommendations } = analyzePost(formData);
+    setSeoAnalysis(analysis);
+    setSeoScores(scores);
+    setSeoRecommendations(recommendations);
+  }, [formData]);
 
   // Run SEO analysis when relevant fields change
   useEffect(() => {
@@ -821,6 +594,84 @@ export default function SeoEditor({ postId }) {
                   className={styles.summaryInput}
                 ></textarea>
               </div>
+
+              {/* Featured image — full-width, clear upload UX */}
+              <div className={styles.featuredImageSection}>
+                <div className={styles.fieldHeader}>
+                  <label className={styles.featuredImageLabel}>
+                    <Image size={18} aria-hidden />
+                    תמונה ראשית
+                  </label>
+                  {seoAnalysis.images && (
+                    <div className={styles.lengthIndicator}>
+                      <SeoStatusIndicator {...seoAnalysis.images} />
+                    </div>
+                  )}
+                </div>
+                <p className={styles.fieldHint}>
+                  התמונה שמופיעה בראש הפוסט בבלוג, בתוצאות החיפוש ובשיתופים. מומלץ יחס 3:2, לפחות 800px רוחב.
+                </p>
+
+                {formData.image ? (
+                  <div className={styles.imagePreviewCard}>
+                    <div className={styles.imagePreviewWrap}>
+                      <img
+                        src={formData.image}
+                        alt="תצוגה מקדימה של התמונה הראשית"
+                        className={styles.imagePreview}
+                      />
+                    </div>
+                    <div className={styles.imagePreviewMeta}>
+                      <span className={styles.imagePreviewBadge}>תמונה נבחרה</span>
+                      <div className={styles.imagePreviewActions}>
+                        <button
+                          type="button"
+                          className={styles.imagePickerBtn}
+                          onClick={openMediaPicker}
+                        >
+                          החלפת תמונה
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.imageRemoveBtn}
+                          onClick={clearFeaturedImage}
+                        >
+                          <X size={16} aria-hidden />
+                          הסרה
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.imageUploadEmpty}
+                    onClick={openMediaPicker}
+                  >
+                    <span className={styles.imageUploadIcon}>
+                      <Image size={28} strokeWidth={1.5} aria-hidden />
+                    </span>
+                    <span className={styles.imageUploadTitle}>בחרי תמונה מספריית המדיה</span>
+                    <span className={styles.imageUploadSub}>לחצי כאן לפתיחת הספרייה</span>
+                  </button>
+                )}
+
+                <div className={styles.imageUrlRow}>
+                  <label className={styles.imageUrlLabel} htmlFor="post-featured-image-url">
+                    {formData.image ? 'כתובת התמונה (ניתן לערוך)' : 'או הדביקי כתובת URL ישירות'}
+                  </label>
+                  <input
+                    id="post-featured-image-url"
+                    type="url"
+                    name="image"
+                    value={formData.image}
+                    placeholder="https://res.cloudinary.com/..."
+                    onChange={handleChange}
+                    className={styles.imageUrlInput}
+                    dir="ltr"
+                  />
+                </div>
+              </div>
               
               {/* Content editor */}
               <div className={styles.formGroup}>
@@ -852,35 +703,20 @@ export default function SeoEditor({ postId }) {
                 }
               />
               
-              {/* Author and image fields */}
-              <div className={styles.formRow}>
+              {/* Post metadata */}
+              <div className={styles.metadataSection}>
+                <p className={styles.metadataSectionTitle}>פרטי פרסום</p>
                 <div className={styles.formGroup}>
-                  <label>מחבר</label>
+                  <label htmlFor="post-author">מחבר / מחברת</label>
                   <input
+                    id="post-author"
                     type="text"
                     name="author"
                     value={formData.author}
-                    placeholder="שם המחבר"
+                    placeholder="שם המחבר שיוצג בפוסט"
                     onChange={handleChange}
                     required
                   />
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label>תמונה ראשית</label>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <input
-                      type="text"
-                      name="image"
-                      value={formData.image}
-                      placeholder="URL של תמונה ראשית"
-                      onChange={handleChange}
-                      style={{ flex: 1 }}
-                    />
-                    <button type="button" className={styles.publishButton} onClick={openMediaPicker}>
-                      בחר מספריית המדיה
-                    </button>
-                  </div>
                 </div>
               </div>
               
@@ -919,6 +755,7 @@ export default function SeoEditor({ postId }) {
               <span className={styles.scoreNumber}>{seoScores.overall}</span>
             </div>
             <div className={styles.scoreLabel}>ציון SEO</div>
+            <p className={styles.scoreSubtext}>מתוך 100 · מתעדכן בזמן אמת</p>
           </div>
           
           {/* Publishing Section - NEW */}
@@ -1094,13 +931,24 @@ export default function SeoEditor({ postId }) {
                 
                 {/* Social image */}
                 <div className={styles.formGroup}>
-                  <label>תמונה לרשתות חברתיות</label>
+                  <div className={styles.fieldHeader}>
+                    <label>תמונה לרשתות חברתיות (OG)</label>
+                    {seoAnalysis.socialImage && (
+                      <div className={styles.lengthIndicator}>
+                        <SeoStatusIndicator {...seoAnalysis.socialImage} />
+                      </div>
+                    )}
+                  </div>
+                  <p className={styles.fieldHintCompact}>
+                    מוצגת בשיתוף בוואטסאפ, פייסבוק ואינסטגרם. אם ריק — משתמשים בתמונה הראשית.
+                  </p>
                   <input
-                    type="text"
+                    type="url"
                     name="socialImage"
                     value={formData.socialImage}
-                    placeholder="URL של תמונה לשיתוף ברשתות חברתיות"
+                    placeholder="https://res.cloudinary.com/..."
                     onChange={handleChange}
+                    dir="ltr"
                   />
                 </div>
               </div>
@@ -1122,6 +970,18 @@ export default function SeoEditor({ postId }) {
             {expandedSections.contentReadability && (
               <div className={styles.sectionContent}>
                 <div className={styles.seoAnalysisList}>
+                  {/* Prioritized fixes — top issues by score impact */}
+                  {seoRecommendations.length > 0 && (
+                    <div className={styles.analysisGroup}>
+                      <h4 className={styles.analysisGroupTitle}>מה לתקן קודם (לפי השפעה על הציון)</h4>
+                      {seoRecommendations.map((rec, index) => (
+                        <div key={index} className={styles.analysisItem}>
+                          <SeoStatusIndicator status={rec.status} message={rec.message} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
                   {/* Keyword Analysis Group */}
                   <div className={styles.analysisGroup}>
                     <h4 className={styles.analysisGroupTitle}>מילות מפתח</h4>
@@ -1167,25 +1027,18 @@ export default function SeoEditor({ postId }) {
                     </div>
                     
                     {/* Keyword density */}
-                    <div className={styles.analysisItem}>
-                      <SeoStatusIndicator 
-                        status={
-                          !formData.focusKeyword ? 'pending' :
-                          seoAnalysis.keywordDensity === 0 ? 'bad' :
-                          seoAnalysis.keywordDensity < SEO_GUIDELINES.keywordDensity.min ? 'warning' :
-                          seoAnalysis.keywordDensity > SEO_GUIDELINES.keywordDensity.max ? 'warning' : 'good'
-                        }
-                        message={
-                          !formData.focusKeyword ? 'הוסף מילת מפתח להערכה' :
-                          seoAnalysis.keywordDensity === 0 ? 'מילת המפתח לא נמצאה בתוכן' :
-                          seoAnalysis.keywordDensity < SEO_GUIDELINES.keywordDensity.min ? 
-                            `צפיפות מילת מפתח נמוכה (${seoAnalysis.keywordDensity.toFixed(1)}%)` :
-                          seoAnalysis.keywordDensity > SEO_GUIDELINES.keywordDensity.max ? 
-                            `צפיפות מילת מפתח גבוהה מדי (${seoAnalysis.keywordDensity.toFixed(1)}%)` :
-                            `צפיפות מילת מפתח אופטימלית (${seoAnalysis.keywordDensity.toFixed(1)}%)`
-                        }
-                      />
-                    </div>
+                    {seoAnalysis.keywordDensityStatus && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.keywordDensityStatus} />
+                      </div>
+                    )}
+                    
+                    {/* Keyword stuffing */}
+                    {seoAnalysis.keywordStuffing && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.keywordStuffing} />
+                      </div>
+                    )}
                   </div>
                   
                   {/* Content Structure Analysis */}
@@ -1204,10 +1057,45 @@ export default function SeoEditor({ postId }) {
                       </div>
                     )}
                     
-                    {/* Links */}
-                    {seoAnalysis.links && (
+                    {/* H1 in content (duplicate H1 check) */}
+                    {seoAnalysis.h1InContent && (
                       <div className={styles.analysisItem}>
-                        <SeoStatusIndicator {...seoAnalysis.links} />
+                        <SeoStatusIndicator {...seoAnalysis.h1InContent} />
+                      </div>
+                    )}
+                    
+                    {/* Direct answer (AIO) */}
+                    {seoAnalysis.directAnswer && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.directAnswer} />
+                      </div>
+                    )}
+                    
+                    {/* Lists (AIO scannability) */}
+                    {seoAnalysis.lists && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.lists} />
+                      </div>
+                    )}
+                    
+                    {/* Question headings (AIO) */}
+                    {seoAnalysis.questionHeadings && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.questionHeadings} />
+                      </div>
+                    )}
+                    
+                    {/* Internal links */}
+                    {seoAnalysis.internalLinks && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.internalLinks} />
+                      </div>
+                    )}
+                    
+                    {/* External links */}
+                    {seoAnalysis.externalLinks && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.externalLinks} />
                       </div>
                     )}
                     
@@ -1215,6 +1103,13 @@ export default function SeoEditor({ postId }) {
                     {seoAnalysis.sentenceLength && (
                       <div className={styles.analysisItem}>
                         <SeoStatusIndicator {...seoAnalysis.sentenceLength} />
+                      </div>
+                    )}
+                    
+                    {/* Paragraph length */}
+                    {seoAnalysis.paragraphLength && (
+                      <div className={styles.analysisItem}>
+                        <SeoStatusIndicator {...seoAnalysis.paragraphLength} />
                       </div>
                     )}
                   </div>

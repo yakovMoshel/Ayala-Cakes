@@ -1,8 +1,14 @@
 // app/api/media/delete/route.js
 import { NextResponse } from "next/server";
 import cloudinary from "@/utils/cloudinary";
+import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 
 export async function POST(req) {
+  const auth = await verifyAdminSession();
+  if (!auth.ok) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: auth.status });
+  }
+
   try {
     const body = await req.json();
     const { public_id, publicIds } = body || {};

@@ -1,19 +1,26 @@
 import React from 'react';
 import styles from './style.module.scss';
 import BelieveLine from '../../Components/BelieveLine';
-import Head from 'next/head';
+
+export const metadata = {
+  title: 'אילה קונדיטורית מוסמכת - עוגות ייחודיות בהתאמה אישית בקריות והסביבה',
+  description: 'אני אילה, קונדיטורית מוסמכת, יוצרת עוגות ייחודיות וקסומות המותאמות אישית לכל אירוע. עוגות מעוצבות וטעימות מחומרי גלם איכותיים שיהפכו את האירוע שלכם לבלתי נשכח.',
+  openGraph: {
+    title: 'אילה קונדיטורית מוסמכת - עוגות ייחודיות בהתאמה אישית',
+    description: 'עוגות ייחודיות וקסומות המותאמות אישית לכל אירוע, מחומרי גלם איכותיים',
+    type: 'website',
+  },
+  alternates: {
+    canonical: '/about',
+  },
+};
 
 export default function About() {
   return (
     <div className={styles.about}>
-      <Head>
-        <title>אילה קונדיטורית מוסמכת - עוגות ייחודיות בהתאמה אישית בקריות והסביבה</title>
-        <meta name="description" content="אני אילה, קונדיטורית מוסמכת, יוצרת עוגות ייחודיות וקסומות המותאמות אישית לכל אירוע. עוגות מעוצבות וטעימות מחומרי גלם איכותיים שיהפכו את האירוע שלכם לבלתי נשכח." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
       <div className={styles.topProducts}>
-        <div className={styles.sideTitle}>
-          היי, נעים להכיר        </div>
+        <h1 className={styles.sideTitle}>
+          היי, נעים להכיר        </h1>
         <div className={styles.text}>
           <p>אני אילה, קונדיטורית מוסמכת ומעצבת עוגות, עם תשוקה עזה ליצור עוגות ייחודיות וקסומות שיהפכו כל אירוע לחגיגה בלתי נשכחת. מגיל צעיר התאהבתי בעולם האפייה והעיצוב, ומאז ועד היום אני משקיעה
             את כל כולי בלימוד ושיפור כישורי האפייה שלי, על מנת להעניק לכם את הטוב ביותר.</p>

@@ -4,5 +4,6 @@ Allow: /
 Disallow: /admin
 Disallow: /login
 Disallow: /user/settings
+Disallow: /UniquePost
 
 Sitemap: https://www.ayacakes.biz/sitemap.xml

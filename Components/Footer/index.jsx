@@ -23,7 +23,7 @@ export default function Footer() {
   ];
 
   return (
-    <div className={styles.container}>
+    <footer className={styles.container}>
       <div className={styles.footerContent}>
         <div className={styles.column}>
           <h3 className={styles.title}>קצת עליי</h3>
@@ -90,6 +90,6 @@ export default function Footer() {
           כל הזכויות שמורות <FaRegCopyright /> {year}
         </p>
       </div>
-    </div>
+    </footer>
   );
 }

@@ -99,20 +99,6 @@
         border-radius: 20px;
       object-fit: cover;      }
     }
-
-    .mobileImage {
-      display: none;
-      width: 100%;
-      animation: fadeInLeft 1s ease;
-
-      img {
-        width: calc(100vw - 50px);
-        height: 35vh;
-        object-fit: cover;
-        background-color: var(--midColor);
-        border-radius: 20px;
-      }
-    }
   }
 
   .topProducts {
@@ -190,12 +176,10 @@
         animation: fadeInUp 1s ease;
       }
 
+      /* Single hero element: on mobile .image takes over the old .mobileImage styling */
       .image {
-        display: none;
-      }
-
-      .mobileImage {
         display: block;
+        width: 100%;
         animation: fadeInUp 1s ease;
 
         img {
@@ -247,13 +231,4 @@
     }
   }
 
-  @media (min-width: 769px) {
-    .mobileImage {
-      display: none;
-    }
-
-    .image {
-      display: block;
-    }
-  }
 }

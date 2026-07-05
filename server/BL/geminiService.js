@@ -3,71 +3,61 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// JSON mode: guaranteed-parseable output, lower temperature for consistent SEO fields
+const JSON_MODEL_CONFIG = {
+  model: 'gemini-1.5-flash',
+  generationConfig: {
+    responseMimeType: 'application/json',
+    temperature: 0.4,
+    maxOutputTokens: 2048,
+  },
+};
+
+// Strip HTML and collapse whitespace so excerpts spend tokens on text, not markup
+const toPlainExcerpt = (html, maxChars = 800) =>
+  (html || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;|&amp;|&lt;|&gt;|&quot;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, maxChars);
+
+const parseJsonResponse = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Fallback for any stray text around the JSON
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) return JSON.parse(jsonMatch[0]);
+    throw new Error('לא ניתן לפרש את התגובה מ-Gemini');
+  }
+};
+
 /**
  * פונקציה לג'ינרוט SEO תוכן למוצרים
  */
 export const generateProductSEO = async ({ name, subtitle, description, category, price, flavors, colors }) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel(JSON_MODEL_CONFIG);
 
-    const prompt = `
-    אני צריך שתוליד תוכן SEO בעברית למוצר קונדיטוריה בחנות "עוגות איילה".
+    const prompt = `אתה מומחה SEO לקונדיטוריות בישראל. צור תוכן SEO בעברית למוצר בחנות "עוגות איילה" (ayacakes.biz, אזור הקריות).
 
-    פרטי המוצר:
-    - שם: ${name}
-    - כותרת משנה: ${subtitle || ''}
-    - תיאור: ${description}
-    - קטגוריה: ${category}
-    - מחיר: ${price} ש"ח
-    - טעמים: ${flavors?.join(', ') || ''}
-    - צבעים: ${colors?.join(', ') || ''}
+מוצר:
+שם: ${name}
+כותרת משנה: ${subtitle || '-'}
+תיאור: ${toPlainExcerpt(description, 400)}
+קטגוריה: ${category}
+מחיר: ${price} ש"ח
+טעמים: ${flavors?.join(', ') || '-'}
+צבעים: ${colors?.join(', ') || '-'}
 
-    אנא צור עבורי:
-    1. SEO Title (50-60 תווים)
-    2. Meta Description (120-155 תווים)
-    3. Focus Keyword (מילת מפתח ראשית)
-    4. Secondary Keywords (3-5 מילות מפתח משניות)
-    5. Slug באנגלית (פשוט ונגיש)
-    6. Alt Text לתמונה
-    7. Image Title
-    8. Tags (5-7 תגיות רלוונטיות)
-    9. Structured Data (JSON-LD למוצר)
+החזר JSON בלבד במבנה המדויק:
+{"seoTitle":"50-60 תווים","metaDescription":"120-155 תווים","focusKeyword":"מילת מפתח ראשית","secondaryKeywords":["3-5 מילות מפתח"],"slug":"english-with-hyphens","altText":"טקסט חלופי לתמונה","imageTitle":"כותרת תמונה","tags":["5-7 תגיות"],"structuredData":{"@context":"https://schema.org","@type":"Product"}}
 
-    // TODO: ADD FAQ generation in the future when displaying FAQs to customers
-
-    החזר תשובה בפורמט JSON הבא:
-    {
-      "seoTitle": "...",
-      "metaDescription": "...",
-      "focusKeyword": "...",
-      "secondaryKeywords": ["...", "...", "..."],
-      "slug": "...",
-      "altText": "...",
-      "imageTitle": "...",
-      "tags": ["...", "...", "..."],
-      "structuredData": {...}
-    }
-
-    הקפד על:
-    - השמדה על איכות התוכן והרלוונטיות לקונדיטוריה
-    - השתמש במילים חיוביות ומזמינות
-    - התמקד ביתרונות המוצר
-    - הוסף מילות מפתח מקומיות אם רלוונטי
-    - ה-slug צריך להיות באנגלית פשוטה וקצרה
-    `;
+כללים: טון חיובי ומזמין, מילות מפתח מקומיות (קריות/חיפה) אם רלוונטי, slug באנגלית פשוטה, structuredData מלא כולל offers במטבע ILS.`;
 
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
-    
-    // Try to parse JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
-    
-    throw new Error('לא ניתן לפרש את התגובה מ-Gemini');
-    
+    return parseJsonResponse(result.response.text());
   } catch (error) {
     console.error('Error generating product SEO:', error);
     throw new Error('שגיאה ביצירת תוכן SEO: ' + error.message);
@@ -79,73 +69,27 @@ export const generateProductSEO = async ({ name, subtitle, description, category
  */
 export const generatePostSEO = async ({ title, summary, content, author }) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel(JSON_MODEL_CONFIG);
 
     // Count words in content for reading time calculation
-    const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const wordCount = (content || '').replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
     const readingTime = Math.ceil(wordCount / 200); // Average reading speed
 
-    const prompt = `
-    אני צריך שתוליד תוכן SEO בעברית לפוסט בבלוג של "עוגות איילה".
+    const prompt = `אתה מומחה SEO לקונדיטוריות בישראל. צור תוכן SEO בעברית לפוסט בבלוג של "עוגות איילה" (ayacakes.biz).
 
-    פרטי הפוסט:
-    - כותרת: ${title}
-    - תקציר: ${summary}
-    - תוכן: ${content.substring(0, 500)}... (קטע מהתוכן)
-    - מחבר: ${author}
+פוסט:
+כותרת: ${title}
+תקציר: ${summary}
+תוכן (קטע): ${toPlainExcerpt(content, 800)}
+מחבר: ${author}
 
-    אנא צור עבורי:
-    1. SEO Title (50-60 תווים)
-    2. Meta Description (120-155 תווים)
-    3. Focus Keyword (מילת מפתח ראשית)
-    4. Secondary Keywords (3-5 מילות מפתח משניות)
-    5. Slug באנגלית (פשוט ונגיש)
-    6. Alt Text לתמונה
-    7. Image Title
-    8. Tags (5-7 תגיות רלוונטיות)
-    9. Structured Data (JSON-LD לפוסט)
-    10. Call to Action
-    11. OG Image description
+החזר JSON בלבד במבנה המדויק:
+{"seoTitle":"50-60 תווים","metaDescription":"120-155 תווים","focusKeyword":"מילת מפתח ראשית","secondaryKeywords":["3-5 מילות מפתח"],"slug":"english-with-hyphens","altText":"טקסט חלופי לתמונה","imageTitle":"כותרת תמונה","tags":["5-7 תגיות"],"structuredData":{"@context":"https://schema.org","@type":"BlogPosting"},"callToAction":"קריאה לפעולה מעודדת","ogImageDescription":"תיאור תמונת שיתוף","readingTime":${readingTime}}
 
-    // TODO: ADD FAQ generation in the future when displaying FAQs to customers
-
-    החזר תשובה בפורמט JSON הבא:
-    {
-      "seoTitle": "...",
-      "metaDescription": "...",
-      "focusKeyword": "...",
-      "secondaryKeywords": ["...", "...", "..."],
-      "slug": "...",
-      "altText": "...",
-      "imageTitle": "...",
-      "tags": ["...", "...", "..."],
-      "structuredData": {...},
-      "callToAction": "...",
-      "ogImageDescription": "...",
-      "readingTime": ${readingTime}
-    }
-
-    הקפד על:
-    - איכות התוכן והרלוונטיות לקונדיטוריה ואפייה
-    - השתמש במילים חיוביות ומזמינות
-    - התמקד בערך המוסף לקורא
-    - הוסף מילות מפתח מקומיות אם רלוונטי
-    - ה-slug צריך להיות באנגלית פשוטה וקצרה
-    - הקריאה לפעולה צריכה להיות מעודדת ורלוונטית
-    `;
+כללים: טון חיובי, ערך מוסף לקורא, מילות מפתח מקומיות אם רלוונטי, slug באנגלית פשוטה וקצרה, structuredData מלא (author: ${author || 'אילה אברהם'}).`;
 
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
-    
-    // Try to parse JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
-    
-    throw new Error('לא ניתן לפרש את התגובה מ-Gemini');
-    
+    return parseJsonResponse(result.response.text());
   } catch (error) {
     console.error('Error generating post SEO:', error);
     throw new Error('שגיאה ביצירת תוכן SEO: ' + error.message);
@@ -157,34 +101,23 @@ export const generatePostSEO = async ({ title, summary, content, author }) => {
  */
 export const generateSlug = async (title) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+      generationConfig: { temperature: 0.2, maxOutputTokens: 64 },
+    });
 
-    const prompt = `
-    אני צריך שתמיר את הכותרת הבאה לslug באנגלית:
-    "${title}"
-
-    הslug צריך להיות:
-    - באנגלית פשוטה
-    - קצר ותמציתי
-    - ללא רווחים (השתמש במקפים)
-    - ללא תווים מיוחדים
-    - SEO friendly
-    - מתאים לחנות קונדיטוריה
-
-    החזר רק את הslug, ללא הסבר נוסף.
-    `;
+    const prompt = `המר את הכותרת לslug באנגלית פשוטה: קצר, מקפים במקום רווחים, ללא תווים מיוחדים, SEO friendly, מתאים לקונדיטוריה. החזר רק את הslug.
+כותרת: "${title}"`;
 
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const slug = response.text().trim().toLowerCase();
-    
+    const slug = result.response.text().trim().toLowerCase();
+
     // Clean up the slug
     return slug
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
-    
   } catch (error) {
     console.error('Error generating slug:', error);
     // Fallback: create a simple slug from title
@@ -194,4 +127,4 @@ export const generateSlug = async (title) => {
       .replace(/\s+/g, '-')
       .substring(0, 50);
   }
-}; 
+};

@@ -6,7 +6,7 @@ export const INTERNAL_LINK_OPTIONS = [
   { label: 'חנות', value: '/shop' },
   { label: 'בלוג', value: '/blog' },
   { label: 'אודות', value: '/about' },
-  { label: 'צור קשר', value: '/Contact' },
+  { label: 'צור קשר', value: '/contact' },
   { label: 'סדנת בנטו', value: '/bento-workshop' },
 ];
 

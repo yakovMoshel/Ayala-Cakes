@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styles from "./style.module.scss";
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useStore from '../../useStore';
@@ -43,15 +44,23 @@ export default function ProductItem({ product, hideAdminActions = false }) {
         <div className={`${styles.item} ${isDeleted ? styles.deleted : ''}`}>
             <Link href={productLink} legacyBehavior>
                 <a className={styles.imageLink}>
-                    <img src={images[0]} alt={name} className={styles.image} />
+                    {/* CSS (.image) controls the rendered 100% x 200px box */}
+                    <Image
+                        src={images[0]}
+                        alt={name}
+                        width={500}
+                        height={400}
+                        sizes="250px"
+                        className={styles.image}
+                    />
                 </a>
             </Link>
 
             <div className={styles.content}>
                 <div className={styles.textContainer}>
-                    <div className={styles.productName}>
+                    <h3 className={styles.productName}>
                         {name}
-                    </div>
+                    </h3>
                     <div className={styles.details}>
                         {subtitle}
                     </div>

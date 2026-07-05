@@ -30,7 +30,8 @@ export default function ConditionalSiteShell({ children }) {
   return (
     <>
       <Header />
-      {children}
+      {/* display:contents keeps children as direct flex items of body (no layout change) */}
+      <main style={{ display: 'contents' }}>{children}</main>
       <Footer />
     </>
   );

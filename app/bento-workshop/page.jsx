@@ -172,7 +172,7 @@ const BentoWorkshopPage = () => {
                     <div className={styles.imageWrapper}>
                         <div className={styles.imageFrame}>
                             <Image
-                                src="/אילה אברהם.png"
+                                src="/ayala-avraham.webp"
                                 alt="אילה אברהם - קונדיטורית ומדריכת סדנאות"
                                 fill
                                 sizes="(max-width: 768px) 100vw, 50vw"
