@@ -7,6 +7,9 @@ import OrderButton from '@/Components/OrderButton';
 import ProductPageTracker from '@/Components/ProductPageTracker';
 import { notFound } from 'next/navigation';
 
+// ISR: revalidated hourly + on demand when a product is edited (see API routes)
+export const revalidate = 3600;
+
 // מטא-דטה דינמית לכל מוצר
 export async function generateMetadata({ params }) {
   await connectToMongo();
@@ -101,9 +104,9 @@ export default async function ProductPage({ params }) {
                     <ImageGallery images={images} />
                 </div>
                 <div className={styles.rightSide}>
-                    <div className={styles.name}>
+                    <h1 className={styles.name}>
                         {name}
-                    </div>
+                    </h1>
                     <div className={styles.details}>
                         <div>{formattedDescription}</div>
                     </div>
@@ -151,15 +154,33 @@ export default async function ProductPage({ params }) {
                 </div>
             </div>
             
-            {/* Structured Data for SEO */}
-            {item.structuredData && (
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(item.structuredData)
-                    }}
-                />
-            )}
+            {/* Structured Data for SEO — DB-stored schema, or generated fallback */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(item.structuredData || buildProductSchema(plainItem))
+                }}
+            />
         </>
     );
+}
+
+// Fallback Product JSON-LD so every product has schema even without a stored one
+function buildProductSchema(product) {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.name,
+        description: (product.description || '').split('\n')[0],
+        image: product.images || [],
+        url: `https://www.ayacakes.biz/shop/products/${product.slug}`,
+        brand: { '@type': 'Brand', name: 'Ayala Cakes' },
+        offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'ILS',
+            availability: 'https://schema.org/InStock',
+            url: `https://www.ayacakes.biz/shop/products/${product.slug}`,
+        },
+    };
 } 

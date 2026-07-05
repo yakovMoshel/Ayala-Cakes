@@ -1,7 +1,22 @@
 import { NextResponse } from 'next/server';
 import { generateProductSEO, generatePostSEO, generateSlug } from '@/server/BL/geminiService';
+import { verifyAdminSession } from '@/server/functions/verifyAdminSession';
+import { isRateLimited, getClientIp } from '@/utils/rateLimit';
 
 export async function POST(request) {
+  const auth = await verifyAdminSession();
+  if (!auth.ok) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: auth.status });
+  }
+
+  // Guard against runaway client loops hammering the paid Gemini API
+  if (isRateLimited(`generate-seo:${getClientIp(request)}`, { windowMs: 60 * 1000, max: 5 })) {
+    return NextResponse.json(
+      { error: 'יותר מדי בקשות - נסו שוב בעוד דקה' },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
     const { type, data } = body;

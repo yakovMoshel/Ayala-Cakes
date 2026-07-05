@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import styles from './style.module.scss';
 
 export default function ImageGallery({ images }) {
@@ -14,7 +15,15 @@ export default function ImageGallery({ images }) {
   return (
     <div className={styles.gallery}>
       <div className={styles.mainImage} onClick={toggleEnlarged}>
-        <img src={selectedImage} alt="Selected" />
+        {/* CSS sizes the rendered box (350x350); priority = product page LCP */}
+        <Image
+          src={selectedImage}
+          alt="תמונת המוצר"
+          width={700}
+          height={700}
+          sizes="350px"
+          priority
+        />
       </div>
       <div className={styles.thumbnails}>
         {images.map((image, index) => (
@@ -23,13 +32,25 @@ export default function ImageGallery({ images }) {
             className={styles.thumbnail}
             onClick={() => setSelectedImage(image)}
           >
-            <img src={image} alt={`image-${index}`} />
+            <Image
+              src={image}
+              alt={`תמונת מוצר ${index + 1}`}
+              width={200}
+              height={200}
+              sizes="100px"
+            />
           </div>
         ))}
       </div>
       {isEnlarged && (
         <div className={styles.enlargedView} onClick={toggleEnlarged}>
-          <img src={selectedImage} alt="Enlarged" />
+          <Image
+            src={selectedImage}
+            alt="תמונת המוצר מוגדלת"
+            width={1200}
+            height={1200}
+            sizes="100vw"
+          />
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styles from './style.module.scss';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useStore from '../../useStore';
@@ -47,7 +48,16 @@ export default function PostItem({ post }) {
     <Link href={postLink} className={styles.itemLink}>
       <div className={styles.item}>
         <div className={styles.imageContainer}>
-          {image && <img src={image} alt={title} className={styles.image} />}
+          {/* fill matches the existing absolute-positioned CSS inside the aspect-ratio container */}
+          {image && (
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 40vw, 200px"
+              className={styles.image}
+            />
+          )}
         </div>
         <div className={styles.content}>
           <div className={styles.textContainer}>

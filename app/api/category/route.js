@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllCategories,newCategory } from "@/server/BL/categoryService";
 import { connectToMongo } from "@/server/DL/connectToMongo";
+import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 
 export async function GET() {
     await connectToMongo();
@@ -13,6 +14,11 @@ export async function GET() {
 }
 
 export async function POST(request) {
+    const auth = await verifyAdminSession();
+    if (!auth.ok) {
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: auth.status });
+    }
+
     await connectToMongo();
     try {
         const { name, description, slug, image } = await request.json();

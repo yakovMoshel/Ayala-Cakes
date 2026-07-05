@@ -37,6 +37,18 @@ export default async function sitemap() {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/bento-workshop`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/summer`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
   ];
 
   try {
@@ -65,12 +77,7 @@ export default async function sitemap() {
       priority: 0.7,
     })) || [];
 
-    // Combine all pages
-    const allPages = [...staticPages, ...productPages, ...blogPages];
-
-    console.log(`Generated sitemap with ${allPages.length} total pages (${productPages.length} products, ${blogPages.length} posts)`);
-    
-    return allPages;
+    return [...staticPages, ...productPages, ...blogPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     // Return only static pages if database connection fails

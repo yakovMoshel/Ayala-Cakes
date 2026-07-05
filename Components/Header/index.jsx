@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './style.module.scss';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import useStore from '../../useStore';
 // Rely on server HttpOnly cookie; verify via API
@@ -92,7 +93,7 @@ export default function Header() {
     );
 
     const renderMobileMenu = () => (
-        <div className={`${styles.mobileMenu} ${isOpen ? styles.open : ''}`}>
+        <nav className={`${styles.mobileMenu} ${isOpen ? styles.open : ''}`}>
             {menuItems.map(renderMenuItem)}
             {isAuthenticated && (
                 <div className={styles.menuItem}>
@@ -101,11 +102,11 @@ export default function Header() {
                     </Link>
                 </div>
             )}
-        </div>
+        </nav>
     );
 
     const renderDesktopMenu = () => (
-        <div className={styles.desktopMenu}>
+        <nav className={styles.desktopMenu}>
             {menuItems.map(renderMenuItem)}
             {isAuthenticated && (
                 <div className={styles.menuItem}>
@@ -114,11 +115,11 @@ export default function Header() {
                     </Link>
                 </div>
             )}
-        </div>
+        </nav>
     );
 
     return (
-        <div className={`${styles.Header} ${isSticky ? styles.sticky : ''}`}>
+        <header className={`${styles.Header} ${isSticky ? styles.sticky : ''}`}>
             <div className={styles.navMenu}>
                 <div className={styles.burger} onClick={handleToggleBurger}>
                     {isOpen ? '✕' : '☰'}
@@ -126,10 +127,18 @@ export default function Header() {
                 {isOpen ? renderMobileMenu() : renderDesktopMenu()}
                 <Link href="/" className={path === '/' ? styles.active : ''}>
                     <div className={styles.logo}>
-                        <img src="/AYALA CAKES LOGO.png" alt="AYALA CAKES LOGO" />
+                        {/* CSS pins height to 50px; width:auto preserves the logo ratio */}
+                        <Image
+                            src="/AYALA CAKES LOGO.png"
+                            alt="Ayala Cakes - עוגות מעוצבות"
+                            width={552}
+                            height={179}
+                            priority
+                            style={{ width: 'auto' }}
+                        />
                     </div>
                 </Link>
             </div>
-        </div>
+        </header>
     );
 }

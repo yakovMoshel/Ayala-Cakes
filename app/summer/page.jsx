@@ -306,7 +306,7 @@ const SummerLandingPage = () => {
                 <div className={styles.aboutWrapper}>
                     <div className={styles.instructorImage}>
                         <Image
-                            src="/אילה אברהם.png"
+                            src="/ayala-avraham.webp"
                             alt="אילה - קונדיטורית ומדריכת הקורס"
                             width={300}
                             height={375}
