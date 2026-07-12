@@ -12,6 +12,8 @@
 
 ```env
 GEMINI_API_KEY=your_api_key_here
+# אופציונלי — ברירת מחדל: gemini-3.5-flash
+GEMINI_MODEL=gemini-3.5-flash
 ```
 
 ### 3. אימות ההתקנה
@@ -47,8 +49,14 @@ GEMINI_API_KEY=your_api_key_here
 
 ## פתרון בעיות נפוצות
 
-### שגיאת "models/gemini-pro is not found"
-אם אתה מקבל שגיאה זו, זה אומר שהמודל הישן כבר לא זמין. המערכת שלנו כבר מעודכנת להשתמש במודל החדש `gemini-1.5-flash`.
+### שגיאת "models/gemini-... is not found" (404)
+Google מפסיקה מודלים ישנים. אם מופיעה שגיאה על `gemini-2.5-flash` או מודל אחר — עדכן ב-`.env.local`:
+
+```env
+GEMINI_MODEL=gemini-3.5-flash
+```
+
+או מחק את השורה `GEMINI_MODEL` כדי להשתמש בברירת המחדל של המערכת.
 
 ### שגיאת API Key
 - וודא שהמפתח שלך נכון ופעיל
@@ -64,5 +72,5 @@ GEMINI_API_KEY=your_api_key_here
 - הSlug נוצר באנגלית לנגישות SEO טובה יותר
 - כל התוכן האחר נוצר בעברית
 - ניתן לערוך את התוכן שנוצר לפני השמירה
-- המערכת משתמשת במודל `gemini-1.5-flash` העדכני ביותר
+- המערכת משתמשת במודל `gemini-3.5-flash` (ניתן לשנות ב-`GEMINI_MODEL`)
 - מחבר הפוסטים מוגדר אוטומטית ל"אילה אברהם" 

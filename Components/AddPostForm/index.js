@@ -24,13 +24,10 @@ import styles from './style.module.scss';
 import PostCtaEditor from '@/Components/PostCtaBlock/PostCtaEditor';
 import { DEFAULT_POST_CTA, mapPostCtaFromPost, normalizePostCtaForDb } from '@/utils/postCta';
 import { analyzePost } from '@/utils/seoScore';
+import { normalizeKeywordsList } from '@/utils/keywords';
+import KeywordTagsInput from '@/Components/KeywordTagsInput';
+import RichTextEditor from '@/Components/RichTextEditor';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
-
-// Load React Quill dynamically to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { 
-  ssr: false,
-  loading: () => <p className={styles.editorLoading}>טוען עורך...</p>
-});
 
 const formatPublishDate = (date) => {
   if (!date) return '';
@@ -49,9 +46,8 @@ const mapPostToFormData = (post) => ({
   image: post.image || '',
   slug: post.slug || '',
   focusKeyword: post.focusKeyword || '',
-  secondaryKeywords: Array.isArray(post.secondaryKeywords)
-    ? post.secondaryKeywords.join(', ')
-    : (post.secondaryKeywords || ''),
+  secondaryKeywords: normalizeKeywordsList(post.secondaryKeywords),
+  longtailKeywords: normalizeKeywordsList(post.longtailKeywords),
   seoTitle: post.seoTitle || '',
   metaDescription: post.metaDescription || '',
   callToAction: post.callToAction || '',
@@ -80,7 +76,8 @@ export default function SeoEditor({ postId }) {
     image: '',
     slug: '',
     focusKeyword: '',
-    secondaryKeywords: '',
+    secondaryKeywords: [],
+    longtailKeywords: [],
     seoTitle: '',
     metaDescription: '',
     callToAction: '',
@@ -93,8 +90,11 @@ export default function SeoEditor({ postId }) {
   // UI state
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingSEO, setIsGeneratingSEO] = useState(false);
+  const [isGeneratingFullPost, setIsGeneratingFullPost] = useState(false);
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiKeywords, setAiKeywords] = useState('');
+  const [aiNotes, setAiNotes] = useState('');
   const [feedback, setFeedback] = useState({ type: '', message: '' });
-  const [quillLoaded, setQuillLoaded] = useState(false);
   const [showSEOSection, setShowSEOSection] = useState(false);
   // TODO: ADD FAQ state when needed in the future
   const [seoScores, setSeoScores] = useState({
@@ -194,30 +194,6 @@ export default function SeoEditor({ postId }) {
     }));
   };
 
-  // Load Quill styles on client
-  useEffect(() => {
-    import('react-quill/dist/quill.snow.css');
-    setQuillLoaded(true);
-  }, []);
-
-  // Quill editor configuration
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link', 'image'],
-      ['clean']
-    ],
-  };
-
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike',
-    'list', 'bullet',
-    'link', 'image'
-  ];
-
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -269,7 +245,8 @@ export default function SeoEditor({ postId }) {
           seoTitle: seoData.seoTitle || '',
           metaDescription: seoData.metaDescription || '',
           focusKeyword: seoData.focusKeyword || '',
-          secondaryKeywords: seoData.secondaryKeywords ? seoData.secondaryKeywords.join(', ') : '',
+          secondaryKeywords: normalizeKeywordsList(seoData.secondaryKeywords),
+          longtailKeywords: normalizeKeywordsList(seoData.longtailKeywords),
           callToAction: seoData.callToAction || '',
           socialImage: seoData.ogImageDescription || ''
         }));
@@ -292,6 +269,81 @@ export default function SeoEditor({ postId }) {
       });
     } finally {
       setIsGeneratingSEO(false);
+    }
+  };
+
+  const formHasContent = () =>
+    Boolean(
+      formData.title?.trim() ||
+        formData.summary?.trim() ||
+        formData.content?.trim()
+    );
+
+  const generateFullBlogPost = async () => {
+    if (!aiTopic.trim()) {
+      setFeedback({
+        type: 'error',
+        message: 'יש להזין נושא או רעיון לפוסט',
+      });
+      return;
+    }
+
+    if (formHasContent()) {
+      const confirmed = window.confirm(
+        'הפעולה תחליף את הכותרת, התקציר והתוכן הקיימים. להמשיך?'
+      );
+      if (!confirmed) return;
+    }
+
+    setIsGeneratingFullPost(true);
+    setFeedback({ type: '', message: '' });
+
+    try {
+      const response = await axios.post('/api/generate-seo', {
+        type: 'post-full',
+        data: {
+          topic: aiTopic.trim(),
+          userKeywords: aiKeywords.trim(),
+          userNotes: aiNotes.trim(),
+          author: formData.author,
+        },
+      });
+
+      if (response.data.success) {
+        const post = response.data.data;
+        const nextFormData = {
+          ...formData,
+          title: post.title || aiTopic.trim(),
+          summary: post.summary || '',
+          content: post.content || '',
+          author: post.author || formData.author,
+          slug: post.slug || '',
+          seoTitle: post.seoTitle || post.title || '',
+          metaDescription: post.metaDescription || '',
+          focusKeyword: post.focusKeyword || '',
+          secondaryKeywords: normalizeKeywordsList(post.secondaryKeywords),
+          longtailKeywords: normalizeKeywordsList(post.longtailKeywords),
+          callToAction: post.callToAction || '',
+        };
+
+        const { scores } = analyzePost(nextFormData);
+        setFormData(nextFormData);
+        setSeoScores(scores);
+        setExpandedSections((prev) => ({ ...prev, seo: true }));
+        setShowSEOSection(true);
+
+        setFeedback({
+          type: 'success',
+          message: `פוסט מלא נוצר בהצלחה! ציון SEO נוכחי: ${scores.overall}/100. הוסיפי תמונה ראשית וקישורים לפני פרסום.`,
+        });
+      }
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: error.response?.data?.error || 'שגיאה ביצירת פוסט מלא',
+      });
+    } finally {
+      setIsGeneratingFullPost(false);
     }
   };
 
@@ -327,7 +379,8 @@ export default function SeoEditor({ postId }) {
       image: '',
       slug: '',
       focusKeyword: '',
-      secondaryKeywords: '',
+      secondaryKeywords: [],
+      longtailKeywords: [],
       seoTitle: '',
       metaDescription: '',
       callToAction: '',
@@ -381,6 +434,8 @@ export default function SeoEditor({ postId }) {
       status: targetStatus,
       image: formData.image.trim(),
       seoTitle: formData.seoTitle || formData.title,
+      secondaryKeywords: normalizeKeywordsList(formData.secondaryKeywords),
+      longtailKeywords: normalizeKeywordsList(formData.longtailKeywords),
       postCta: normalizePostCtaForDb(formData.postCta),
     };
 
@@ -682,17 +737,13 @@ export default function SeoEditor({ postId }) {
                   </div>
                 </div>
                 <div className={styles.editorContainer}>
-                  {quillLoaded && (
-                    <ReactQuill
-                      theme="snow"
-                      value={formData.content}
-                      onChange={handleEditorChange}
-                      modules={modules}
-                      formats={formats}
-                      placeholder="תוכן הפוסט"
-                      className={styles.quillEditor}
-                    />
-                  )}
+                  <RichTextEditor
+                    value={formData.content}
+                    onChange={handleEditorChange}
+                    placeholder="תוכן הפוסט"
+                    className={styles.quillEditor}
+                    excludePostId={editingPostId || ''}
+                  />
                 </div>
               </div>
 
@@ -720,23 +771,83 @@ export default function SeoEditor({ postId }) {
                 </div>
               </div>
               
-              {/* AI SEO Generation Section */}
+              {/* AI Generation Section */}
               <div className={styles.seoGenerateSection}>
                 <div className={styles.seoHeader}>
-                  <h4>ג'ינרוט תוכן SEO אוטומטי</h4>
-                  <p>צור תוכן SEO מתקדם באמצעות AI עבור הפוסט שלך</p>
+                  <h4>יצירת תוכן ב-AI</h4>
+                  <p>בחרי מצב: פוסט מלא חדש, או שדות SEO מתוכן שכבר כתבת</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={generateSEO}
-                  disabled={isGeneratingSEO || !formData.title || !formData.summary || !formData.content}
-                  className={styles.generateSEOButton}
-                >
-                  {isGeneratingSEO ? 'מייצר תוכן SEO...' : '🤖 ייצר תוכן SEO באמצעות AI'}
-                </button>
-                {(!formData.title || !formData.summary || !formData.content) ? (
-                  <p className={styles.requirement}>נדרש כותרת, תקציר ותוכן לג'ינרוט SEO</p>
-                ) : null}
+
+                <div className={styles.aiModeBlock}>
+                  <h5 className={styles.aiModeTitle}>יצירת פוסט מלא חדש</h5>
+                  <p className={styles.aiModeHint}>
+                    ה-AI משתמש בהקשר קבוע על העסק. הוסיפי נושא ומילות מפתח — אחר כך תוסיפי תמונה וקישורים ידנית.
+                  </p>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="ai-topic">נושא / רעיון לפוסט</label>
+                    <input
+                      id="ai-topic"
+                      type="text"
+                      value={aiTopic}
+                      onChange={(e) => setAiTopic(e.target.value)}
+                      placeholder="לדוגמה: איך לבחור עוגת יום הולדת לילדים"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="ai-keywords">מילות מפתח / ביטויים (אופציונלי)</label>
+                    <input
+                      id="ai-keywords"
+                      type="text"
+                      value={aiKeywords}
+                      onChange={(e) => setAiKeywords(e.target.value)}
+                      placeholder="עוגת יום הולדת, קריות, עוגות מעוצבות"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="ai-notes">הערות נוספות ל-AI (אופציונלי)</label>
+                    <textarea
+                      id="ai-notes"
+                      value={aiNotes}
+                      onChange={(e) => setAiNotes(e.target.value)}
+                      placeholder="זווית, קהל יעד, מוצרים לציין..."
+                      rows={3}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={generateFullBlogPost}
+                    disabled={isGeneratingFullPost || isGeneratingSEO || !aiTopic.trim()}
+                    className={styles.generateFullPostButton}
+                  >
+                    {isGeneratingFullPost ? 'יוצר פוסט מלא...' : 'יצירת פוסט מלא ב-AI'}
+                  </button>
+                </div>
+
+                <div className={styles.aiModeDivider} />
+
+                <div className={styles.aiModeBlock}>
+                  <h5 className={styles.aiModeTitle}>שדות SEO מתוכן קיים</h5>
+                  <p className={styles.aiModeHint}>
+                    ממלא רק שדות SEO בסרגל הצד — לפי כותרת, תקציר ותוכן שכבר כתבת.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={generateSEO}
+                    disabled={
+                      isGeneratingSEO ||
+                      isGeneratingFullPost ||
+                      !formData.title ||
+                      !formData.summary ||
+                      !formData.content
+                    }
+                    className={styles.generateSEOButton}
+                  >
+                    {isGeneratingSEO ? 'מייצר שדות SEO...' : 'ייצור שדות SEO מתוכן קיים'}
+                  </button>
+                  {(!formData.title || !formData.summary || !formData.content) ? (
+                    <p className={styles.requirement}>נדרשים כותרת, תקציר ותוכן</p>
+                  ) : null}
+                </div>
               </div>
 
                              {/* TODO: ADD FAQ display section when needed in the future */}
@@ -834,30 +945,58 @@ export default function SeoEditor({ postId }) {
                 {/* Focus keyword */}
                 <div className={styles.formGroup}>
                   <div className={styles.fieldHeader}>
-                    <label>מילת מפתח מרכזית</label>
+                    <label htmlFor="post-focus-keyword">מילת מפתח מרכזית</label>
                     <div className={styles.lengthIndicator}>
                       <SeoStatusIndicator {...seoAnalysis.focusKeywordCount} />
                     </div>
                   </div>
+                  <p className={styles.fieldHintCompact}>
+                    מילת המפתח העיקרית שעליה בנוי הפוסט — בדרך כלל ביטוי אחד קצר.
+                  </p>
                   <input
+                    id="post-focus-keyword"
                     type="text"
                     name="focusKeyword"
                     value={formData.focusKeyword}
-                    placeholder="מילת מפתח עיקרית"
+                    placeholder="לדוגמה: עוגת יום הולדת"
                     onChange={handleChange}
                   />
                 </div>
-                
-                {/* Secondary keywords */}
-                <div className={styles.formGroup}>
-                  <label>מילות מפתח משניות</label>
-                  <input
-                    type="text"
-                    name="secondaryKeywords"
-                    value={formData.secondaryKeywords}
-                    placeholder="מילות מפתח נוספות (מופרדות בפסיקים)"
-                    onChange={handleChange}
-                  />
+
+                <div className={styles.keywordsGroup}>
+                  <p className={styles.keywordsGroupTitle}>מילות מפתח נוספות</p>
+
+                  {/* Secondary keywords */}
+                  <div className={styles.formGroup}>
+                    <label htmlFor="post-secondary-keywords">מילות מפתח משניות</label>
+                    <p className={styles.fieldHintCompact}>
+                      מילים או ביטויים קצרים וקשורים לנושא (1–2 מילים).
+                    </p>
+                    <KeywordTagsInput
+                      id="post-secondary-keywords"
+                      value={formData.secondaryKeywords}
+                      onChange={(secondaryKeywords) =>
+                        setFormData((prev) => ({ ...prev, secondaryKeywords }))
+                      }
+                      placeholder="עוגות, קונדיטוריה, יום הולדת"
+                    />
+                  </div>
+
+                  {/* Long-tail keywords */}
+                  <div className={styles.formGroup}>
+                    <label htmlFor="post-longtail-keywords">מילות מפתח Long-tail</label>
+                    <p className={styles.fieldHintCompact}>
+                      ביטויי חיפוש ארוכים וספציפיים (3 מילים ומעלה) — טובים ל-SEO ולמנועי AI.
+                    </p>
+                    <KeywordTagsInput
+                      id="post-longtail-keywords"
+                      value={formData.longtailKeywords}
+                      onChange={(longtailKeywords) =>
+                        setFormData((prev) => ({ ...prev, longtailKeywords }))
+                      }
+                      placeholder="איך לבחור עוגת יום הולדת לילדים"
+                    />
+                  </div>
                 </div>
                 
                 {/* URL Slug */}

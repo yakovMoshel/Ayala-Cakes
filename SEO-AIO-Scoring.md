@@ -377,21 +377,42 @@ Per-field indicators (title, summary, content, meta description) also read from 
 
 ---
 
-## Gemini SEO Generation (separate from scoring)
+## Gemini AI Generation (separate from scoring)
 
-File: `server/BL/geminiService.js` → `generatePostSEO()`
+Files:
+- `server/BL/geminiService.js` — API calls
+- `server/BL/context/business.md` — עסק, קהל יעד, איסורים (נערך ידנית)
+- `server/BL/context/writingStyle.md` — טון, סגנון ניסוח, דוגמאות (נערך ידנית)
+- `server/BL/context/loadContext.js` — טוען את קבצי ה-MD לפרומפט
+- `server/BL/seoPromptRules.js` — SEO/AIO checklist for full-blog prompts
+- `app/api/generate-seo/route.js` — admin API
 
-| Setting | Value |
-|---------|-------|
-| Model | `gemini-1.5-flash` |
-| `responseMimeType` | `application/json` |
-| `temperature` | 0.4 |
-| `maxOutputTokens` | 2048 |
-| Content excerpt | 800 chars of **plain text** (HTML stripped) |
+| Setting | SEO fields (`post`) | Full blog (`post-full`) |
+|---------|---------------------|-------------------------|
+| Model | `GEMINI_MODEL` env or `gemini-3.5-flash` | same |
+| `responseMimeType` | `application/json` | `application/json` |
+| `temperature` | 0.4 | 0.5 |
+| `maxOutputTokens` | 2048 | 8192 |
+| Rate limit | 5 req / IP / minute | 2 req / IP / minute |
 
-Generated fields populate the form; scoring then evaluates whatever the admin saves.
+### API types (`POST /api/generate-seo`)
+
+| `type` | Purpose | Required input |
+|--------|---------|----------------|
+| `post` | SEO fields from existing content | `title`, `summary`, `content`, `author` |
+| `post-full` | Full new blog post | `topic`, optional `userKeywords`, `userNotes`, `author` |
+| `product` | Product SEO fields | product data |
+| `slug` | English slug from title | `title` |
+
+Full blog output fills title, summary, content (HTML), all SEO keyword fields, slug, CTA. **No links or images** in generated HTML — admin adds manually.
+
+Generation runs in **two steps**: (1) blog content HTML, (2) SEO fields from that content — avoids truncated JSON on long posts.
+
+Generated fields populate the form; **scoring runs client-side** via `analyzePost()` after fill. AI does not compute the numeric score.
 
 **Do not** move scoring into Gemini — it adds latency, cost, and non-deterministic grades.
+
+Override model via `.env`: `GEMINI_MODEL=gemini-3.5-flash`
 
 ---
 

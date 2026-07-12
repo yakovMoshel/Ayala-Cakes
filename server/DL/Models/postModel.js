@@ -38,6 +38,10 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: false
   }],
+  longtailKeywords: [{
+    type: String,
+    required: false
+  }],
   seoTitle: {
     type: String,
     required: false

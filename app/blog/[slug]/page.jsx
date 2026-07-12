@@ -25,8 +25,8 @@ export async function generateMetadata({ params }) {
   return {
     title: post.seoTitle || `${post.title} - בלוג הקונדיטוריה של אילה`,
     description: post.metaDescription || post.summary,
-    keywords: post.focusKeyword ? 
-      [post.focusKeyword, ...(post.secondaryKeywords || [])].join(', ') 
+    keywords: post.focusKeyword ?
+      [post.focusKeyword, ...(post.secondaryKeywords || []), ...(post.longtailKeywords || [])].join(', ')
       : `טיפים לאפייה, קונדיטוריה, ${post.title}`,
     openGraph: {
       title: post.seoTitle || post.title,

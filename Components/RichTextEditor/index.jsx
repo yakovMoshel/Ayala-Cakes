@@ -1,184 +1,178 @@
-"use client"
-import { useState, useEffect } from 'react';
+'use client';
 
-const RichTextEditor = ({ value, onChange }) => {
-  const [editorContent, setEditorContent] = useState('');
-  const [preview, setPreview] = useState(false);
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { isInternalUrl } from '@/utils/siteLinks';
+import styles from './style.module.scss';
+
+// Direct client import (not next/dynamic) so the ReactQuill ref forwards correctly.
+let ReactQuill = null;
+if (typeof window !== 'undefined') {
+  // eslint-disable-next-line global-require
+  ReactQuill = require('react-quill');
+}
+
+const LinkPickerModal = dynamic(() => import('@/Components/LinkPickerModal'), {
+  ssr: false,
+});
+
+const TOOLBAR = [
+  [{ header: [1, 2, 3, false] }],
+  ['bold', 'italic', 'underline', 'strike'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
+  ['link', 'image'],
+  ['clean'],
+];
+
+const FORMATS = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
+  'bullet',
+  'link',
+  'image',
+];
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function applyLinkToEditor(quill, range, { url, linkText, linkType, openInNewTab }) {
+  const text = (linkText || '').trim() || url;
+  const index = range.index;
+  const length = range.length;
+
+  if (linkType === 'external' && openInNewTab) {
+    if (length > 0) {
+      quill.deleteText(index, length);
+    }
+    quill.clipboard.dangerouslyPasteHTML(
+      index,
+      `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(text)}</a>`
+    );
+    quill.setSelection(index + text.length);
+    return;
+  }
+
+  if (length === 0) {
+    quill.insertText(index, text, { link: url });
+    quill.setSelection(index + text.length);
+    return;
+  }
+
+  quill.formatText(index, length, 'link', url);
+}
+
+export default function RichTextEditor({
+  value,
+  onChange,
+  placeholder = 'תוכן הפוסט',
+  className = '',
+  excludePostId = '',
+}) {
+  const quillRef = useRef(null);
+  const linkHandlerRef = useRef(() => {});
+  const [quillLoaded, setQuillLoaded] = useState(false);
+  const [showLinkPicker, setShowLinkPicker] = useState(false);
+  const [linkPickerState, setLinkPickerState] = useState({
+    initialUrl: '',
+    initialLinkType: 'internal',
+    selectedText: '',
+    savedRange: null,
+  });
 
   useEffect(() => {
-    setEditorContent(value);
-  }, [value]);
-
-  const handleContentChange = (e) => {
-    const newValue = e.target.value;
-    setEditorContent(newValue);
-    onChange({ target: { name: 'content', value: newValue } });
-  };
-
-  const formatSelection = (type) => {
-    const textarea = document.querySelector('.editor-textarea');
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = editorContent.substring(start, end);
-    
-    let newText;
-    switch(type) {
-      case 'bold':
-        newText = `**${selectedText}**`;
-        break;
-      case 'bullet':
-        newText = `* ${selectedText}`;
-        break;
-      case 'header':
-        newText = `## ${selectedText}`;
-        break;
-      default:
-        return;
+    import('react-quill/dist/quill.snow.css');
+    if (!ReactQuill) {
+      // eslint-disable-next-line global-require
+      ReactQuill = require('react-quill');
     }
+    setQuillLoaded(true);
+  }, []);
 
-    const newContent = editorContent.substring(0, start) + newText + editorContent.substring(end);
-    setEditorContent(newContent);
-    onChange({ target: { name: 'content', value: newContent } });
-    
-    // Reset focus to textarea
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + newText.length, start + newText.length);
-    }, 0);
-  };
+  const openLinkPicker = useCallback(() => {
+    const quill = quillRef.current?.getEditor?.();
+    if (!quill) return;
 
-  const renderPreview = () => {
-    const formatContent = (content) => {
-      return content
-        .split('\n')
-        .map(line => {
-          // Headers
-          if (line.startsWith('##')) {
-            const level = line.match(/^#+/)[0].length;
-            const text = line.replace(/^#+\s*/, '');
-            return `<h${level}>${text}</h${level}>`;
-          }
-          // Bullets
-          if (line.startsWith('*')) {
-            const text = line.replace(/^\*\s*/, '');
-            return `<li>${text}</li>`;
-          }
-          // Bold text
-          const boldText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-          // Regular paragraph
-          return `<p>${boldText}</p>`;
-        })
-        .join('');
-    };
-    
-    return (
-      <div 
-        className="preview-content" 
-        dangerouslySetInnerHTML={{ __html: formatContent(editorContent) }}
-        style={{
-          minHeight: '300px',
-          border: '1px solid #ccc',
-          borderRadius: '10px',
-          padding: '10px',
-          textAlign: 'right',
-          direction: 'rtl',
-          overflowY: 'auto'
-        }}
-      />
-    );
-  };
+    const range = quill.getSelection(true);
+    if (!range) return;
+
+    const formats = quill.getFormat(range);
+    const existingUrl = typeof formats.link === 'string' ? formats.link : '';
+    const selectedText =
+      range.length > 0 ? quill.getText(range.index, range.length).trim() : '';
+
+    setLinkPickerState({
+      initialUrl: existingUrl,
+      initialLinkType: existingUrl && !isInternalUrl(existingUrl) ? 'external' : 'internal',
+      selectedText,
+      savedRange: { index: range.index, length: range.length },
+    });
+    setShowLinkPicker(true);
+  }, []);
+
+  linkHandlerRef.current = openLinkPicker;
+
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: TOOLBAR,
+        handlers: {
+          link: () => linkHandlerRef.current(),
+        },
+      },
+    }),
+    []
+  );
+
+  const handleLinkConfirm = useCallback(
+    (linkData) => {
+      const quill = quillRef.current?.getEditor?.();
+      const range = linkPickerState.savedRange;
+      if (!quill || !range) return;
+
+      applyLinkToEditor(quill, range, linkData);
+      onChange(quill.root.innerHTML);
+      setShowLinkPicker(false);
+    },
+    [linkPickerState.savedRange, onChange]
+  );
+
+  if (!quillLoaded || !ReactQuill) {
+    return <p className={styles.editorLoading}>טוען עורך...</p>;
+  }
 
   return (
-    <div className="rich-text-editor">
-      <div 
-        className="editor-toolbar" 
-        style={{
-          display: 'flex',
-          gap: '10px',
-          marginBottom: '10px',
-          justifyContent: 'space-between'
-        }}
-      >
-        <div className="format-buttons" style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            type="button" 
-            onClick={() => formatSelection('bold')}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              background: 'white',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            B
-          </button>
-          <button 
-            type="button" 
-            onClick={() => formatSelection('bullet')}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              background: 'white',
-              cursor: 'pointer'
-            }}
-          >
-            •
-          </button>
-          <button 
-            type="button" 
-            onClick={() => formatSelection('header')}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              background: 'white',
-              cursor: 'pointer'
-            }}
-          >
-            H
-          </button>
-        </div>
-        <button 
-          type="button"
-          onClick={() => setPreview(!preview)}
-          style={{
-            padding: '5px 10px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            background: preview ? '#eee' : 'white',
-            cursor: 'pointer'
-          }}
-        >
-          {preview ? 'ערוך' : 'תצוגה מקדימה'}
-        </button>
-      </div>
-      
-      {preview ? renderPreview() : (
-        <textarea
-          className="editor-textarea"
-          value={editorContent}
-          onChange={handleContentChange}
-          style={{
-            width: '100%',
-            minHeight: '300px',
-            padding: '10px',
-            border: '1px solid #ccc',
-            borderRadius: '10px',
-            resize: 'none',
-            textAlign: 'right',
-            direction: 'rtl',
-            fontFamily: 'inherit'
-          }}
+    <div className={styles.richTextEditor}>
+      <ReactQuill
+        ref={quillRef}
+        theme="snow"
+        value={value}
+        onChange={onChange}
+        modules={modules}
+        formats={FORMATS}
+        placeholder={placeholder}
+        className={className}
+      />
+
+      {showLinkPicker && (
+        <LinkPickerModal
+          isOpen={showLinkPicker}
+          onClose={() => setShowLinkPicker(false)}
+          onConfirm={handleLinkConfirm}
+          initialUrl={linkPickerState.initialUrl}
+          initialLinkType={linkPickerState.initialLinkType}
+          selectedText={linkPickerState.selectedText}
+          excludePostId={excludePostId}
         />
       )}
     </div>
   );
-};
-
-export default RichTextEditor;
+}
