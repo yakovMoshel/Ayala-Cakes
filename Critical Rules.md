@@ -81,7 +81,8 @@ Use `@/utils/rateLimit` (`isRateLimited`, `getClientIp`). In-memory only — suf
 
 | Route | Limit | Rationale |
 |-------|-------|-----------|
-| `POST /api/generate-seo` | 5 req / IP / minute | Paid Gemini API; admin-gated but loop-safe |
+| `POST /api/generate-seo` (`post`, `product`, `slug`) | 5 req / IP / minute | Gemini API; admin-gated |
+| `POST /api/generate-seo` (`post-full`) | 2 req / IP / minute | Full blog uses more tokens |
 | `POST /api/send-email` | 5 req / IP / 10 minutes | Spam relay prevention |
 
 ```js

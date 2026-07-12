@@ -1,4 +1,5 @@
 // SeoEditor.module.scss
+@import '/app/mixins.scss';
 
   // Variables
 // :root {
@@ -178,6 +179,22 @@
     font-size: 12px;
     line-height: 1.45;
     color: #64748b;
+    text-align: right;
+  }
+
+  .keywordsGroup {
+    margin: 4px 0 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+  }
+
+  .keywordsGroupTitle {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
     text-align: right;
   }
 
@@ -493,50 +510,105 @@
     width: 100%;
   }
 
-  // סגנונות לסקציית ג'ינרוט SEO
+  // סגנונות לסקציית AI
   .seoGenerateSection {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    padding: 25px;
+    background: var(--grayColor);
+    border: 2px solid var(--brightGrayColor);
+    border-radius: 20px;
+    padding: 24px;
     margin: 30px 0;
-    color: white;
-    text-align: center;
+    text-align: right;
 
     .seoHeader {
       margin-bottom: 20px;
+      text-align: center;
 
       h4 {
-        color: white;
+        color: var(--secColor);
         margin-bottom: 8px;
         font-size: 1.3rem;
       }
 
       p {
         margin: 0;
-        opacity: 0.9;
+        color: var(--darkGrayColor);
         font-size: 14px;
       }
     }
 
-    .generateSEOButton {
-      background: rgba(255, 255, 255, 0.2);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      color: white;
+    .aiModeBlock {
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      border: 1px solid var(--brightGrayColor);
+
+      .formGroup {
+        margin-bottom: 14px;
+        text-align: right;
+
+        label {
+          display: block;
+          margin-bottom: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--darkGrayColor);
+        }
+
+        input,
+        textarea {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid var(--brightGrayColor);
+          border-radius: 10px;
+          font-family: var(--font);
+          font-size: 14px;
+          background: white;
+
+          &:focus {
+            outline: none;
+            border-color: var(--midColor);
+          }
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 72px;
+        }
+      }
+    }
+
+    .aiModeTitle {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--secColor);
+    }
+
+    .aiModeHint {
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: var(--darkGrayColor);
+      line-height: 1.5;
+    }
+
+    .aiModeDivider {
+      height: 1px;
+      background: var(--brightGrayColor);
+      margin: 20px 0;
+    }
+
+    .generateSEOButton,
+    .generateFullPostButton {
+      width: 100%;
+      border: none;
       padding: 12px 24px;
-      border-radius: 25px;
+      border-radius: 20px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
       font-family: var(--font);
-
-      &:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.5);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      }
+      @include shadow;
 
       &:disabled {
         opacity: 0.6;
@@ -545,14 +617,35 @@
       }
     }
 
+    .generateFullPostButton {
+      background-color: var(--midColor);
+      color: var(--mainColor);
+
+      &:hover:not(:disabled) {
+        background-color: var(--midColorHover);
+        transform: translateY(-2px);
+      }
+    }
+
+    .generateSEOButton {
+      background-color: white;
+      color: var(--secColor);
+      border: 2px solid var(--brightGrayColor);
+
+      &:hover:not(:disabled) {
+        border-color: var(--midColor);
+        background-color: var(--brightGrayColor);
+      }
+    }
+
     .requirement {
-      margin-top: 15px;
+      margin-top: 12px;
       font-size: 13px;
-      opacity: 0.8;
-      background: rgba(255, 255, 255, 0.1);
+      color: var(--darkGrayColor);
+      background: var(--grayColor);
       padding: 8px 12px;
       border-radius: 8px;
-      display: inline-block;
+      text-align: center;
     }
   }
 

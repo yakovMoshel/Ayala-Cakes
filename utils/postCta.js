@@ -1,14 +1,12 @@
+import { STATIC_SITE_PAGES } from './siteLinks';
+
 export const MAX_CTA_BUTTONS = 2;
 export const MAX_CTA_PRODUCTS = 2;
 
-export const INTERNAL_LINK_OPTIONS = [
-  { label: 'דף הבית', value: '/' },
-  { label: 'חנות', value: '/shop' },
-  { label: 'בלוג', value: '/blog' },
-  { label: 'אודות', value: '/about' },
-  { label: 'צור קשר', value: '/contact' },
-  { label: 'סדנת בנטו', value: '/bento-workshop' },
-];
+export const INTERNAL_LINK_OPTIONS = STATIC_SITE_PAGES.map(({ label, value }) => ({
+  label,
+  value,
+}));
 
 /** Preset external destinations (same WhatsApp link as site footer) */
 export const EXTERNAL_LINK_OPTIONS = [
