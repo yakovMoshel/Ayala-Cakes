@@ -29,6 +29,28 @@ import KeywordTagsInput from '@/Components/KeywordTagsInput';
 import RichTextEditor from '@/Components/RichTextEditor';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
+const getApiErrorMessage = (error, fallback) => {
+  const data = error?.response?.data;
+  const status = error?.response?.status;
+
+  if (status === 504 || data?.code === 'FUNCTION_INVOCATION_TIMEOUT') {
+    return 'יצירת התוכן ארכה יותר מדי בשרת. נסו שוב בעוד רגע.';
+  }
+
+  const raw = data?.error ?? data?.message;
+  if (typeof raw === 'string' && raw.trim()) return raw;
+  if (raw && typeof raw === 'object' && typeof raw.message === 'string') {
+    return raw.message;
+  }
+  if (typeof data?.message === 'string' && data.message.trim()) return data.message;
+
+  if (error?.code === 'ECONNABORTED') {
+    return 'הבקשה נקטעה בגלל זמן המתנה ארוך. נסו שוב.';
+  }
+
+  return fallback;
+};
+
 const formatPublishDate = (date) => {
   if (!date) return '';
   const d = new Date(date);
@@ -265,7 +287,7 @@ export default function SeoEditor({ postId }) {
     } catch (error) {
       setFeedback({
         type: 'error',
-        message: error.response?.data?.error || 'שגיאה בג׳ינרוט תוכן SEO'
+        message: getApiErrorMessage(error, 'שגיאה בג׳ינרוט תוכן SEO'),
       });
     } finally {
       setIsGeneratingSEO(false);
@@ -299,15 +321,19 @@ export default function SeoEditor({ postId }) {
     setFeedback({ type: '', message: '' });
 
     try {
-      const response = await axios.post('/api/generate-seo', {
-        type: 'post-full',
-        data: {
-          topic: aiTopic.trim(),
-          userKeywords: aiKeywords.trim(),
-          userNotes: aiNotes.trim(),
-          author: formData.author,
+      const response = await axios.post(
+        '/api/generate-seo',
+        {
+          type: 'post-full',
+          data: {
+            topic: aiTopic.trim(),
+            userKeywords: aiKeywords.trim(),
+            userNotes: aiNotes.trim(),
+            author: formData.author,
+          },
         },
-      });
+        { timeout: 90000 }
+      );
 
       if (response.data.success) {
         const post = response.data.data;
@@ -340,7 +366,7 @@ export default function SeoEditor({ postId }) {
     } catch (error) {
       setFeedback({
         type: 'error',
-        message: error.response?.data?.error || 'שגיאה ביצירת פוסט מלא',
+        message: getApiErrorMessage(error, 'שגיאה ביצירת פוסט מלא'),
       });
     } finally {
       setIsGeneratingFullPost(false);

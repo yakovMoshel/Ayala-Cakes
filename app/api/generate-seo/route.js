@@ -8,6 +8,9 @@ import {
 import { verifyAdminSession } from '@/server/functions/verifyAdminSession';
 import { isRateLimited, getClientIp } from '@/utils/rateLimit';
 
+// Full blog = 2 Gemini calls; default Vercel limit (~10s) causes 504.
+export const maxDuration = 60;
+
 export async function POST(request) {
   const auth = await verifyAdminSession();
   if (!auth.ok) {

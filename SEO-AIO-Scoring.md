@@ -395,6 +395,7 @@ Files:
 | `temperature` | 0.4 | 0.5 |
 | `maxOutputTokens` | 2048 | 8192 |
 | Rate limit | 5 req / IP / minute | 2 req / IP / minute |
+| Vercel `maxDuration` | 60s (shared route) | 60s — required (2 Gemini calls) |
 
 ### API types (`POST /api/generate-seo`)
 
