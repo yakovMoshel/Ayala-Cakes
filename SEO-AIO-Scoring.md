@@ -383,7 +383,8 @@ Files:
 - `server/BL/geminiService.js` — API calls
 - `server/BL/context/business.md` — עסק, קהל יעד, איסורים (נערך ידנית)
 - `server/BL/context/writingStyle.md` — טון, סגנון ניסוח, דוגמאות (נערך ידנית)
-- `server/BL/context/loadContext.js` — טוען את קבצי ה-MD לפרומפט
+- `server/BL/context/loadContext.js` — מייבא את קבצי ה-MD כ-string ב-build (חשוב ל-Vercel; לא קורא מ-disk)
+
 - `server/BL/seoPromptRules.js` — SEO/AIO checklist for full-blog prompts
 - `app/api/generate-seo/route.js` — admin API
 

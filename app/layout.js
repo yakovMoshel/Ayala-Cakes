@@ -2,18 +2,21 @@ import { Assistant } from "next/font/google";
 import "./globals.css";
 import ConditionalSiteShell from "@/Components/ConditionalSiteShell";
 
-// Variable font — a single file covers all weights (200-800), Hebrew included
 const assistant = Assistant({ subsets: ["hebrew", "latin"], display: "swap" });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ayacakes.biz";
+
 export const metadata = {
-  metadataBase: new URL("https://www.ayacakes.biz"),
-  title: "Ayala Cakes | עוגות מעוצבות בהתאמה אישית בקריות",
+  metadataBase: new URL(baseUrl),
+  title: "Ayala Cakes | עוגות בנטו, עוגות מעוצבות וסדנאות חווייתיות בקריות",
   description:
-    "עוגות שהן פשוט ואו - עוגות מעוצבות, עוגות בנטו ומארזים בהתאמה אישית מאת אילה אברהם, קונדיטורית מוסמכת בקריות והסביבה",
+    "עוגות בנטו טרנדיות, עוגות מעוצבות פרימיום לאירועים וסדנאות בנטו חווייתיות (למסיבות רווקות, ימי הולדת וגיבוש) בקריות והסביבה. Ayala Cakes - אילה אברהם.",
   openGraph: {
     siteName: "Ayala Cakes",
     locale: "he_IL",
     type: "website",
+    title: "Ayala Cakes | עוגות בנטו, עוגות מעוצבות וסדנאות חווייתיות בקריות",
+    description: "עוגות בנטו, עוגות מעוצבות וסדנאות אפייה חווייתיות בקריות והסביבה.",
   },
 };
 
@@ -21,23 +24,25 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'Bakery',
   name: 'Ayala Cakes',
-  alternateName: 'עוגות איילה',
+  alternateName: 'אילה קייקס',
   description:
-    'עוגות מעוצבות, עוגות בנטו ומארזים בהתאמה אישית מאת אילה אברהם, קונדיטורית מוסמכת',
-  url: 'https://www.ayacakes.biz',
-  logo: 'https://www.ayacakes.biz/AYALA CAKES LOGO.png',
-  image: 'https://www.ayacakes.biz/ayala-avraham.webp',
+    'קונדיטוריית בוטיק בקריות המתמחית בעוגות בנטו טרנדיות, עוגות מעוצבות פרימיום לאירועים, וסדנאות בנטו חווייתיות למסיבות רווקות, ימי הולדת וימי גיבוש בהנחיית אילה אברהם.',
+  url: baseUrl,
+  logo: `${baseUrl}/ayala-cakes-logo.png`,
+  image: `${baseUrl}/ayala-avraham.webp`,
   telephone: '+972-58-7990503',
   email: 'ayalapastry@gmail.com',
   founder: { '@type': 'Person', name: 'אילה אברהם' },
-  areaServed: { '@type': 'Place', name: 'הקריות והסביבה, ישראל' },
-  address: { '@type': 'PostalAddress', addressCountry: 'IL' },
+  areaServed: [
+    { '@type': 'Place', name: 'הקריות' },
+    { '@type': 'Place', name: 'חיפה והסביבה' }
+  ],
+  address: { '@type': 'PostalAddress', addressCountry: 'IL', addressLocality: 'קריות' },
   priceRange: '₪₪',
   sameAs: [
     'https://www.instagram.com/ayala_cakes',
     'https://www.tiktok.com/@ayala_cakes1',
-    'https://www.facebook.com',
-  ],
+  ].filter(Boolean),
 };
 
 export default function RootLayout({ children }) {

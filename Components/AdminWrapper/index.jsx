@@ -74,7 +74,7 @@ export default function AdminWrapper({ children }) {
     <div className={styles.shop}>
       <div className={styles.sidebar}>
         <div className={styles.logoContainer}>
-          <img src="/AYALA CAKES LOGO.png" alt="AYALA CAKES LOGO" />
+          <img src="/ayala-cakes-logo.png" alt="AYALA CAKES LOGO" />
           <span className={styles.logoText}>ממשק ניהול</span>
         </div>
 
