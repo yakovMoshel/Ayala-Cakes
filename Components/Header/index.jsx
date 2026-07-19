@@ -129,7 +129,7 @@ export default function Header() {
                     <div className={styles.logo}>
                         {/* CSS pins height to 50px; width:auto preserves the logo ratio */}
                         <Image
-                            src="/AYALA CAKES LOGO.png"
+                            src="/ayala-cakes-logo.png"
                             alt="Ayala Cakes - עוגות מעוצבות"
                             width={552}
                             height={179}

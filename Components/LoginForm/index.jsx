@@ -70,7 +70,7 @@ export default function LoginForm() {
       <div className={styles.squareForm}>
         <div className={styles.loginHeader}>
           <div className={styles.logoRing}>
-            <img src="/AYALA CAKES LOGO.png" alt="AYALA CAKES LOGO" />
+            <img src="/ayala-cakes-logo.png" alt="AYALA CAKES LOGO" />
           </div>
           <h2>אילה שוקולד ועוגות</h2>
           <p>התחברי לממשק הניהול כדי לעדכן מוצרים, קטגוריות ופוסטים</p>

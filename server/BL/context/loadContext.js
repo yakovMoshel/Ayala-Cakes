@@ -1,15 +1,15 @@
-import fs from 'fs';
-import path from 'path';
-
-const CONTEXT_DIR = path.join(process.cwd(), 'server/BL/context');
+/**
+ * Context is imported as bundled strings (not read from disk).
+ * This is required for Vercel/serverless — fs paths like /var/task/... omit .md files.
+ *
+ * Edit the sibling .md files, then keep them in sync by importing below.
+ * Webpack `asset/source` inlines the .md contents at build time.
+ */
+import businessMd from './business.md';
+import writingStyleMd from './writingStyle.md';
 
 let businessCache = null;
 let writingStyleCache = null;
-
-function readMarkdown(filename) {
-  const filePath = path.join(CONTEXT_DIR, filename);
-  return fs.readFileSync(filePath, 'utf8').trim();
-}
 
 /**
  * Business + audience context for Gemini prompts.
@@ -17,7 +17,7 @@ function readMarkdown(filename) {
  */
 export function getBusinessContextPromptBlock() {
   if (!businessCache) {
-    businessCache = readMarkdown('business.md');
+    businessCache = String(businessMd).trim();
   }
   return businessCache;
 }
@@ -28,7 +28,7 @@ export function getBusinessContextPromptBlock() {
  */
 export function getWritingStylePromptBlock() {
   if (!writingStyleCache) {
-    writingStyleCache = readMarkdown('writingStyle.md');
+    writingStyleCache = String(writingStyleMd).trim();
   }
   return writingStyleCache;
 }
