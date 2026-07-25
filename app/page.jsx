@@ -2,7 +2,8 @@ import { connectToMongo } from '@/server/DL/connectToMongo';
 import styles from "./style.module.scss"
 import BelieveLine from '@/Components/BelieveLine';
 import ProductItem from '@/Components/ProductItem';
-import { getAllProducts, getProductsByCategory } from '@/server/BL/productService';
+import { getPopularProducts } from '@/server/BL/productService';
+import { getGoogleReviews } from '@/server/BL/googleReviewsService';
 import Testimonial from '@/Components/Testimonial/Index';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -26,8 +27,10 @@ export const metadata = {
 const Home = async () => {
   await connectToMongo();
 
-  const allProducts = await getAllProducts();
-  const limitedProducts = allProducts.slice(0, 4);
+  const [popularProducts, googleReviews] = await Promise.all([
+    getPopularProducts(4),
+    getGoogleReviews(),
+  ]);
 
   return (
     <div className={styles.home}>
@@ -59,7 +62,7 @@ const Home = async () => {
         <h2 className={styles.sideTitle}>
           העוגות הפופולריות
         </h2>      <div className={styles.products}>
-          {limitedProducts.map((product) => (
+          {popularProducts.map((product) => (
             <ProductItem key={product._id} product={product} />
           ))}
         </div>
@@ -68,9 +71,13 @@ const Home = async () => {
         הטעם שעושה את ההבדל  </h2>
       <BelieveLine />
       <div className={styles.testimonialContainer}>
-        <Testimonial />
         <h2 className={styles.sideTitle}>
-          הלקוחות המרוצים  </h2>
+          הלקוחות המרוצים
+        </h2>
+        <Testimonial
+          reviews={googleReviews?.reviews ?? null}
+          mapsUri={googleReviews?.mapsUri ?? null}
+        />
       </div>
     </div>
   );

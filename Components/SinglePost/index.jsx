@@ -12,7 +12,7 @@ export default function SinglePost({ post, ctaProducts = [] }) {
       )}
       <h1 className={styles.title}>{post.title}</h1>
       <p className={styles.summary}>{post.summary}</p>
-      <p className={styles.author}>נכתב על ידי {post.author} בתאריך {new Date(post.createdAt).toLocaleDateString()}</p>
+      <p className={styles.author}>נכתב על ידי {post.author} בתאריך {new Date(post.createdAt).toLocaleDateString('en-GB')}</p>
       {/* CSS (.image) sets width 100% + 3/2 aspect ratio; attrs only reserve space */}
       {post.image && (
         <Image

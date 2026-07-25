@@ -1,4 +1,4 @@
-import { getProducts, getOneProduct, getSomeProducts, getProductBySlug as getProductBySlugController } from "../DL/controllers/productController";
+import { getProducts, getOneProduct, getSomeProducts, getProductBySlug as getProductBySlugController, getPopularProducts as getPopularProductsController } from "../DL/controllers/productController";
 import { productModel } from "../DL/Models/productModel";
 import { createSlugFromHebrew, ensureUniqueSlug } from "../../utils/slugUtils";
 
@@ -6,6 +6,7 @@ export const getProduct = (id) => getOneProduct(id);
 export const getProductsByIds = (ids) => getSomeProducts(ids);
 export const getAllProducts = () => getProducts();
 export const getProductsByCategory = (categoryName) => getProducts(categoryName);
+export const getPopularProducts = (limit = 4) => getPopularProductsController(limit);
 
 /**
  * מוצא מוצר לפי slug

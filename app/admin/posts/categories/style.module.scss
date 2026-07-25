@@ -1,0 +1,28 @@
+@import '/app/mixins.scss';
+
+.categoriesPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  direction: rtl;
+  text-align: right;
+  font-family: var(--font);
+}
+
+.pageHeader {
+  h1 {
+    color: var(--secColor);
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin: 0;
+  }
+}

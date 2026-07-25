@@ -78,6 +78,11 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: false
   }],
+  category: {
+    type: String,
+    required: false,
+    default: '',
+  },
   relatedPosts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'

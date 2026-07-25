@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import styles from './style.module.scss';
@@ -69,5 +69,3 @@ export default function Toolbar({
     </div>
   );
 }
-
-
