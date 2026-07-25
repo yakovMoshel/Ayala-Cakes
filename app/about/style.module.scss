@@ -68,6 +68,16 @@
       border-radius: 20px;
       @include shadow;
       animation: fadeInRight 1.4s ease;
+
+      a {
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+
+        &:hover {
+          opacity: 0.75;
+        }
+      }
     }
   }
 

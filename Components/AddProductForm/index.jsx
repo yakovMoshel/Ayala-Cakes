@@ -439,7 +439,7 @@ export default function AddProductForm({ categories, productId }) {
               >
                 <option value="">בחר קטגוריה</option>
                 {categories.map(category => (
-                  <option key={category._id} value={category._id}>
+                  <option key={category._id} value={category.name}>
                     {category.name}
                   </option>
                 ))}

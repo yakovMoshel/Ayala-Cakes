@@ -49,6 +49,24 @@ export const getSomeProducts = async (ids) => {
   }
 };
 
+/**
+ * Most-viewed active products for homepage "העוגות הפופולריות".
+ * Ties broken by newest first so zero-view catalogs still look sensible.
+ */
+export const getPopularProducts = async (limit = 4) => {
+  try {
+    const products = await productModel
+      .find({ isActive: true })
+      .sort({ views: -1, createdAt: -1 })
+      .limit(limit)
+      .lean();
+    return serializeData(products);
+  } catch (error) {
+    console.error('Error fetching popular products:', error);
+    throw error;
+  }
+};
+
 export const createMessage = async (message) => {
   try {
     const newMessage = await messageModel.create(message);

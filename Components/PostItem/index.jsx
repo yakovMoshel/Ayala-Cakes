@@ -68,7 +68,7 @@ export default function PostItem({ post }) {
               {summary}
             </div>
             <div className={styles.createdAt}>
-  {createdAt ? new Date(createdAt).toISOString().split('T')[0].replace(/-/g, '.') : ''}
+  {createdAt ? new Date(createdAt).toLocaleDateString('en-GB') : ''}
 </div>
           </div>
           {isAuthenticated && (

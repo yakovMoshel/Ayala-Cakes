@@ -76,6 +76,7 @@ const mapPostToFormData = (post) => ({
   socialImage: post.socialImage || '',
   status: post.status === 'deleted' ? 'draft' : (post.status || 'draft'),
   publishDate: formatPublishDate(post.publishDate || post.createdAt),
+  category: post.category || '',
   postCta: mapPostCtaFromPost(post),
 });
 
@@ -88,6 +89,7 @@ export default function SeoEditor({ postId }) {
   const router = useRouter();
   const [editingPostId, setEditingPostId] = useState(postId || null);
   const [isLoadingPost, setIsLoadingPost] = useState(!!postId);
+  const [blogCategories, setBlogCategories] = useState([]);
 
   // State for form data
   const [formData, setFormData] = useState({
@@ -106,6 +108,7 @@ export default function SeoEditor({ postId }) {
     socialImage: '',
     status: 'draft', // added status field for publishing
     publishDate: '', // added publishDate field
+    category: '',
     postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
   });
   
@@ -177,6 +180,15 @@ export default function SeoEditor({ postId }) {
       publishDate: `${year}-${month}-${day}`
     }));
   }, [postId]);
+
+  useEffect(() => {
+    fetch('/api/post-category')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setBlogCategories(data.data || []);
+      })
+      .catch(() => {});
+  }, []);
 
   // Load existing post for editing
   useEffect(() => {
@@ -349,6 +361,7 @@ export default function SeoEditor({ postId }) {
           focusKeyword: post.focusKeyword || '',
           secondaryKeywords: normalizeKeywordsList(post.secondaryKeywords),
           longtailKeywords: normalizeKeywordsList(post.longtailKeywords),
+          category: post.category || '',
           callToAction: post.callToAction || '',
         };
 
@@ -413,6 +426,7 @@ export default function SeoEditor({ postId }) {
       socialImage: '',
       status: 'draft',
       publishDate: `${year}-${month}-${day}`,
+      category: '',
       postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
     });
   };
@@ -462,6 +476,7 @@ export default function SeoEditor({ postId }) {
       seoTitle: formData.seoTitle || formData.title,
       secondaryKeywords: normalizeKeywordsList(formData.secondaryKeywords),
       longtailKeywords: normalizeKeywordsList(formData.longtailKeywords),
+      category: (formData.category || '').trim(),
       postCta: normalizePostCtaForDb(formData.postCta),
     };
 
@@ -674,6 +689,26 @@ export default function SeoEditor({ postId }) {
                   required
                   className={styles.summaryInput}
                 ></textarea>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="post-blog-category">קטגוריית בלוג</label>
+                <p className={styles.fieldHintCompact}>
+                  קטגוריה אחת לפוסט — לסינון בדף הבלוג ולסיווג ברור (מומלץ ל-SEO ולניהול).
+                </p>
+                <select
+                  id="post-blog-category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                >
+                  <option value="">ללא קטגוריה</option>
+                  {blogCategories.map((cat) => (
+                    <option key={cat._id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Featured image — full-width, clear upload UX */}

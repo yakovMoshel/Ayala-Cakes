@@ -1,5 +1,6 @@
 import { connectToMongo } from '@/server/DL/connectToMongo';
 import { getAllProducts } from '@/server/BL/productService';
+import { getAllCategories } from '@/server/BL/categoryService';
 import ShopClient from './ShopClient';
 
 // ISR: pages are also revalidated on demand when products change (see API routes)
@@ -20,7 +21,10 @@ export const metadata = {
 
 export default async function Shop() {
     await connectToMongo();
-    const products = await getAllProducts();
+    const [products, dbCategories] = await Promise.all([
+        getAllProducts(),
+        getAllCategories(),
+    ]);
 
-    return <ShopClient products={products || []} />;
+    return <ShopClient products={products || []} dbCategories={dbCategories || []} />;
 }

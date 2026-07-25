@@ -62,8 +62,11 @@ export default function AdminWrapper({ children }) {
     );
   }
 
+  const isPostCategoriesActive = pathname === '/admin/posts/categories';
+
   const isPostsActive =
-    pathname.startsWith('/admin/posts') || pathname === '/admin/addPost';
+    (pathname.startsWith('/admin/posts') && !isPostCategoriesActive) ||
+    pathname === '/admin/addPost';
 
   const isProductsActive =
     pathname.startsWith('/admin/products') || pathname === '/admin/addProduct';
@@ -127,6 +130,15 @@ export default function AdminWrapper({ children }) {
               </Link>
             </li>
             <li>
+              <Link
+                href="/admin/posts/categories"
+                className={`${styles.navLink} ${styles.navSubLink} ${isPostCategoriesActive ? styles.active : ''}`}
+              >
+                <FolderTree size={16} />
+                <span>קטגוריות בלוג</span>
+              </Link>
+            </li>
+            <li>
               <Link 
                 href="/admin/media" 
                 className={`${styles.navLink} ${pathname === '/admin/media' ? styles.active : ''}`}
@@ -176,6 +188,7 @@ export default function AdminWrapper({ children }) {
               { label: 'ניהול מוצרים', value: '/admin/products' },
               { label: 'ניהול קטגוריות', value: '/admin/categories' },
               { label: 'ניהול פוסטים', value: '/admin/posts' },
+              { label: '— קטגוריות בלוג', value: '/admin/posts/categories' },
               { label: 'ספריית מדיה', value: '/admin/media' },
               { label: 'מדדים', value: '/admin/metrics' },
               { label: 'חזרה לאתר', value: '/' },
