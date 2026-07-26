@@ -25,6 +25,7 @@ function setVisitorCookie(response, visitorId) {
     path: '/',
     sameSite: 'lax',
     httpOnly: true,
+    secure: true,
   });
 }
 
@@ -88,8 +89,9 @@ export async function POST(req) {
     setVisitorCookie(response, visitorId);
     return response;
   } catch (error) {
+    console.error('[analytics/view]', error?.code || error?.name, error?.message);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to record view' },
+      { success: false, error: 'internal error' },
       { status: 500 }
     );
   }

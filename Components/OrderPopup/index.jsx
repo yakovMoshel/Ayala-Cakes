@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import axios from 'axios';
 import styles from './style.module.scss';
 
@@ -227,6 +228,10 @@ export default function OrderPopup({ item, onClose }) {
         <div className={styles.loader}></div>
     </div>
 }
+
+                        <p className={styles.consent}>
+                            בשליחת הטופס אני מסכים/ה ל<Link href="/privacy">מדיניות הפרטיות</Link>
+                        </p>
 
                     </form>
                 ) : (
