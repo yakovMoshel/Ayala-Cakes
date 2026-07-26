@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import React, { useId, useState } from 'react';
 import styles from './style.module.scss';
-import { FaBars } from 'react-icons/fa';
+import { FaFilter } from 'react-icons/fa';
 import SearchItem from '../SearchItem';
 
 export default function Toolbar({
@@ -16,6 +16,7 @@ export default function Toolbar({
   showSearch = true,
   closeOnSelect = true,
   activeValue,
+  mobileLabel = 'סינון',
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const menuId = useId();
@@ -55,7 +56,8 @@ export default function Toolbar({
         aria-expanded={isOpen}
         aria-controls={menuId}
       >
-        <FaBars />
+        <FaFilter aria-hidden="true" />
+        <span>{mobileLabel}</span>
       </button>
       <div
         id={menuId}

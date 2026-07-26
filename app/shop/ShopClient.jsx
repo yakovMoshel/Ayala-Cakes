@@ -4,7 +4,11 @@ import { useMemo, useState } from 'react';
 import styles from './style.module.scss';
 import FilterToolbar from '@/Components/Toolbar';
 import ProductsList from '@/Components/ProductsList';
-import { buildFilterChips, filterByChipAndSearch } from '@/utils/catalogFilter';
+import {
+  buildFilterChips,
+  filterByChipAndSearch,
+  getUsedCategoryNames,
+} from '@/utils/catalogFilter';
 import { buildCategoryByIdMap } from '@/utils/categoryRef';
 
 // Client island: products arrive server-rendered from the page,
@@ -19,8 +23,8 @@ export default function ShopClient({ products, dbCategories = [] }) {
   );
 
   const categories = useMemo(
-    () => buildFilterChips((dbCategories || []).map((c) => c.name)),
-    [dbCategories]
+    () => buildFilterChips(getUsedCategoryNames(dbCategories, products)),
+    [dbCategories, products]
   );
 
   const filteredProducts = useMemo(
@@ -47,6 +51,7 @@ export default function ShopClient({ products, dbCategories = [] }) {
         setSearchTerm={setSearchTerm}
         categories={categories}
         activeValue={category}
+        mobileLabel="סינון עוגות לפי סוג"
       />
       <div className={styles.content}>
         <ProductsList productByCat={filteredProducts} isLoading={false} />

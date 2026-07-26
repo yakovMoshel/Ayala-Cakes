@@ -3,7 +3,11 @@
 import { useMemo, useState } from 'react';
 import FilterToolbar from '@/Components/Toolbar';
 import PostItem from '@/Components/PostItem';
-import { buildFilterChips, filterByChipAndSearch } from '@/utils/catalogFilter';
+import {
+  buildFilterChips,
+  filterByChipAndSearch,
+  getUsedCategoryNames,
+} from '@/utils/catalogFilter';
 import { buildCategoryByIdMap } from '@/utils/categoryRef';
 import styles from './style.module.scss';
 
@@ -17,8 +21,8 @@ export default function BlogClient({ posts = [], categories = [] }) {
   );
 
   const chips = useMemo(
-    () => buildFilterChips((categories || []).map((cat) => cat.name)),
-    [categories]
+    () => buildFilterChips(getUsedCategoryNames(categories, posts)),
+    [categories, posts]
   );
 
   const filteredPosts = useMemo(
@@ -50,6 +54,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
         setSearchTerm={setSearchTerm}
         categories={chips}
         activeValue={chip}
+        mobileLabel="סינון פוסטים לפי נושא"
       />
       <div className={styles.content}>
         <h1 className={styles.title}>טיפים, מתכונים ועוד</h1>

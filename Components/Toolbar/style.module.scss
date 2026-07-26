@@ -19,12 +19,20 @@
 
   .burgerButton {
     display: none;
+    align-items: center;
+    gap: 8px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
     cursor: pointer;
     color: var(--darkGrayColor);
     padding: 10px;
+
+    svg {
+      font-size: 19px;
+    }
 
     &:hover {
       color: var(--darkGrayColor);
@@ -109,7 +117,7 @@
     height: auto;
 
     .burgerButton {
-      display: block;
+      display: inline-flex;
       color: var(--darkGrayColor);
     }
 
