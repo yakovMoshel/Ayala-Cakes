@@ -52,6 +52,7 @@ export default function ShopClient({ products, dbCategories = [] }) {
         categories={categories}
         activeValue={category}
         mobileLabel="סינון עוגות לפי סוג"
+        selectedMobileLabel={(label) => `מציג ${label}`}
       />
       <div className={styles.content}>
         <ProductsList productByCat={filteredProducts} isLoading={false} />

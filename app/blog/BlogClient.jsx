@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useMemo, useState } from 'react';
 import FilterToolbar from '@/Components/Toolbar';
@@ -55,6 +55,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
         categories={chips}
         activeValue={chip}
         mobileLabel="סינון פוסטים לפי נושא"
+        selectedMobileLabel={(label) => `מציג פוסטים בנושא ${label}`}
       />
       <div className={styles.content}>
         <h1 className={styles.title}>טיפים, מתכונים ועוד</h1>

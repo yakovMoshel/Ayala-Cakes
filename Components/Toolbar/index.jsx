@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useId, useState } from 'react';
 import styles from './style.module.scss';
@@ -17,12 +17,21 @@ export default function Toolbar({
   closeOnSelect = true,
   activeValue,
   mobileLabel = 'סינון',
+  selectedMobileLabel,
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const menuId = useId();
 
   const categoriesToRender = categories ?? [];
   const handleCategoryChange = onCategoryChange ?? setCategory ?? (() => {});
+
+  const activeChip = categoriesToRender.find(
+    (item) => item.value === activeValue
+  );
+  const displayMobileLabel =
+    activeValue && activeChip?.label
+      ? selectedMobileLabel?.(activeChip.label) ?? `מציג ${activeChip.label}`
+      : mobileLabel;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -57,7 +66,7 @@ export default function Toolbar({
         aria-controls={menuId}
       >
         <FaFilter aria-hidden="true" />
-        <span>{mobileLabel}</span>
+        <span>{displayMobileLabel}</span>
       </button>
       <div
         id={menuId}
