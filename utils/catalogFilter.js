@@ -3,6 +3,41 @@
  */
 
 /**
+ * Category names that are actually used by at least one item.
+ * Empty categories are omitted from the filter bar.
+ *
+ * @param {{ _id?: string, name?: string }[]} categories
+ * @param {{ categoryId?: string | { _id?: string }, category?: string }[]} items
+ * @returns {string[]}
+ */
+export function getUsedCategoryNames(categories = [], items = []) {
+  const byId = new Map(
+    (categories || [])
+      .filter((cat) => cat && cat._id && cat.name)
+      .map((cat) => [String(cat._id), String(cat.name).trim()])
+  );
+
+  const used = new Set();
+  for (const item of items || []) {
+    if (!item) continue;
+    const id =
+      item.categoryId && typeof item.categoryId === 'object'
+        ? item.categoryId._id
+        : item.categoryId;
+    const fromId = id ? byId.get(String(id)) : '';
+    if (fromId) {
+      used.add(fromId);
+      continue;
+    }
+    if (typeof item.category === 'string' && item.category.trim()) {
+      used.add(item.category.trim());
+    }
+  }
+
+  return [...used];
+}
+
+/**
  * @param {string[]} values
  * @returns {{ label: string, value: string, icon: null }[]}
  */

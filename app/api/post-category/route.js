@@ -3,6 +3,10 @@ import { connectToMongo } from "@/server/DL/connectToMongo";
 import { getAllPostCategories, newPostCategory } from "@/server/BL/postCategoryService";
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { revalidatePath } from "next/cache";
+import {
+  parsePostCategoryBody,
+  postCategoryErrorResponse,
+} from "@/utils/postCategoryApi";
 
 export async function GET() {
   await connectToMongo();
@@ -10,7 +14,7 @@ export async function GET() {
     const categories = await getAllPostCategories();
     return NextResponse.json({ success: true, data: categories });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    return postCategoryErrorResponse(error, 'post-category GET');
   }
 }
 
@@ -22,23 +26,15 @@ export async function POST(request) {
 
   await connectToMongo();
   try {
-    const { name, description, slug } = await request.json();
-    if (!name || !slug) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
+    const body = await request.json();
+    const parsed = parsePostCategoryBody(body);
+    if (!parsed.ok) return parsed.response;
 
-    const category = await newPostCategory({
-      name: name.trim(),
-      description: description?.trim() || '',
-      slug: slug.trim(),
-    });
+    const category = await newPostCategory(parsed.data);
 
     revalidatePath('/blog');
     return NextResponse.json({ success: true, data: category }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    return postCategoryErrorResponse(error, 'post-category POST');
   }
 }

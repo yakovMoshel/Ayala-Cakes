@@ -19,12 +19,20 @@
 
   .burgerButton {
     display: none;
+    align-items: center;
+    gap: 8px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
     cursor: pointer;
     color: var(--darkGrayColor);
     padding: 10px;
+
+    svg {
+      font-size: 19px;
+    }
 
     &:hover {
       color: var(--darkGrayColor);
@@ -50,12 +58,21 @@
         padding: 10px;
         text-align: center;
         font-size: 18px;
+        font-family: inherit;
+        color: inherit;
+        background: none;
+        border: none;
         cursor: pointer;
         transition: background-color 0.3s ease-in-out;
         border-radius: 15px;
 
         &:hover {
-          background-color: rgb(194, 194, 194);
+          background-color: var(--grayColorHover);
+        }
+
+        &.active {
+          background-color: var(--grayColorHover);
+          font-weight: 600;
         }
       }
     }
@@ -76,13 +93,22 @@
       padding: 10px;
       text-align: center;
       font-size: 18px;
+      font-family: inherit;
+      color: inherit;
+      background: none;
+      border: none;
       cursor: pointer;
       transition: background-color 0.3s ease-in-out;
       border-radius: 15px;
       flex-shrink: 0;
 
       &:hover {
-        background-color: rgb(194, 194, 194);
+        background-color: var(--grayColorHover);
+      }
+
+      &.active {
+        background-color: var(--grayColorHover);
+        font-weight: 600;
       }
     }
   }
@@ -93,7 +119,7 @@
     height: auto;
 
     .burgerButton {
-      display: block;
+      display: inline-flex;
       color: var(--darkGrayColor);
     }
 

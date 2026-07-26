@@ -77,6 +77,14 @@ const mapPostToFormData = (post) => ({
   status: post.status === 'deleted' ? 'draft' : (post.status || 'draft'),
   publishDate: formatPublishDate(post.publishDate || post.createdAt),
   category: post.category || '',
+  categoryId:
+    post.categoryId != null && post.categoryId !== ''
+      ? String(
+          typeof post.categoryId === 'object'
+            ? post.categoryId._id || ''
+            : post.categoryId
+        )
+      : '',
   postCta: mapPostCtaFromPost(post),
 });
 
@@ -85,11 +93,10 @@ const STATUS_LABELS = {
   published: 'מפורסם',
 };
 
-export default function SeoEditor({ postId }) {
+export default function SeoEditor({ postId, blogCategories = [] }) {
   const router = useRouter();
   const [editingPostId, setEditingPostId] = useState(postId || null);
   const [isLoadingPost, setIsLoadingPost] = useState(!!postId);
-  const [blogCategories, setBlogCategories] = useState([]);
 
   // State for form data
   const [formData, setFormData] = useState({
@@ -109,6 +116,7 @@ export default function SeoEditor({ postId }) {
     status: 'draft', // added status field for publishing
     publishDate: '', // added publishDate field
     category: '',
+    categoryId: '',
     postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
   });
   
@@ -180,15 +188,6 @@ export default function SeoEditor({ postId }) {
       publishDate: `${year}-${month}-${day}`
     }));
   }, [postId]);
-
-  useEffect(() => {
-    fetch('/api/post-category')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setBlogCategories(data.data || []);
-      })
-      .catch(() => {});
-  }, []);
 
   // Load existing post for editing
   useEffect(() => {
@@ -362,6 +361,20 @@ export default function SeoEditor({ postId }) {
           secondaryKeywords: normalizeKeywordsList(post.secondaryKeywords),
           longtailKeywords: normalizeKeywordsList(post.longtailKeywords),
           category: post.category || '',
+          categoryId: (() => {
+            if (post.categoryId) {
+              return String(
+                typeof post.categoryId === 'object'
+                  ? post.categoryId._id || ''
+                  : post.categoryId
+              );
+            }
+            if (post.category) {
+              const match = blogCategories.find((c) => c.name === post.category);
+              return match ? String(match._id) : '';
+            }
+            return '';
+          })(),
           callToAction: post.callToAction || '',
         };
 
@@ -427,6 +440,7 @@ export default function SeoEditor({ postId }) {
       status: 'draft',
       publishDate: `${year}-${month}-${day}`,
       category: '',
+      categoryId: '',
       postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
     });
   };
@@ -476,7 +490,7 @@ export default function SeoEditor({ postId }) {
       seoTitle: formData.seoTitle || formData.title,
       secondaryKeywords: normalizeKeywordsList(formData.secondaryKeywords),
       longtailKeywords: normalizeKeywordsList(formData.longtailKeywords),
-      category: (formData.category || '').trim(),
+      categoryId: formData.categoryId || null,
       postCta: normalizePostCtaForDb(formData.postCta),
     };
 
@@ -698,13 +712,13 @@ export default function SeoEditor({ postId }) {
                 </p>
                 <select
                   id="post-blog-category"
-                  name="category"
-                  value={formData.category}
+                  name="categoryId"
+                  value={formData.categoryId}
                   onChange={handleChange}
                 >
                   <option value="">ללא קטגוריה</option>
                   {blogCategories.map((cat) => (
-                    <option key={cat._id} value={cat.name}>
+                    <option key={cat._id} value={cat._id}>
                       {cat.name}
                     </option>
                   ))}

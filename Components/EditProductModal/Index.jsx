@@ -8,7 +8,14 @@ export default function EditProductModal({ product, closeModal }) {
     subtitle: product.subtitle,
     description: product.description,
     price: product.price,
-    category: product.category,
+    categoryId:
+      product.categoryId != null
+        ? String(
+            typeof product.categoryId === 'object'
+              ? product.categoryId._id || ''
+              : product.categoryId
+          )
+        : '',
     images: product.images.join(','),
     colors: product.colors.join(','),
     flavors: product.flavors.join(','),
@@ -27,6 +34,7 @@ export default function EditProductModal({ product, closeModal }) {
     e.preventDefault();
     const formattedData = {
       ...formData,
+      categoryId: formData.categoryId || null,
       price: parseFloat(formData.price),
       images: formData.images.split(','),
       colors: formData.colors.split(','),
@@ -92,9 +100,9 @@ export default function EditProductModal({ product, closeModal }) {
             <div className={styles.formGroup}>
               <input
                 type="text"
-                name="category"
-                value={formData.category}
-                placeholder="קטגוריה"
+                name="categoryId"
+                value={formData.categoryId}
+                placeholder="מזהה קטגוריה"
                 onChange={handleChange}
                 required
               />

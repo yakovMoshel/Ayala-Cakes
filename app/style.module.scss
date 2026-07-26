@@ -57,7 +57,8 @@
       padding: 50px;
       animation: fadeInRight 1s ease;
 
-      .btn button {
+      .btn a {
+        display: inline-block;
         border: none;
         background-color: var(--midColor);
         color: var(--mainColor);

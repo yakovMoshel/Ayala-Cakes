@@ -13,23 +13,13 @@ export const createPostCategory = async (data) => {
 };
 
 /**
- * Renaming a category also moves every post that used the old name,
- * otherwise those posts would silently drop out of the blog filter.
+ * Rename only updates the category doc — posts store categoryId, so no cascade.
  */
 export const updatePostCategory = async (id, data) => {
-  const existing = await postCategoryModel.findById(id);
-  if (!existing) return null;
-
-  const previousName = existing.name;
   const updated = await postCategoryModel
     .findByIdAndUpdate(id, data, { new: true, runValidators: true })
     .lean();
-
-  if (updated && data.name && data.name !== previousName) {
-    await postModel.updateMany({ category: previousName }, { category: data.name });
-  }
-
-  return serializeData(updated);
+  return updated ? serializeData(updated) : null;
 };
 
 export const deletePostCategory = async (id) => {
@@ -37,7 +27,7 @@ export const deletePostCategory = async (id) => {
   if (!existing) return null;
 
   await postCategoryModel.findByIdAndDelete(id);
-  await postModel.updateMany({ category: existing.name }, { category: '' });
+  await postModel.updateMany({ categoryId: id }, { $set: { categoryId: null } });
 
   return serializeData(existing);
 };

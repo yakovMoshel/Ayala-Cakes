@@ -1,8 +1,8 @@
-﻿'use client';
+'use client';
 
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import styles from './style.module.scss';
-import { FaBars } from 'react-icons/fa';
+import { FaFilter } from 'react-icons/fa';
 import SearchItem from '../SearchItem';
 
 export default function Toolbar({
@@ -15,56 +15,75 @@ export default function Toolbar({
   defaultOpen = false,
   showSearch = true,
   closeOnSelect = true,
+  activeValue,
+  mobileLabel = 'סינון',
+  selectedMobileLabel,
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const menuId = useId();
 
   const categoriesToRender = categories ?? [];
   const handleCategoryChange = onCategoryChange ?? setCategory ?? (() => {});
+
+  const activeChip = categoriesToRender.find(
+    (item) => item.value === activeValue
+  );
+  const displayMobileLabel =
+    activeValue && activeChip?.label
+      ? selectedMobileLabel?.(activeChip.label) ?? `מציג ${activeChip.label}`
+      : mobileLabel;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  const renderChip = (categoryItem, index) => {
+    const isActive = activeValue !== undefined && activeValue === categoryItem.value;
+    return (
+      <button
+        type="button"
+        className={`${styles.category} ${isActive ? styles.active : ''}`}
+        key={categoryItem.value ?? index}
+        aria-pressed={isActive}
+        onClick={() => {
+          handleCategoryChange(categoryItem.value);
+          if (closeOnSelect) setIsOpen(false);
+        }}
+      >
+        {categoryItem.icon} {categoryItem.label}
+      </button>
+    );
+  };
+
   return (
     <div className={`${styles.sideBar} ${className ? className : ''}`}>
-      <button className={styles.burgerButton} onClick={toggleMenu}>
-        <FaBars />
+      <button
+        type="button"
+        className={styles.burgerButton}
+        onClick={toggleMenu}
+        aria-label={isOpen ? 'סגור תפריט סינון' : 'פתח תפריט סינון'}
+        aria-expanded={isOpen}
+        aria-controls={menuId}
+      >
+        <FaFilter aria-hidden="true" />
+        <span>{displayMobileLabel}</span>
       </button>
-      <div className={`${styles.menu} ${isOpen ? styles.open : ''}`}>
+      <div
+        id={menuId}
+        className={`${styles.menu} ${isOpen ? styles.open : ''}`}
+      >
         {showSearch && (
           <SearchItem searchTerm={searchTerm ?? ''} setSearchTerm={setSearchTerm ?? (() => {})} />
         )}
         <div className={styles.categories}>
-          {categoriesToRender.map((categoryItem, index) => (
-            <div
-              className={styles.category}
-              key={index}
-              onClick={() => {
-                handleCategoryChange(categoryItem.value);
-                if (closeOnSelect) setIsOpen(false);
-              }}
-            >
-              {categoryItem.icon} {categoryItem.label}
-            </div>
-          ))}
+          {categoriesToRender.map(renderChip)}
         </div>
       </div>
       <div className={styles.categoriesDesktop}>
         {showSearch && (
           <SearchItem searchTerm={searchTerm ?? ''} setSearchTerm={setSearchTerm ?? (() => {})} />
         )}
-        {categoriesToRender.map((categoryItem, index) => (
-          <div
-            className={styles.category}
-            key={index}
-            onClick={() => {
-              handleCategoryChange(categoryItem.value);
-              if (closeOnSelect) setIsOpen(false);
-            }}
-          >
-            {categoryItem.icon} {categoryItem.label}
-          </div>
-        ))}
+        {categoriesToRender.map(renderChip)}
       </div>
     </div>
   );

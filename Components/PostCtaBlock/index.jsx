@@ -1,6 +1,7 @@
 import PlatformButton from '@/Components/PlatformButton';
 import ProductItem from '@/Components/ProductItem';
 import { isCtaEnabled, normalizePostCta } from '@/utils/postCta';
+import { sanitizeEmbedHtml } from '@/utils/sanitizeHtml';
 import styles from './style.module.scss';
 
 export default function PostCtaBlock({
@@ -14,6 +15,7 @@ export default function PostCtaBlock({
   }
 
   const data = normalizePostCta(cta);
+  const safeEmbed = data.embedHtml ? sanitizeEmbedHtml(data.embedHtml) : '';
 
   return (
     <section
@@ -57,10 +59,10 @@ export default function PostCtaBlock({
         </div>
       )}
 
-      {data.embedHtml && (
+      {safeEmbed && (
         <div
           className={styles.embed}
-          dangerouslySetInnerHTML={{ __html: data.embedHtml }}
+          dangerouslySetInnerHTML={{ __html: safeEmbed }}
         />
       )}
     </section>

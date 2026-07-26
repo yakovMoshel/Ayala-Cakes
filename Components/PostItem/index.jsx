@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useStore from '../../useStore';
+import { formatBlogDate } from '@/utils/formatBlogDate';
 
 export default function PostItem({ post }) {
   const { _id, title, summary, image, createdAt, slug } = post;
@@ -68,7 +69,7 @@ export default function PostItem({ post }) {
               {summary}
             </div>
             <div className={styles.createdAt}>
-  {createdAt ? new Date(createdAt).toLocaleDateString('en-GB') : ''}
+  {formatBlogDate(createdAt)}
 </div>
           </div>
           {isAuthenticated && (

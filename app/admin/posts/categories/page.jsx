@@ -1,10 +1,8 @@
-import { connectToMongo } from '@/server/DL/connectToMongo';
 import PostCategoriesManager from '@/Components/PostCategoriesManager';
 import styles from './style.module.scss';
 import layout from '../../layoutShared.module.scss';
 
-export default async function PostCategoriesAdminPage() {
-  await connectToMongo();
+export default function PostCategoriesAdminPage() {
   return (
     <div className={`${styles.categoriesPage} ${layout.listPage}`}>
       <div className={layout.stickyChrome}>

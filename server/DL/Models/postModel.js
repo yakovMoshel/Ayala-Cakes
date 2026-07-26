@@ -78,10 +78,11 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: false
   }],
-  category: {
-    type: String,
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PostCategory',
     required: false,
-    default: '',
+    default: null,
   },
   relatedPosts: [{
     type: mongoose.Schema.Types.ObjectId,

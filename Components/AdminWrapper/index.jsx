@@ -97,6 +97,7 @@ export default function AdminWrapper({ children }) {
               <Link
                 href="/admin"
                 className={`${styles.navLink} ${isDashboardActive ? styles.active : ''}`}
+                aria-current={isDashboardActive ? 'page' : undefined}
               >
                 <LayoutDashboard size={18} />
                 <span>לוח בקרה</span>
@@ -106,6 +107,7 @@ export default function AdminWrapper({ children }) {
               <Link
                 href="/admin/products"
                 className={`${styles.navLink} ${isProductsActive ? styles.active : ''}`}
+                aria-current={isProductsActive ? 'page' : undefined}
               >
                 <ShoppingBag size={18} />
                 <span>ניהול מוצרים</span>
@@ -115,6 +117,7 @@ export default function AdminWrapper({ children }) {
               <Link 
                 href="/admin/categories" 
                 className={`${styles.navLink} ${pathname === '/admin/categories' ? styles.active : ''}`}
+                aria-current={pathname === '/admin/categories' ? 'page' : undefined}
               >
                 <FolderTree size={18} />
                 <span>ניהול קטגוריות</span>
@@ -124,6 +127,7 @@ export default function AdminWrapper({ children }) {
               <Link
                 href="/admin/posts"
                 className={`${styles.navLink} ${isPostsActive ? styles.active : ''}`}
+                aria-current={isPostsActive ? 'page' : undefined}
               >
                 <FileText size={18} />
                 <span>ניהול פוסטים</span>
@@ -133,6 +137,7 @@ export default function AdminWrapper({ children }) {
               <Link
                 href="/admin/posts/categories"
                 className={`${styles.navLink} ${styles.navSubLink} ${isPostCategoriesActive ? styles.active : ''}`}
+                aria-current={isPostCategoriesActive ? 'page' : undefined}
               >
                 <FolderTree size={16} />
                 <span>קטגוריות בלוג</span>
@@ -142,6 +147,7 @@ export default function AdminWrapper({ children }) {
               <Link 
                 href="/admin/media" 
                 className={`${styles.navLink} ${pathname === '/admin/media' ? styles.active : ''}`}
+                aria-current={pathname === '/admin/media' ? 'page' : undefined}
               >
                 <ImageIcon size={18} />
                 <span>ספריית מדיה</span>
@@ -151,6 +157,7 @@ export default function AdminWrapper({ children }) {
               <Link 
                 href="/admin/metrics" 
                 className={`${styles.navLink} ${pathname === '/admin/metrics' ? styles.active : ''}`}
+                aria-current={pathname === '/admin/metrics' ? 'page' : undefined}
               >
                 <BarChart3 size={18} />
                 <span>מדדים ואנליטיקה</span>
@@ -162,6 +169,7 @@ export default function AdminWrapper({ children }) {
                 href="/" 
                 className={styles.navLinkOut}
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <Globe size={18} />
                 <span>חזרה לאתר</span>
@@ -183,6 +191,7 @@ export default function AdminWrapper({ children }) {
           <Toolbar
             showSearch={false}
             defaultOpen={false}
+            activeValue={pathname}
             categories={[
               { label: 'לוח בקרה', value: '/admin' },
               { label: 'ניהול מוצרים', value: '/admin/products' },
@@ -199,7 +208,7 @@ export default function AdminWrapper({ children }) {
                 handleLogout();
               } else if (typeof val === 'string') {
                 if (val === '/') {
-                  window.open('/', '_blank');
+                  window.open('/', '_blank', 'noopener,noreferrer');
                 } else {
                   router.push(val);
                 }
