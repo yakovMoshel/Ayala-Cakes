@@ -33,7 +33,7 @@
   }
 }
 
-.privacy {
+.terms {
   width: 100%;
 
   p,
@@ -90,6 +90,8 @@
       align-items: flex-start;
       padding: 20px;
       animation: fadeInLeft 1.2s ease;
+      max-width: 220px;
+      text-align: right;
     }
 
     .text {
@@ -117,7 +119,7 @@
 }
 
 @media (max-width: 768px) {
-  .privacy {
+  .terms {
     .panel {
       flex-direction: column;
       padding: 20px;
@@ -127,6 +129,8 @@
       .sideTitle {
         justify-content: center;
         padding: 10px;
+        max-width: none;
+        text-align: center;
         animation: fadeInUp 1.2s ease;
       }
 
@@ -140,7 +144,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .privacy {
+  .terms {
     p,
     li,
     .panel,

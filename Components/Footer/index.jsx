@@ -88,6 +88,14 @@ export default function Footer() {
       <div className={styles.endFooter}>
         <p>
           כל הזכויות שמורות <FaRegCopyright /> {year}
+          <span className={styles.policySep} aria-hidden="true"> · </span>
+          <Link href="/privacy" className={styles.policyLink}>
+            מדיניות פרטיות
+          </Link>
+          <span className={styles.policySep} aria-hidden="true"> · </span>
+          <Link href="/terms" className={styles.policyLink}>
+            תקנון האתר
+          </Link>
         </p>
       </div>
     </footer>
