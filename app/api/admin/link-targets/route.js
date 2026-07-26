@@ -65,7 +65,8 @@ export async function GET(req) {
       type === 'all' || type === 'product'
         ? productModel
             .find()
-            .select('name slug isActive createdAt views price category')
+            .select('name slug isActive createdAt views price categoryId')
+            .populate({ path: 'categoryId', select: 'name' })
             .lean()
         : [],
     ]);
@@ -98,7 +99,8 @@ export async function GET(req) {
           type: 'product',
           title: product.name,
           url: `/shop/products/${product.slug}`,
-          subtitle: product.category || product.slug,
+          subtitle:
+            (product.categoryId && product.categoryId.name) || product.slug,
           date: product.createdAt,
           views: product.views || 0,
           status: product.isActive ? 'active' : 'inactive',

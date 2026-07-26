@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import styles from './style.module.scss';
@@ -11,7 +11,14 @@ const mapProductToForm = (product) => ({
   subtitle: product.subtitle || '',
   description: product.description || '',
   price: product.price?.toString() || '',
-  category: product.category || '',
+  categoryId:
+    product.categoryId != null && product.categoryId !== ''
+      ? String(
+          typeof product.categoryId === 'object'
+            ? product.categoryId._id || ''
+            : product.categoryId
+        )
+      : '',
   colors: Array.isArray(product.colors) ? product.colors.join(', ') : '',
   flavors: Array.isArray(product.flavors) ? product.flavors.join(', ') : '',
   isActive: product.isActive ? 'true' : 'false',
@@ -43,7 +50,7 @@ export default function AddProductForm({ categories, productId }) {
     subtitle: '',
     description: '',
     price: '',
-    category: '',
+    categoryId: '',
     colors: '',
     flavors: '',
     isActive: 'true',
@@ -63,6 +70,14 @@ export default function AddProductForm({ categories, productId }) {
     ogImage: '',
     twitterCard: 'summary_large_image'
   });
+
+  const categoryById = useMemo(() => {
+    const map = new Map();
+    (categories || []).forEach((c) => {
+      if (c?._id != null) map.set(String(c._id), c);
+    });
+    return map;
+  }, [categories]);
   
   const [selectedImages, setSelectedImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -149,7 +164,7 @@ export default function AddProductForm({ categories, productId }) {
           name: formData.name,
           subtitle: formData.subtitle,
           description: formData.description,
-          category: formData.category,
+          category: categoryById.get(String(formData.categoryId))?.name || '',
           price: formData.price,
           flavors: formData.flavors ? formData.flavors.split(',').map(f => f.trim()) : [],
           colors: formData.colors ? formData.colors.split(',').map(c => c.trim()) : []
@@ -197,7 +212,7 @@ export default function AddProductForm({ categories, productId }) {
       subtitle: '',
       description: '',
       price: '',
-      category: '',
+      categoryId: '',
       colors: '',
       flavors: '',
       isActive: 'true',
@@ -226,6 +241,7 @@ export default function AddProductForm({ categories, productId }) {
     const { glutenContent, dairyContent, isActive: _ignored, ...rest } = formData;
     return {
       ...rest,
+      categoryId: formData.categoryId || null,
       price: parseFloat(formData.price),
       images: [...selectedImageUrls],
       colors: formData.colors ? formData.colors.split(',').map((c) => c.trim()) : [],
@@ -432,14 +448,14 @@ export default function AddProductForm({ categories, productId }) {
             <div className={styles.formField}>
               <label>קטגוריה</label>
               <select
-                name="category"
-                value={formData.category}
+                name="categoryId"
+                value={formData.categoryId}
                 onChange={handleChange}
                 required
               >
                 <option value="">בחר קטגוריה</option>
                 {categories.map(category => (
-                  <option key={category._id} value={category.name}>
+                  <option key={category._id} value={category._id}>
                     {category.name}
                   </option>
                 ))}

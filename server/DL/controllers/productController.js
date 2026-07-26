@@ -2,17 +2,27 @@ import { productModel } from "../Models/productModel";
 import { messageModel } from "../Models/messageModel";
 import { categoryModel } from "../Models/categoryModel";
 import { serializeData } from "@/utils/serialization";
+import { withCategoryFields, withCategoryFieldsList } from "@/utils/categoryRef";
 
+const CATEGORY_POPULATE = { path: 'categoryId', select: 'name' };
 
 export const getProducts = async (categoryName) => {
   try {
     if (categoryName) {
-      const productsByCategory = await productModel.find({ category: categoryName, isActive: true }).lean();
-      return serializeData(productsByCategory);
+      const cat = await categoryModel.findOne({ name: categoryName }).lean();
+      if (!cat) return [];
+      const productsByCategory = await productModel
+        .find({ categoryId: cat._id, isActive: true })
+        .populate(CATEGORY_POPULATE)
+        .lean();
+      return withCategoryFieldsList(serializeData(productsByCategory));
     }
-    
-    const allProducts = await productModel.find({ isActive: true }).lean();
-    return serializeData(allProducts);
+
+    const allProducts = await productModel
+      .find({ isActive: true })
+      .populate(CATEGORY_POPULATE)
+      .lean();
+    return withCategoryFieldsList(serializeData(allProducts));
   } catch (error) {
     console.error('Error fetching products:', error);
     throw error;
@@ -21,8 +31,11 @@ export const getProducts = async (categoryName) => {
 
 export const getOneProduct = async (id) => {
   try {
-    const product = await productModel.findOne({ _id: id, isActive: true }).lean();
-    return serializeData(product);
+    const product = await productModel
+      .findOne({ _id: id, isActive: true })
+      .populate(CATEGORY_POPULATE)
+      .lean();
+    return withCategoryFields(serializeData(product));
   } catch (error) {
     console.error('Error fetching single product:', error);
     throw error;
@@ -31,8 +44,11 @@ export const getOneProduct = async (id) => {
 
 export const getProductBySlug = async (slug) => {
   try {
-    const product = await productModel.findOne({ slug, isActive: true }).lean();
-    return serializeData(product);
+    const product = await productModel
+      .findOne({ slug, isActive: true })
+      .populate(CATEGORY_POPULATE)
+      .lean();
+    return withCategoryFields(serializeData(product));
   } catch (error) {
     console.error('Error fetching product by slug:', error);
     throw error;
@@ -41,8 +57,11 @@ export const getProductBySlug = async (slug) => {
 
 export const getSomeProducts = async (ids) => {
   try {
-    const products = await productModel.find({ _id: { $in: ids }, isActive: true }).lean();
-    return serializeData(products);
+    const products = await productModel
+      .find({ _id: { $in: ids }, isActive: true })
+      .populate(CATEGORY_POPULATE)
+      .lean();
+    return withCategoryFieldsList(serializeData(products));
   } catch (error) {
     console.error('Error fetching multiple products:', error);
     throw error;
@@ -57,10 +76,11 @@ export const getPopularProducts = async (limit = 4) => {
   try {
     const products = await productModel
       .find({ isActive: true })
+      .populate(CATEGORY_POPULATE)
       .sort({ views: -1, createdAt: -1 })
       .limit(limit)
       .lean();
-    return serializeData(products);
+    return withCategoryFieldsList(serializeData(products));
   } catch (error) {
     console.error('Error fetching popular products:', error);
     throw error;

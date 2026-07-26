@@ -4,31 +4,42 @@ import { useMemo, useState } from 'react';
 import FilterToolbar from '@/Components/Toolbar';
 import PostItem from '@/Components/PostItem';
 import { buildFilterChips, filterByChipAndSearch } from '@/utils/catalogFilter';
+import { buildCategoryByIdMap } from '@/utils/categoryRef';
 import styles from './style.module.scss';
 
 export default function BlogClient({ posts = [], categories = [] }) {
   const [chip, setChip] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const chips = useMemo(() => {
-    const names = categories.map((cat) => cat.name);
-    const fromPosts = posts.map((post) => post.category);
-    return buildFilterChips([...names, ...fromPosts]);
-  }, [categories, posts]);
+  const categoryById = useMemo(
+    () => buildCategoryByIdMap(categories),
+    [categories]
+  );
+
+  const chips = useMemo(
+    () => buildFilterChips((categories || []).map((cat) => cat.name)),
+    [categories]
+  );
 
   const filteredPosts = useMemo(
     () =>
       filterByChipAndSearch(posts, {
         chip,
         searchTerm,
-        matchesChip: (post, selected) => post.category === selected,
+        matchesChip: (post, selected) => {
+          if (!selected) return true;
+          // Prefer id map; fall back to populated `category` name prop
+          const cat = categoryById.get(String(post.categoryId));
+          if (cat) return cat.name === selected;
+          return post.category === selected;
+        },
         matchesSearch: (post, term) => {
           const title = (post.title || '').toLowerCase();
           const summary = (post.summary || '').toLowerCase();
           return title.includes(term) || summary.includes(term);
         },
       }),
-    [posts, chip, searchTerm]
+    [posts, chip, searchTerm, categoryById]
   );
 
   return (
@@ -38,6 +49,7 @@ export default function BlogClient({ posts = [], categories = [] }) {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         categories={chips}
+        activeValue={chip}
       />
       <div className={styles.content}>
         <h1 className={styles.title}>טיפים, מתכונים ועוד</h1>

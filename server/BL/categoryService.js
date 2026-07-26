@@ -1,10 +1,14 @@
-import { createCategory, getCategories } from "../DL/controllers/categoryController";
+import {
+  createCategory,
+  getCategories,
+  updateCategory,
+  deleteCategory,
+} from "../DL/controllers/categoryController";
 
-export const getAllCategories = async () => {
-    const categories = await getCategories();
-    return categories;
-}
-export const newCategory = async (categoryData) => {
-const  newCategory = await createCategory(categoryData);
-return newCategory;
-}
+export const getAllCategories = async () => getCategories();
+
+export const newCategory = async (categoryData) => createCategory(categoryData);
+
+export const editCategory = async (id, data) => updateCategory(id, data);
+
+export const removeCategory = async (id) => deleteCategory(id);

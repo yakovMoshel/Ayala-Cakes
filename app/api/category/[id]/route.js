@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
+import { editCategory, removeCategory } from "@/server/BL/categoryService";
 import { connectToMongo } from "@/server/DL/connectToMongo";
-import { editPostCategory, removePostCategory } from "@/server/BL/postCategoryService";
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { revalidatePath } from "next/cache";
 import {
-  isValidObjectId,
-  parsePostCategoryBody,
-  postCategoryErrorResponse,
-} from "@/utils/postCategoryApi";
+  parseProductCategoryBody,
+  categoryErrorResponse,
+} from "@/utils/productCategoryApi";
+import { isValidObjectId } from "@/utils/postCategoryApi";
 
 export async function PUT(request, { params }) {
   const auth = await verifyAdminSession();
@@ -22,19 +22,19 @@ export async function PUT(request, { params }) {
   await connectToMongo();
   try {
     const body = await request.json();
-    const parsed = parsePostCategoryBody(body);
+    const parsed = parseProductCategoryBody(body);
     if (!parsed.ok) return parsed.response;
 
-    const updated = await editPostCategory(params.id, parsed.data);
-
+    const updated = await editCategory(params.id, parsed.data);
     if (!updated) {
       return NextResponse.json({ success: false, error: 'Category not found' }, { status: 404 });
     }
 
-    revalidatePath('/blog');
+    revalidatePath('/shop');
+    revalidatePath('/admin/categories');
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
-    return postCategoryErrorResponse(error, 'post-category PUT');
+    return categoryErrorResponse(error, 'category PUT');
   }
 }
 
@@ -50,14 +50,15 @@ export async function DELETE(request, { params }) {
 
   await connectToMongo();
   try {
-    const deleted = await removePostCategory(params.id);
+    const deleted = await removeCategory(params.id);
     if (!deleted) {
       return NextResponse.json({ success: false, error: 'Category not found' }, { status: 404 });
     }
 
-    revalidatePath('/blog');
+    revalidatePath('/shop');
+    revalidatePath('/admin/categories');
     return NextResponse.json({ success: true, data: deleted });
   } catch (error) {
-    return postCategoryErrorResponse(error, 'post-category DELETE');
+    return categoryErrorResponse(error, 'category DELETE');
   }
 }

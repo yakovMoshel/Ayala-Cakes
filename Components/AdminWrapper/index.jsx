@@ -183,6 +183,7 @@ export default function AdminWrapper({ children }) {
           <Toolbar
             showSearch={false}
             defaultOpen={false}
+            activeValue={pathname}
             categories={[
               { label: 'לוח בקרה', value: '/admin' },
               { label: 'ניהול מוצרים', value: '/admin/products' },
