@@ -1,5 +1,6 @@
 import { Assistant } from "next/font/google";
 import "./globals.css";
+import Providers from "@/Components/Providers";
 import ConditionalSiteShell from "@/Components/ConditionalSiteShell";
 
 const assistant = Assistant({ subsets: ["hebrew", "latin"], display: "swap" });
@@ -53,7 +54,9 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
         />
-        <ConditionalSiteShell>{children}</ConditionalSiteShell>
+        <Providers>
+          <ConditionalSiteShell>{children}</ConditionalSiteShell>
+        </Providers>
       </body>
     </html>
   );
