@@ -51,7 +51,7 @@ export default function ShopClient({ products, dbCategories = [] }) {
       <div className={styles.content}>
         <ProductsList productByCat={filteredProducts} isLoading={false} />
         {filteredProducts.length === 0 && (
-          <p style={{ textAlign: 'center', marginTop: 24 }}>לא נמצאו מוצרים בקטגוריה זו</p>
+          <p className={styles.empty}>לא נמצאו מוצרים בקטגוריה זו</p>
         )}
       </div>
     </div>

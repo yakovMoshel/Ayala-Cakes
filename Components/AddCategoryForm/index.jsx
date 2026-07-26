@@ -2,7 +2,6 @@
 
 import CategoryManager from '@/Components/CategoryManager';
 
-/** Product categories — create + grid list (edit/delete off to preserve prior behavior). */
 export default function AddCategoryForm() {
   return (
     <CategoryManager
@@ -10,7 +9,7 @@ export default function AddCategoryForm() {
       listVariant="grid"
       requireImage
       autoSlug={false}
-      permissions={{ edit: false, delete: false }}
+      permissions={{ edit: true, delete: true }}
       labels={{
         createTitle: 'הוספת קטגוריה חדשה',
         listTitle: 'קטגוריות קיימות',
@@ -19,6 +18,8 @@ export default function AddCategoryForm() {
         slugPlaceholder: 'למשל: mousse-cakes',
         descriptionPlaceholder: 'תיאור קצר שיוצג לקוראים...',
         successMessage: 'הקטגוריה נוצרה בהצלחה! 🎉',
+        deleteConfirm: (name) =>
+          `למחוק את הקטגוריה "${name}"? לא ניתן למחוק קטגוריה שמשויכים אליה מוצרים.`,
       }}
     />
   );

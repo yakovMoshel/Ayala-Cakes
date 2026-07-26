@@ -5,6 +5,29 @@ import { revalidatePath } from 'next/cache';
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { normalizeCategoryIdWrite, withCategoryFields } from "@/utils/categoryRef";
 import { serializeData } from "@/utils/serialization";
+import { sanitizeBlogHtml, sanitizeEmbedHtml } from "@/utils/sanitizeHtml";
+
+function withCategoryFieldsListSafe(posts) {
+  return (posts || []).map((p) => withCategoryFields(serializeData(p)));
+}
+
+function sanitizePostWritePayload(data) {
+  if (!data || typeof data !== 'object') return data;
+  const next = { ...data };
+
+  if (typeof next.content === 'string') {
+    next.content = sanitizeBlogHtml(next.content);
+  }
+
+  if (next.postCta && typeof next.postCta === 'object') {
+    next.postCta = { ...next.postCta };
+    if (typeof next.postCta.embedHtml === 'string') {
+      next.postCta.embedHtml = sanitizeEmbedHtml(next.postCta.embedHtml);
+    }
+  }
+
+  return next;
+}
 
 export const GET = async () => {
   await connectToMongo();
@@ -20,10 +43,6 @@ export const GET = async () => {
   });
 };
 
-function withCategoryFieldsListSafe(posts) {
-  return (posts || []).map((p) => withCategoryFields(serializeData(p)));
-}
-
 export async function POST(req) {
   const auth = await verifyAdminSession();
   if (!auth.ok) {
@@ -31,7 +50,7 @@ export async function POST(req) {
   }
 
   await connectToMongo();
-  const data = normalizeCategoryIdWrite(await req.json());
+  const data = sanitizePostWritePayload(normalizeCategoryIdWrite(await req.json()));
 
   try {
     const post = await postModel.create(data);

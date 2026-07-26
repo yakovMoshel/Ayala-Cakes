@@ -282,6 +282,82 @@
   }
 }
 
+.dialogBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(49, 31, 35, 0.45);
+}
+
+.confirmDialog {
+  width: min(100%, 430px);
+  padding: 28px;
+  border-radius: 18px;
+  background: white;
+  border: 1px solid rgba(109, 55, 67, 0.1);
+  @include shadow;
+  text-align: right;
+
+  h3 {
+    margin: 0 0 12px;
+    color: var(--secColor);
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+
+  button {
+    min-width: 90px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+}
+
+.cancelButton {
+  border: 1px solid rgba(109, 55, 67, 0.15);
+  color: var(--secColor);
+  background: white;
+
+  &:hover:not(:disabled) {
+    background: var(--grayColor);
+  }
+}
+
+.deleteButton {
+  border: 1px solid #ef4444;
+  color: white;
+  background: #ef4444;
+
+  &:hover:not(:disabled) {
+    background: #dc2626;
+  }
+}
+
 .skeletonList {
   display: flex;
   flex-direction: column;

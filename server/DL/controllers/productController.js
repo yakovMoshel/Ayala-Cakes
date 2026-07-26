@@ -74,11 +74,13 @@ export const getSomeProducts = async (ids) => {
  */
 export const getPopularProducts = async (limit = 4) => {
   try {
+    const n = Number(limit);
+    const safeLimit = Math.min(24, Math.max(1, Number.isFinite(n) ? Math.floor(n) : 4));
     const products = await productModel
       .find({ isActive: true })
       .populate(CATEGORY_POPULATE)
       .sort({ views: -1, createdAt: -1 })
-      .limit(limit)
+      .limit(safeLimit)
       .lean();
     return withCategoryFieldsList(serializeData(products));
   } catch (error) {

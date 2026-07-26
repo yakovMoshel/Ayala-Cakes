@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useId, useState } from 'react';
 import styles from './style.module.scss';

@@ -25,7 +25,11 @@ export async function getGoogleReviews() {
 
     if (!res.ok) {
       const body = await res.text().catch(() => '');
-      console.error('[googleReviews] Places API error:', res.status, body);
+      console.error(
+        '[googleReviews] Places API error:',
+        res.status,
+        body.slice(0, 200)
+      );
       return null;
     }
 
@@ -46,7 +50,6 @@ export async function getGoogleReviews() {
           id: r.name || `google-review-${index}`,
           name,
           review: text,
-          photoUri: r?.authorAttribution?.photoUri || null,
           rating: typeof r?.rating === 'number' ? r.rating : null,
         };
       })

@@ -14,7 +14,26 @@ export const getPosts = async () => {
   return withCategoryFieldsList(serializeData(posts));
 };
 
+/** Public: published posts only */
 export const getOnePost = async (id) => {
+  const post = await postModel
+    .findOne({ _id: id, status: 'published' })
+    .populate(CATEGORY_POPULATE)
+    .lean();
+  return withCategoryFields(serializeData(post));
+};
+
+/** Public: published posts only */
+export const getOnePostBySlug = async (slug) => {
+  const post = await postModel
+    .findOne({ slug, status: 'published' })
+    .populate(CATEGORY_POPULATE)
+    .lean();
+  return withCategoryFields(serializeData(post));
+};
+
+/** Admin: any non-deleted post */
+export const getOnePostAdmin = async (id) => {
   const post = await postModel
     .findOne({ _id: id, status: { $ne: 'deleted' } })
     .populate(CATEGORY_POPULATE)
@@ -22,7 +41,8 @@ export const getOnePost = async (id) => {
   return withCategoryFields(serializeData(post));
 };
 
-export const getOnePostBySlug = async (slug) => {
+/** Admin: any non-deleted post by slug */
+export const getOnePostBySlugAdmin = async (slug) => {
   const post = await postModel
     .findOne({ slug, status: { $ne: 'deleted' } })
     .populate(CATEGORY_POPULATE)

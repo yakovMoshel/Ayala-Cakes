@@ -5,7 +5,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'i.imgur.com' },
       { protocol: 'https', hostname: 'i.ibb.co' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
   // Bundle Gemini context .md files into serverless functions (Vercel).

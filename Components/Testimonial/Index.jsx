@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './style.module.scss';
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 
@@ -53,6 +53,11 @@ function GoogleMark({ className }) {
   );
 }
 
+function prefersReducedMotion() {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 const Testimonial = ({ reviews = null, mapsUri = null }) => {
   const testimonials =
     Array.isArray(reviews) && reviews.length > 0 ? reviews : FALLBACK_TESTIMONIALS;
@@ -60,48 +65,89 @@ const Testimonial = ({ reviews = null, mapsUri = null }) => {
 
   const [current, setCurrent] = useState(0);
   const length = testimonials.length;
+
   const timerRef = useRef(null);
+  const lengthRef = useRef(length);
+  const pausedRef = useRef(false);
+  const reduceMotionRef = useRef(false);
 
-  const nextSlide = () => {
-    setCurrent((prev) => (prev === length - 1 ? 0 : prev + 1));
-  };
+  lengthRef.current = length;
 
-  const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? length - 1 : prev - 1));
-  };
+  const clearAuto = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
 
-  const restartAuto = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (length <= 1) return;
+  const startAuto = useCallback(() => {
+    clearAuto();
+    if (reduceMotionRef.current || pausedRef.current || lengthRef.current <= 1) {
+      return;
+    }
     timerRef.current = setInterval(() => {
-      setCurrent((prev) => (prev === length - 1 ? 0 : prev + 1));
+      setCurrent((prev) =>
+        prev === lengthRef.current - 1 ? 0 : prev + 1
+      );
     }, AUTO_INTERVAL_MS);
-  };
+  }, [clearAuto]);
 
   useEffect(() => {
-    restartAuto();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+    reduceMotionRef.current = prefersReducedMotion();
+    startAuto();
+
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onMotionChange = () => {
+      reduceMotionRef.current = mq.matches;
+      if (mq.matches) clearAuto();
+      else startAuto();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [length]);
+    mq.addEventListener?.('change', onMotionChange);
+
+    return () => {
+      clearAuto();
+      mq.removeEventListener?.('change', onMotionChange);
+    };
+  }, [length, startAuto, clearAuto]);
 
   const handlePrev = () => {
-    prevSlide();
-    restartAuto();
+    setCurrent((prev) => (prev === 0 ? length - 1 : prev - 1));
+    startAuto();
   };
 
   const handleNext = () => {
-    nextSlide();
-    restartAuto();
+    setCurrent((prev) => (prev === length - 1 ? 0 : prev + 1));
+    startAuto();
+  };
+
+  const pauseAuto = () => {
+    pausedRef.current = true;
+    clearAuto();
+  };
+
+  const resumeAuto = () => {
+    pausedRef.current = false;
+    startAuto();
   };
 
   if (!Array.isArray(testimonials) || testimonials.length <= 0) {
     return null;
   }
 
+  const active = testimonials[current] || testimonials[0];
+
   return (
-    <div className={styles.testimonialCarousel}>
+    <div
+      className={styles.testimonialCarousel}
+      onMouseEnter={pauseAuto}
+      onMouseLeave={resumeAuto}
+      onFocusCapture={pauseAuto}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          resumeAuto();
+        }
+      }}
+    >
       <div className={styles.row}>
         <button type="button" className={styles.leftArrow} onClick={handlePrev} aria-label="הקודם">
           <BiChevronRight />
@@ -125,6 +171,10 @@ const Testimonial = ({ reviews = null, mapsUri = null }) => {
         <button type="button" className={styles.rightArrow} onClick={handleNext} aria-label="הבא">
           <BiChevronLeft />
         </button>
+      </div>
+
+      <div className={styles.liveRegion} aria-live="polite" aria-atomic="true">
+        {`"${active.review}" — ${active.name}`}
       </div>
 
       {fromGoogle && (

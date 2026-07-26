@@ -18,6 +18,14 @@ export const metadata = {
     title: 'אילה - קונדיטורית | עוגות מעוצבות, סדנאות ועוד בקריות',
     description: 'עוגות ייחודיות וקסומות לכל אירוע, בהתאמה אישית - קונדיטורית מוסמכת בקריות והסביבה',
     type: 'website',
+    images: [
+      {
+        url: '/ayala-avraham.webp',
+        width: 1000,
+        height: 600,
+        alt: 'אילה אברהם - קונדיטורית מוסמכת',
+      },
+    ],
   },
   alternates: {
     canonical: '/',
@@ -52,9 +60,7 @@ const Home = async () => {
             היי, אני אילה, קונדיטורית מוסמכת ומעצבת עוגות, עם תשוקה ליצור עוגות ייחודיות וקסומות שיהפכו כל אירוע לחגיגה בלתי נשכחת
           </div>
           <div className={styles.btn}>
-            <Link href="/shop" passHref>
-              <button>לצפייה בעוגות</button>
-            </Link>
+            <Link href="/shop">לצפייה בעוגות</Link>
           </div>
         </div>
       </div>

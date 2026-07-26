@@ -16,6 +16,14 @@ export const metadata = {
       'עוגות מעוצבות בהתאמה אישית, טריות ואיכותיות, וסדנאות עיצוב עוגות בנטו בקריות והסביבה.',
     type: 'website',
     url: '/about',
+    images: [
+      {
+        url: '/ayala-avraham.webp',
+        width: 1000,
+        height: 600,
+        alt: 'אילה אברהם - מעצבת עוגות וקונדיטורית מוסמכת',
+      },
+    ],
   },
   alternates: {
     canonical: '/about',
@@ -54,7 +62,9 @@ export default function About() {
     <div className={styles.about}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(aboutPageSchema).replace(/</g, '\\u003c'),
+        }}
       />
       <div className={styles.topProducts}>
         <h1 className={styles.sideTitle}>היי, נעים להכיר</h1>

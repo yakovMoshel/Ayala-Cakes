@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './style.module.scss';
 import {
   FolderPlus,
@@ -62,6 +62,9 @@ export default function CategoryManager({
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(emptyForm);
   const [rowError, setRowError] = useState('');
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const successTimerRef = useRef(null);
 
   const fetchCategories = useCallback(async () => {
     setIsCategoriesLoading(true);
@@ -84,6 +87,27 @@ export default function CategoryManager({
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
+
+  useEffect(() => {
+    return () => {
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!pendingDelete) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && !isDeleting) {
+        setPendingDelete(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [pendingDelete, isDeleting]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -121,7 +145,13 @@ export default function CategoryManager({
       setSubmitSuccess(true);
       setFormData(emptyForm);
       fetchCategories();
-      setTimeout(() => setSubmitSuccess(false), 4000);
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+      }
+      successTimerRef.current = setTimeout(() => {
+        setSubmitSuccess(false);
+        successTimerRef.current = null;
+      }, 4000);
     } catch (error) {
       setSubmitError(error.message || 'אירעה שגיאה ביצירת הקטגוריה');
     } finally {
@@ -165,22 +195,25 @@ export default function CategoryManager({
     }
   };
 
-  const deleteCategory = async (cat) => {
-    const confirmFn =
-      labels.deleteConfirm ||
-      ((name) => `למחוק את הקטגוריה "${name}"?`);
-    if (!window.confirm(confirmFn(cat.name))) return;
-
+  const deleteCategory = async () => {
+    if (!pendingDelete) return;
     setRowError('');
+    setIsDeleting(true);
     try {
-      const response = await fetch(`${endpoint}/${cat._id}`, { method: 'DELETE' });
+      const response = await fetch(`${endpoint}/${pendingDelete._id}`, {
+        method: 'DELETE',
+      });
       const resData = await response.json();
       if (!response.ok || !resData.success) {
         throw new Error(resData.error || 'Failed to delete category');
       }
+      setPendingDelete(null);
       fetchCategories();
     } catch (error) {
       setRowError(error.message || 'אירעה שגיאה במחיקת הקטגוריה');
+      setPendingDelete(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -208,7 +241,7 @@ export default function CategoryManager({
           <button
             type="button"
             className={`${styles.iconButton} ${styles.danger}`}
-            onClick={() => deleteCategory(cat)}
+            onClick={() => setPendingDelete(cat)}
             aria-label="מחק"
           >
             <Trash2 size={16} />
@@ -225,12 +258,14 @@ export default function CategoryManager({
         value={editForm.name}
         onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
         placeholder="שם"
+        aria-label="שם הקטגוריה"
       />
       <input
         type="text"
         value={editForm.slug}
         onChange={(e) => setEditForm((p) => ({ ...p, slug: e.target.value }))}
         placeholder="slug"
+        aria-label="מזהה הקטגוריה בכתובת האתר"
       />
       <input
         type="text"
@@ -239,6 +274,7 @@ export default function CategoryManager({
           setEditForm((p) => ({ ...p, description: e.target.value }))
         }
         placeholder="תיאור"
+        aria-label="תיאור הקטגוריה"
       />
       {requireImage && (
         <input
@@ -246,6 +282,7 @@ export default function CategoryManager({
           value={editForm.image || ''}
           onChange={(e) => setEditForm((p) => ({ ...p, image: e.target.value }))}
           placeholder="תמונה (URL)"
+          aria-label="כתובת תמונת הקטגוריה"
         />
       )}
       <div className={styles.rowActions}>
@@ -472,6 +509,52 @@ export default function CategoryManager({
 
         {renderList()}
       </div>
+
+      {pendingDelete && (
+        <div
+          className={styles.dialogBackdrop}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !isDeleting) {
+              setPendingDelete(null);
+            }
+          }}
+        >
+          <div
+            className={styles.confirmDialog}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="category-delete-title"
+            aria-describedby="category-delete-description"
+          >
+            <h3 id="category-delete-title">מחיקת קטגוריה</h3>
+            <p id="category-delete-description">
+              {(labels.deleteConfirm ||
+                ((name) => `למחוק את הקטגוריה "${name}"?`))(
+                pendingDelete.name
+              )}
+            </p>
+            <div className={styles.dialogActions}>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={() => setPendingDelete(null)}
+                disabled={isDeleting}
+                autoFocus
+              >
+                ביטול
+              </button>
+              <button
+                type="button"
+                className={styles.deleteButton}
+                onClick={deleteCategory}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'מוחק...' : 'מחק'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

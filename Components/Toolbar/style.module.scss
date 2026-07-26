@@ -59,11 +59,11 @@
         border-radius: 15px;
 
         &:hover {
-          background-color: rgb(194, 194, 194);
+          background-color: var(--grayColorHover);
         }
 
         &.active {
-          background-color: rgb(194, 194, 194);
+          background-color: var(--grayColorHover);
         }
       }
     }
@@ -94,11 +94,11 @@
       flex-shrink: 0;
 
       &:hover {
-        background-color: rgb(194, 194, 194);
+        background-color: var(--grayColorHover);
       }
 
       &.active {
-        background-color: rgb(194, 194, 194);
+        background-color: var(--grayColorHover);
       }
     }
   }
