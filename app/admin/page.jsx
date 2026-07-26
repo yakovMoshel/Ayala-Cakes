@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from './style.module.scss';
-import useStore from '../../useStore';
+import useStore from '@/store/useStore';
 import { 
   ShoppingBag, 
   FileText, 

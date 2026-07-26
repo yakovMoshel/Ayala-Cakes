@@ -1,5 +1,4 @@
 import { productModel } from "../Models/productModel";
-import { messageModel } from "../Models/messageModel";
 import { categoryModel } from "../Models/categoryModel";
 import { serializeData } from "@/utils/serialization";
 import { withCategoryFields, withCategoryFieldsList } from "@/utils/categoryRef";
@@ -85,16 +84,6 @@ export const getPopularProducts = async (limit = 4) => {
     return withCategoryFieldsList(serializeData(products));
   } catch (error) {
     console.error('Error fetching popular products:', error);
-    throw error;
-  }
-};
-
-export const createMessage = async (message) => {
-  try {
-    const newMessage = await messageModel.create(message);
-    return serializeData(newMessage);
-  } catch (error) {
-    console.error('Error creating message:', error);
     throw error;
   }
 };

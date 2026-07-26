@@ -4,7 +4,7 @@ import styles from './style.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import useStore from '../../useStore';
+import useStore from '@/store/useStore';
 // Rely on server HttpOnly cookie; verify via API
 
 export default function Header() {

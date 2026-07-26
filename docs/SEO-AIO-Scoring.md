@@ -446,7 +446,7 @@ Override model via `.env`: `GEMINI_MODEL=gemini-3.5-flash`
 1. **Hebrew density for multi-word keywords** — counted as occurrences / total words, not per-phrase industry TF-IDF.
 2. **Link detection** — only double-quoted `href="..."`; single quotes not parsed.
 3. **Alt text** — counts `alt="..."` presence, not quality or keyword relevance.
-4. **Mobile / CWV** — not measured in editor; site-level concern (see `Critical Rules.md`).
+4. **Mobile / CWV** — not measured in editor; site-level concern (see `docs/Critical-Rules.md`).
 5. **No debounce** — large posts re-score on every formData change (acceptable for admin use).
 6. **Product posts** — this engine is **blog-only**; product SEO uses Gemini generation without this score UI.
 
@@ -461,7 +461,7 @@ Override model via `.env`: `GEMINI_MODEL=gemini-3.5-flash`
 | `Components/AddPostForm/style.module.scss` | Indicator / score widget styles |
 | `server/BL/geminiService.js` | AI field generation |
 | `app/api/generate-seo/route.js` | API + rate limit |
-| `Critical Rules.md` | Site-wide SEO/architecture rules |
+| `docs/Critical-Rules.md` | Site-wide SEO/architecture rules |
 
 ---
 

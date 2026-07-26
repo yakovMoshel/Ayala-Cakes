@@ -1,5 +1,5 @@
 /**
- * Compact SEO/AIO rules for Gemini prompts — mirrors utils/seoScore.js / SEO-AIO-Scoring.md
+ * Compact SEO/AIO rules for Gemini prompts — mirrors utils/seoScore.js / docs/SEO-AIO-Scoring.md
  */
 export function getFullBlogSeoRulesBlock() {
   return `כללי SEO/AIO לפוסט (חובה לעמוד בהם כדי להשיג ציון גבוה):

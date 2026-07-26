@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import useStore from '../../useStore';
+import useStore from '@/store/useStore';
 import { formatBlogDate } from '@/utils/formatBlogDate';
 
 export default function PostItem({ post }) {
