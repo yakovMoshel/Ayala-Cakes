@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Header from "@/Components/Header";
 import Footer from "@/Components/Footer";
+import CookieConsent from "@/Components/CookieConsent";
 
 const ADMIN_SHELL_PATHS = ["/admin", "/login"];
 
@@ -33,6 +34,7 @@ export default function ConditionalSiteShell({ children }) {
       {/* display:contents keeps children as direct flex items of body (no layout change) */}
       <main style={{ display: 'contents' }}>{children}</main>
       <Footer />
+      <CookieConsent />
     </>
   );
 }

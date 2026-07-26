@@ -188,6 +188,42 @@
   }
 }
 
+.consent {
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 300;
+  text-align: center;
+
+  a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.squareForm .consent {
+  color: var(--text-color);
+
+  a {
+    color: var(--secColor);
+
+    &:hover {
+      color: var(--midColor);
+    }
+  }
+}
+
+.lineForm .consent {
+  color: var(--mainColor);
+
+  a {
+    color: var(--mainColor);
+
+    &:hover {
+      color: var(--midColor);
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .squareForm,
   .lineForm {

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import styles from "./style.module.scss";
 import axios from "axios";
 
@@ -130,6 +131,9 @@ export default function ContactForm({ type = "line" }) {
               )}
             </button>
           </div>
+          <p className={styles.consent}>
+            בשליחת הטופס אני מסכים/ה ל<Link href="/privacy">מדיניות הפרטיות</Link>
+          </p>
         </form>
       )}
     </div>

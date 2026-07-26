@@ -127,6 +127,24 @@
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
   }
+
+  .consent {
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--secColor);
+    text-align: center;
+
+    a {
+      color: var(--midColor);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      &:hover {
+        color: var(--secColor);
+      }
+    }
+  }
 }
 
 .messageContainer {
