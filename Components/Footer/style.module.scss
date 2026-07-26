@@ -108,10 +108,37 @@
   justify-content: center;
   align-items: center;
   background-color: var(--secColor);
-  height: 50px;
+  min-height: 50px;
   font-size: 14px;
   color: var(--mainColor);
   border-radius: 20px;
+  text-align: center;
+  padding: 10px 16px;
+
+  p {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+  }
+
+  .policySep {
+    margin: 0 0.35em;
+    opacity: 0.7;
+  }
+
+  .policyLink {
+    color: var(--mainColor);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 300;
+
+    &:hover {
+      color: var(--midColor);
+    }
+  }
 }
 
 @media (max-width: 768px) {
