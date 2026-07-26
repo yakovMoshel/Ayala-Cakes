@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import axios from 'axios';
-import PopUp from '@/Components/popUp';
+import PopUp from '../popUp';
 
 import styles from './style.module.scss';
 

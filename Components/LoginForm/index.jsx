@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import styles from './style.module.scss';
 import { useRouter } from 'next/navigation';
-import useStore from '../../useStore';
+import useStore from '@/store/useStore';
 import { Mail, Lock, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function LoginForm() {

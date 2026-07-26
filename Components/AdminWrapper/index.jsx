@@ -4,7 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 // We now rely on server HttpOnly cookie and server verification
 import styles from './style.module.scss';
 import Link from 'next/link';
-import useStore from '../../useStore';
+import useStore from '@/store/useStore';
 import Toolbar from '@/Components/Toolbar';
 import { 
   LayoutDashboard, 

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import styles from "./style.module.scss";
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
-import useStore from '../../useStore';
+import useStore from '@/store/useStore';
 
 export default function FavButton({ productId }) {
     const { favorites, addFavorite, removeFavorite } = useStore();
