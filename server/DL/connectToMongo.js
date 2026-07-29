@@ -1,13 +1,17 @@
 import mongoose from "mongoose";
 import dns from "dns";
 
+/* Register populate targets once per isolate — serverless cold starts
+ * otherwise throw MissingSchemaError on .populate('categoryId'). */
+import "./Models/categoryModel";
+import "./Models/postCategoryModel";
+
 // Cache the connection promise across hot reloads / serverless invocations so
 // parallel callers share one connection attempt instead of racing.
 let cached = global._mongooseCache;
 if (!cached) {
   cached = global._mongooseCache = { promise: null, dnsFallbackApplied: false };
 }
-
 const connect = () =>
   mongoose.connect(process.env.MONGO_URI, {
     // Fail fast with the real connection error instead of letting queries
