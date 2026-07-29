@@ -3,7 +3,10 @@
 :root {
   --font: 'Rubik', sans-serif;
   --mainColor: #f7e7e2;
-  --secColor: #693743;
+  --secColor: #6d3743;
+  /* Deeper burgundies used for gradients / active / hover (exact existing hex) */
+  --secColor-deep: #4a212c;
+  --secColor-muted: #532d34;
   --midColor: #AD8080;
   --midColorHover: #8a6666;
   --grayColor: #faf9f9;
@@ -12,6 +15,77 @@
   --brightGrayColor: #d1cfcf;
   --grayColorHover: #f5f2f0;
 
+  /* RGB triplets for rgba(var(--*-rgb), a) — match hex tokens above */
+  --mainColor-rgb: 247, 231, 226;
+  --secColor-rgb: 109, 55, 67;
+  --midColor-rgb: 173, 128, 128;
+
+  /* Status / feedback — aligned with bakery palette; danger uses error tokens */
+  --color-success-bg: #e8efe1;
+  --color-success-text: #3a5432;
+  --color-success-border: rgba(58, 84, 50, 0.22);
+
+  --color-error-bg: #f7e9ec;
+  --color-error-text: var(--secColor);
+  --color-error-border: rgba(var(--secColor-rgb), 0.2);
+  --color-error-hover: #5a2c36;
+
+  --color-warning-bg: #faf3dd;
+  --color-warning-text: #6d5430;
+  --color-warning-border: rgba(109, 84, 48, 0.22);
+
+  --color-info-bg: #e6ecf2;
+  --color-info-text: #2e4a5e;
+  --color-info-border: rgba(46, 74, 94, 0.2);
+
+  /* Soft danger surface (admin delete / danger CTA bg) */
+  --color-danger-soft-bg: #fff5f5;
+
+  /* Admin metric / dashboard badge tones (exact existing hex) */
+  --badge-blue-bg: #ecf3fe;
+  --badge-blue-text: #3b82f6;
+  --badge-purple-bg: #f3e8ff;
+  --badge-purple-text: #a855f7;
+  --badge-pink-bg: #fce7f3;
+  --badge-pink-text: #ec4899;
+  --badge-green-text: #22c55e;
+
+  /* Admin table / panel soft surface */
+  --admin-surface-soft: #fbf9f8;
+
+  /* Admin / forms type scale (rem) — not public store typography */
+  --text-xs: 0.78rem;
+  --text-sm: 0.875rem;
+  --text-base: 0.95rem;
+  --text-md: 1rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.3rem;
+  --text-2xl: 1.85rem;
+
+  /*
+   * Admin UI only — not public store shapes/spacing.
+   * radius-admin-sm: controls, buttons, inputs, thumbs
+   * radius-admin-lg: cards, rows, panels, modals
+   */
+  --radius-admin-sm: 8px;
+  --radius-admin-lg: 16px;
+  --radius-admin-pill: 999px;
+  --radius-admin-circle: 50%;
+
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 10px;
+  --space-5: 12px;
+  --space-6: 14px;
+  --space-7: 15px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-11: 24px;
+  --space-12: 25px;
+  --space-13: 30px;
+  --space-14: 40px;
 }
 
 * {
@@ -64,4 +138,14 @@ html:has(body.admin-shell) {
     padding: 20px;
     gap: 20px;
   }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
