@@ -146,33 +146,7 @@
     }
   }
 
-  .orderButton a {
-    text-decoration: none;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: 500;
-    background-color: var(--secColor);
-    color: var(--mainColor);
-    border: none;
-    height: 50px;
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      filter: brightness(120%);
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    &:active {
-      filter: brightness(120%);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-  }
+  /* order CTA lives in Components/OrderButton + Button fullWidth */
 }
 
 .customization {

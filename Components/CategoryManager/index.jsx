@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './style.module.scss';
+import form from '@/app/admin/formShared.module.scss';
 import {
   FolderPlus,
   Folder,
@@ -310,9 +311,9 @@ export default function CategoryManager({
     if (isCategoriesLoading) {
       if (listVariant === 'grid') {
         return (
-          <div className={styles.skeletonGrid}>
+          <div className={form.skeletonGrid}>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className={styles.skeletonCard} />
+              <div key={i} className={form.skeletonCard} />
             ))}
           </div>
         );
@@ -328,7 +329,7 @@ export default function CategoryManager({
 
     if (categoriesError) {
       return (
-        <div className={styles.errorState}>
+        <div className={form.errorState}>
           <AlertCircle size={32} />
           <p>שגיאה בטעינת קטגוריות: {categoriesError}</p>
         </div>
@@ -337,8 +338,8 @@ export default function CategoryManager({
 
     if (categories.length === 0) {
       return (
-        <div className={styles.emptyState}>
-          <Folder size={40} className={styles.emptyIcon} />
+        <div className={form.emptyState}>
+          <Folder size={40} className={form.emptyIcon} />
           <p>{labels.emptyMessage}</p>
         </div>
       );
@@ -346,24 +347,24 @@ export default function CategoryManager({
 
     if (listVariant === 'grid') {
       return (
-        <div className={styles.categoryGrid}>
+        <div className={form.categoryGrid}>
           {categories.map((cat) => (
-            <div key={cat._id} className={styles.categoryCard}>
+            <div key={cat._id} className={form.categoryCard}>
               {editingId === cat._id ? (
                 renderEditFields()
               ) : (
                 <>
                   <div
-                    className={styles.cardImage}
+                    className={form.cardImage}
                     style={{ backgroundImage: `url(${cat.image})` }}
                   >
-                    <div className={styles.imageOverlay} />
+                    <div className={form.imageOverlay} />
                   </div>
-                  <div className={styles.cardInfo}>
+                  <div className={form.cardInfo}>
                     <h4>{cat.name}</h4>
-                    <span className={styles.slugBadge}>{cat.slug}</span>
+                    <span className={form.slugBadge}>{cat.slug}</span>
                     {cat.description && (
-                      <p className={styles.catDesc} title={cat.description}>
+                      <p className={form.catDesc} title={cat.description}>
                         {cat.description}
                       </p>
                     )}
@@ -402,15 +403,15 @@ export default function CategoryManager({
   };
 
   return (
-    <div className={styles.dualPaneContainer}>
-      <div className={styles.formPane}>
-        <div className={styles.paneHeader}>
-          <FolderPlus className={styles.headerIcon} size={24} />
+    <div className={form.dualPaneContainer}>
+      <div className={form.formPane}>
+        <div className={form.paneHeader}>
+          <FolderPlus className={form.headerIcon} size={24} />
           <h3>{labels.createTitle}</h3>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.formGroup}>
+        <form onSubmit={handleSubmit} className={form.form}>
+          <div className={form.formGroup}>
             <label htmlFor="cm-name">שם הקטגוריה</label>
             <input
               type="text"
@@ -424,7 +425,7 @@ export default function CategoryManager({
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={form.formGroup}>
             <label htmlFor="cm-slug">Slug (מזהה בכתובת האתר)</label>
             <input
               type="text"
@@ -438,7 +439,7 @@ export default function CategoryManager({
             />
           </div>
 
-          <div className={styles.formGroup}>
+          <div className={form.formGroup}>
             <label htmlFor="cm-description">תיאור הקטגוריה</label>
             <textarea
               id="cm-description"
@@ -463,26 +464,26 @@ export default function CategoryManager({
           )}
 
           {submitError && (
-            <div className={styles.submitError}>
+            <div className={form.submitError}>
               <AlertCircle size={18} />
               <span>{submitError}</span>
             </div>
           )}
 
           {submitSuccess && (
-            <div className={styles.submitSuccess}>
+            <div className={form.submitSuccess}>
               <span>{labels.successMessage || 'הקטגוריה נוצרה בהצלחה!'}</span>
             </div>
           )}
 
           <button
             type="submit"
-            className={styles.submitButton}
+            className={form.submitButton}
             disabled={submitDisabled}
           >
             {isSubmitting ? (
               <>
-                <Loader2 className={styles.spinner} size={18} />
+                <Loader2 className={form.spinner} size={18} />
                 <span>יוצר קטגוריה...</span>
               </>
             ) : (
@@ -492,16 +493,16 @@ export default function CategoryManager({
         </form>
       </div>
 
-      <div className={styles.listPane}>
-        <div className={styles.paneHeader}>
-          <Folder className={styles.headerIcon} size={24} />
+      <div className={form.listPane}>
+        <div className={form.paneHeader}>
+          <Folder className={form.headerIcon} size={24} />
           <h3>
             {labels.listTitle} ({categories.length})
           </h3>
         </div>
 
         {rowError && (
-          <div className={styles.submitError}>
+          <div className={form.submitError}>
             <AlertCircle size={18} />
             <span>{rowError}</span>
           </div>

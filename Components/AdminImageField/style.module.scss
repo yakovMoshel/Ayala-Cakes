@@ -3,21 +3,21 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-3);
   text-align: right;
 
   label {
-    font-size: 0.88rem;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--secColor);
   }
 
   .required {
-    color: #ef4444;
+    color: var(--color-error-text);
   }
 
   .hint {
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     color: var(--darkGrayColor);
     margin: 0;
     line-height: 1.4;
@@ -28,9 +28,9 @@
   position: relative;
   width: 100%;
   max-width: 280px;
-  border-radius: 14px;
+  border-radius: var(--radius-admin-sm);
   overflow: hidden;
-  border: 1px solid rgba(109, 55, 67, 0.1);
+  border: 1px solid rgba(var(--secColor-rgb), 0.1);
   @include shadow;
 
   img {
@@ -48,18 +48,16 @@
     width: 32px;
     height: 32px;
     border: none;
-    border-radius: 50%;
+    border-radius: var(--radius-admin-circle);
     background: rgba(255, 255, 255, 0.95);
-    color: #ef4444;
+    color: var(--color-error-text);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     @include shadow;
     transition: background-color 0.2s;
 
     &:hover:not(:disabled) {
-      background: #fef2f2;
+      background: var(--color-error-bg);
     }
 
     &:disabled {
@@ -72,7 +70,7 @@
 .inputRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: var(--space-4);
   align-items: stretch;
 }
 
@@ -93,9 +91,9 @@
   input {
     width: 100%;
     padding: 12px 42px 12px 14px;
-    border: 1.5px solid rgba(173, 128, 128, 0.2);
-    border-radius: 12px;
-    font-size: 0.95rem;
+    border: 1.5px solid rgba(var(--midColor-rgb), 0.2);
+    border-radius: var(--radius-admin-sm);
+    font-size: var(--text-base);
     font-family: var(--font);
     color: var(--secColor);
     background-color: var(--grayColor);
@@ -107,7 +105,7 @@
       outline: none;
       border-color: var(--midColor);
       background-color: white;
-      box-shadow: 0 0 0 4px rgba(173, 128, 128, 0.1);
+      box-shadow: 0 0 0 4px rgba(var(--midColor-rgb), 0.1);
     }
 
     &::placeholder {
@@ -115,7 +113,7 @@
     }
 
     &:disabled {
-      background-color: #f1f5f9;
+      background-color: var(--grayColorHover);
       cursor: not-allowed;
     }
   }
@@ -125,13 +123,13 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-3);
   padding: 12px 18px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-admin-sm);
   background-color: var(--secColor);
   color: white;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   font-family: var(--font);
   cursor: pointer;

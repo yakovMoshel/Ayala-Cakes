@@ -4,7 +4,7 @@
   .modalContent {
     background-color: white;
     padding: 30px;
-    border-radius: 20px;
+    border-radius: var(--radius-admin-lg);
     width: 900px;
     max-width: 90vw;
     max-height: 90vh;
@@ -47,7 +47,7 @@
       cursor: pointer;
       color: var(--secColor);
       padding: 8px;
-      border-radius: 50%;
+      border-radius: var(--radius-admin-circle);
       transition: all 0.3s ease;
 
       &:hover {
@@ -60,18 +60,18 @@
   .tabContainer {
     flex-shrink: 0;
     background-color: var(--grayColor);
-    border-radius: 20px;
+    border-radius: var(--radius-admin-lg);
     padding: 8px;
     margin-bottom: 25px;
     display: flex;
-    gap: 8px;
+    gap: var(--space-3);
   }
 
   .tab {
     flex: 1;
     padding: 12px 20px;
     border: none;
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     background-color: transparent;
     color: var(--darkGrayColor);
     font-size: 16px;
@@ -82,7 +82,7 @@
     text-align: center;
 
     &:hover {
-      background-color: rgba(173, 128, 128, 0.1);
+      background-color: rgba(var(--midColor-rgb), 0.1);
     }
 
     &.active {
@@ -97,7 +97,7 @@
     text-align: center;
     padding: 40px 20px;
     border: 2px dashed var(--midColor);
-    border-radius: 20px;
+    border-radius: var(--radius-admin-lg);
     background-color: var(--grayColor);
     margin-bottom: 20px;
 
@@ -105,7 +105,7 @@
       margin-bottom: 15px;
       padding: 10px;
       border: 1px solid var(--brightGrayColor);
-      border-radius: 10px;
+      border-radius: var(--radius-admin-sm);
       background-color: white;
       font-family: var(--font);
       width: 100%;
@@ -129,7 +129,7 @@
       color: var(--mainColor);
       border: none;
       padding: 12px 25px;
-      border-radius: 20px;
+      border-radius: var(--radius-admin-lg);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -161,13 +161,13 @@
     .imageGrid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: var(--space-10);
       margin-bottom: 20px;
     }
 
     .imageCard {
       border: 2px solid var(--grayColor);
-      border-radius: 15px;
+      border-radius: var(--radius-admin-sm);
       padding: 15px;
       background-color: white;
       transition: all 0.3s ease;
@@ -193,7 +193,7 @@
           width: 100%;
           height: 200px;
           object-fit: cover;
-          border-radius: 10px;
+          border-radius: var(--radius-admin-sm);
         }
 
         .selectionOverlay {
@@ -202,11 +202,9 @@
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: rgba(173, 128, 128, 0.8);
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          background-color: rgba(var(--midColor-rgb), 0.8);
+          border-radius: var(--radius-admin-sm);
+          @include flex-center;
           opacity: 0;
           transition: opacity 0.3s ease;
 
@@ -226,7 +224,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 10px;
+        gap: var(--space-4);
 
         .imageName {
           font-size: 12px;
@@ -240,7 +238,7 @@
 
         .imageActions {
           display: flex;
-          gap: 8px;
+          gap: var(--space-3);
         }
 
         .actionButton {
@@ -248,7 +246,7 @@
           color: var(--mainColor);
           border: none;
           padding: 6px 12px;
-          border-radius: 15px;
+          border-radius: var(--radius-admin-sm);
           font-size: 12px;
           font-weight: 500;
           cursor: pointer;
@@ -261,10 +259,10 @@
           }
 
           &.danger {
-            background-color: #dc3545;
+            background-color: var(--color-error-text);
 
             &:hover {
-              background-color: #c82333;
+              background-color: var(--color-error-hover);
             }
           }
         }
@@ -277,7 +275,7 @@
       color: var(--darkGrayColor);
       border: 2px solid var(--brightGrayColor);
       padding: 12px;
-      border-radius: 15px;
+      border-radius: var(--radius-admin-sm);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -300,7 +298,7 @@
     flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
-    gap: 15px;
+    gap: var(--space-7);
     margin-top: 20px;
     padding-top: 20px;
     border-top: 2px solid var(--grayColor);
@@ -314,7 +312,7 @@
       color: var(--darkGrayColor);
       border: 2px solid var(--brightGrayColor);
       padding: 12px 25px;
-      border-radius: 20px;
+      border-radius: var(--radius-admin-lg);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -332,7 +330,7 @@
       color: var(--mainColor);
       border: none;
       padding: 12px 25px;
-      border-radius: 20px;
+      border-radius: var(--radius-admin-lg);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -377,13 +375,13 @@
 
       .imageGrid {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: var(--space-7);
       }
     }
 
     .modalActions {
       flex-direction: column;
-      gap: 10px;
+      gap: var(--space-4);
 
       .cancelButton,
       .confirmButton {

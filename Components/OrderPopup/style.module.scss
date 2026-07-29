@@ -1,3 +1,5 @@
+@import '/app/mixins.scss';
+
 .popupOverlay {
   position: fixed;
   top: 0;
@@ -5,9 +7,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   z-index: 1000;
 }
 
@@ -105,7 +105,7 @@
     text-decoration: none;
     font-size: 16px;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    @include shadow-sm;
     &:hover {
       cursor: pointer;
       background-color: var(--midColorHover);
@@ -148,9 +148,7 @@
 }
 
 .messageContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   height: 100%;
 }
 

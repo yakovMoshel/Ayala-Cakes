@@ -49,8 +49,8 @@ export default function MetricsPage() {
     <div className={`${styles.metricsPage} ${layout.listPage}`}>
       <div className={layout.stickyChrome}>
         <div className={styles.pageHeader}>
-          <h1>מדדים ואנליטיקה</h1>
-          <p className={styles.subtitle}>צפיות ומבקרים ייחודיים לפי סוג תוכן</p>
+          <h1 className={layout.pageTitle}>מדדים ואנליטיקה</h1>
+          <p className={layout.pageSubtitle}>צפיות ומבקרים ייחודיים לפי סוג תוכן</p>
         </div>
 
         <div className={styles.tabBar}>
@@ -73,7 +73,7 @@ export default function MetricsPage() {
 
       <div className={layout.listScroller}>
       {error && (
-        <div className={styles.errorContainer}>
+        <div className={layout.errorMessage}>
           <AlertCircle size={20} />
           <span>שגיאה בטעינת הנתונים: {error}</span>
         </div>
@@ -161,12 +161,16 @@ export default function MetricsPage() {
                     </td>
                     <td>
                       <span
-                        className={`${styles.badge} ${
+                        className={`${layout.badge} ${
                           activeTab === "posts"
-                            ? styles[item.status] || ""
+                            ? item.status === "published"
+                              ? layout.badgeSuccess
+                              : item.status === "draft"
+                                ? layout.badgeWarning
+                                : ""
                             : item.status === "active"
-                              ? styles.published
-                              : styles.draft
+                              ? layout.badgeSuccess
+                              : layout.badgeWarning
                         }`}
                       >
                         {activeTab === "posts"

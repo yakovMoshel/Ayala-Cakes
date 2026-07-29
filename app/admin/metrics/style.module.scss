@@ -3,26 +3,13 @@
 .metricsPage {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-11);
   direction: rtl;
   font-family: var(--font);
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   text-align: right;
-
-  h1 {
-    color: var(--secColor);
-    font-size: 1.85rem;
-    font-weight: 700;
-    margin: 0 0 4px;
-  }
-
-  .subtitle {
-    color: var(--text-color);
-    margin: 0;
-    font-size: 0.95rem;
-  }
 }
 
 .pageHeader {
@@ -33,10 +20,10 @@
 .tabBar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-3);
   background: var(--mainColor);
   padding: 6px;
-  border-radius: 16px;
+  border-radius: var(--radius-admin-lg);
   width: fit-content;
   max-width: 100%;
   align-self: flex-start;
@@ -48,15 +35,15 @@
   border: none;
   background: transparent;
   padding: 10px 20px;
-  border-radius: 12px;
+  border-radius: var(--radius-admin-sm);
   font-family: var(--font);
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--secColor);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-3);
   transition: all 0.2s ease;
 
   svg {
@@ -64,7 +51,7 @@
   }
 
   &:hover {
-    background: rgba(173, 128, 128, 0.1);
+    background: rgba(var(--midColor-rgb), 0.1);
   }
 }
 
@@ -79,35 +66,22 @@
   }
 }
 
-.errorContainer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 18px;
-  background-color: #fef2f2;
-  border: 1px solid #fee2e2;
-  border-radius: 14px;
-  color: #ef4444;
-  font-size: 0.92rem;
-  font-weight: 500;
-}
-
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: var(--space-10);
   width: 100%;
 }
 
 .summaryCard {
   background: white;
-  border-radius: 20px;
+  border-radius: var(--radius-admin-lg);
   padding: 24px;
-  border: 1px solid rgba(109, 55, 67, 0.05);
+  border: 1px solid rgba(var(--secColor-rgb), 0.05);
   @include shadow;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: var(--space-9);
   transition: transform 0.2s ease;
 
   &:hover {
@@ -117,35 +91,33 @@
   .cardIcon {
     width: 48px;
     height: 48px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius-admin-sm);
+    @include flex-center;
     @include shadow;
     flex-shrink: 0;
 
     &.blue {
-      background-color: #ecf3fe;
-      color: #3b82f6;
+      background-color: var(--badge-blue-bg);
+      color: var(--badge-blue-text);
     }
     &.purple {
-      background-color: #f3e8ff;
-      color: #a855f7;
+      background-color: var(--badge-purple-bg);
+      color: var(--badge-purple-text);
     }
     &.green {
-      background-color: #f0fdf4;
-      color: #22c55e;
+      background-color: var(--color-success-bg);
+      color: var(--badge-green-text);
     }
     &.pink {
-      background-color: #fce7f3;
-      color: #ec4899;
+      background-color: var(--badge-pink-bg);
+      color: var(--badge-pink-text);
     }
   }
 
   .cardInfo {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
     text-align: right;
 
     .summaryValue {
@@ -156,7 +128,7 @@
     }
 
     .summaryLabel {
-      font-size: 0.85rem;
+      font-size: var(--text-sm);
       color: var(--darkGrayColor);
       font-weight: 500;
     }
@@ -166,8 +138,8 @@
 .tableWrap {
   overflow-x: auto;
   background: white;
-  border-radius: 20px;
-  border: 1px solid rgba(109, 55, 67, 0.05);
+  border-radius: var(--radius-admin-lg);
+  border: 1px solid rgba(var(--secColor-rgb), 0.05);
   @include shadow;
   margin-top: 10px;
 }
@@ -185,18 +157,18 @@
   }
 
   th {
-    background: #fbf9f8;
+    background: var(--admin-surface-soft);
     color: var(--secColor);
     font-weight: 700;
-    font-size: 0.95rem;
-    border-bottom: 2px solid rgba(109, 55, 67, 0.08);
+    font-size: var(--text-base);
+    border-bottom: 2px solid rgba(var(--secColor-rgb), 0.08);
   }
 
   tr {
     transition: background-color 0.15s ease;
 
     &:hover td {
-      background-color: rgba(247, 231, 226, 0.2);
+      background-color: rgba(var(--mainColor-rgb), 0.2);
     }
   }
 
@@ -207,7 +179,7 @@
 
 .titleCell {
   color: var(--secColor);
-  font-size: 1rem;
+  font-size: var(--text-md);
   max-width: 320px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -222,7 +194,7 @@
 .uniqueCell {
   color: var(--text-color);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: var(--text-base);
 
   .inlineIcon {
     color: var(--midColor);
@@ -236,27 +208,6 @@
   }
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 700;
-
-  &.published {
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-  }
-
-  &.draft {
-    background: #fef9c3;
-    color: #854d0e;
-    border: 1px solid #fef08a;
-  }
-}
-
 .actionsHeader {
   text-align: center !important;
 }
@@ -266,20 +217,18 @@
 }
 
 .actionsWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
 }
 
 .btnAction {
   padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 0.82rem;
+  border-radius: var(--radius-admin-sm);
+  font-size: var(--text-sm);
   font-weight: 700;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   transition: all 0.2s ease;
   font-family: var(--font);
 
@@ -315,36 +264,27 @@
 .skeletonContainer {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: var(--space-13);
   width: 100%;
 }
 
 .skeletonGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: var(--space-10);
   width: 100%;
 }
 
 .skeletonCard {
   height: 98px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-admin-lg);
+  @include skeleton-shimmer;
 }
 
 .skeletonTable {
   height: 300px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  border-radius: var(--radius-admin-lg);
+  @include skeleton-shimmer;
 }
 
 @media (max-width: 768px) {

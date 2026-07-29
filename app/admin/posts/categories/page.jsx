@@ -6,9 +6,9 @@ export default function PostCategoriesAdminPage() {
   return (
     <div className={`${styles.categoriesPage} ${layout.listPage}`}>
       <div className={layout.stickyChrome}>
-        <div className={styles.pageHeader}>
-          <h1>קטגוריות בלוג</h1>
-          <p className={styles.subtitle}>הוסיפי, ערכי ומחקי את הקטגוריות שמופיעות בסינון הבלוג</p>
+        <div>
+          <h1 className={layout.pageTitle}>קטגוריות בלוג</h1>
+          <p className={layout.pageSubtitle}>הוסיפי, ערכי ומחקי את הקטגוריות שמופיעות בסינון הבלוג</p>
         </div>
       </div>
       <div className={layout.listScroller}>

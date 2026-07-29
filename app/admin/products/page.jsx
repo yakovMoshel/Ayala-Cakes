@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./style.module.scss";
 import layout from "../layoutShared.module.scss";
+import Button from "@/Components/Button";
 import { 
   ShoppingBag, 
   Plus, 
@@ -133,50 +133,50 @@ export default function AdminProductsListPage() {
   return (
     <div className={`${styles.listSection} ${layout.listPage}`}>
       <div className={layout.stickyChrome}>
-        <div className={styles.pageHeader}>
-          <div className={styles.headerTitle}>
-            <h1>ניהול מוצרים בחנות</h1>
-            <p className={styles.subtitle}>נהלי את מלאי העוגות, הקינוחים ומחירי המוצרים</p>
+        <div className={layout.listToolbar}>
+          <div className={layout.headerTitle}>
+            <h1 className={layout.pageTitle}>ניהול מוצרים בחנות</h1>
+            <p className={layout.pageSubtitle}>נהלי את מלאי העוגות, הקינוחים ומחירי המוצרים</p>
           </div>
-          <Link href="/admin/products/new" className={styles.newButton}>
+          <Button href="/admin/products/new" tone="admin">
             <Plus size={18} />
             <span>מוצר חדש</span>
-          </Link>
+          </Button>
         </div>
       </div>
 
       <div className={layout.listScroller}>
       {error && (
-        <div className={styles.errorMessage}>
+        <div className={layout.errorMessage}>
           <AlertCircle size={18} />
           <span>{error}</span>
         </div>
       )}
 
       {isLoading && (
-        <div className={styles.skeletonList}>
+        <div className={layout.skeletonList}>
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className={styles.skeletonRow}>
-              <div className={styles.skeletonThumb} />
-              <div className={styles.skeletonContent}>
-                <div className={styles.skeletonTitle} />
-                <div className={styles.skeletonMeta} />
+            <div key={i} className={layout.skeletonRow}>
+              <div className={layout.skeletonThumb} />
+              <div className={layout.skeletonContent}>
+                <div className={layout.skeletonTitle} />
+                <div className={layout.skeletonMeta} />
               </div>
-              <div className={styles.skeletonActions} />
+              <div className={layout.skeletonActions} />
             </div>
           ))}
         </div>
       )}
 
       {!isLoading && !error && products.length === 0 && (
-        <div className={styles.emptyState}>
-          <ShoppingBag size={48} className={styles.emptyIcon} />
+        <div className={layout.emptyState}>
+          <ShoppingBag size={48} className={layout.emptyIcon} />
           <h3>אין מוצרים עדיין</h3>
           <p>הוסיפי את העוגה או הקינוח הראשון שלך כדי להתחיל למכור בחנות!</p>
-          <Link href="/admin/products/new" className={styles.emptyBtn}>
+          <Button href="/admin/products/new" tone="admin">
             <Plus size={18} />
             <span>צרי מוצר חדש</span>
-          </Link>
+          </Button>
         </div>
       )}
 
@@ -207,8 +207,8 @@ export default function AdminProductsListPage() {
                 <div className={styles.itemTitle}>{product.name}</div>
                 <div className={styles.itemMeta}>
                   <span
-                    className={`${styles.badge} ${
-                      product.isActive ? styles.active : styles.inactive
+                    className={`${layout.badge} ${
+                      product.isActive ? layout.badgeSuccess : layout.badgeNeutral
                     }`}
                   >
                     {product.isActive ? "פעיל" : "לא פעיל"}
@@ -279,11 +279,11 @@ export default function AdminProductsListPage() {
                   </span>
                 </div>
               </div>
-              <div className={styles.rowActions} onClick={(e) => e.stopPropagation()}>
+              <div className={layout.rowActions} onClick={(e) => e.stopPropagation()}>
                 {product.isActive ? (
                   <button
                     type="button"
-                    className={styles.actionDraft}
+                    className={layout.actionDraft}
                     disabled={actionId === product._id}
                     onClick={(e) => updateActive(e, product._id, false)}
                     title="השבת מוצר מהחנות"
@@ -294,7 +294,7 @@ export default function AdminProductsListPage() {
                 ) : (
                   <button
                     type="button"
-                    className={styles.actionPublish}
+                    className={layout.actionPublish}
                     disabled={actionId === product._id}
                     onClick={(e) => updateActive(e, product._id, true)}
                     title="הפעל והצג בחנות"
@@ -305,7 +305,7 @@ export default function AdminProductsListPage() {
                 )}
                 <button
                   type="button"
-                  className={styles.actionEdit}
+                  className={layout.actionEdit}
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/admin/products/${product._id}/edit`);
@@ -317,7 +317,7 @@ export default function AdminProductsListPage() {
                 </button>
                 <button
                   type="button"
-                  className={styles.actionDelete}
+                  className={layout.actionDelete}
                   disabled={actionId === product._id}
                   onClick={(e) => deactivateProduct(e, product._id)}
                   title="הסר מוצר מהחנות"

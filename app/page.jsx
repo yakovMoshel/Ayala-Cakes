@@ -5,7 +5,7 @@ import ProductItem from '@/Components/ProductItem';
 import { getPopularProducts } from '@/server/BL/productService';
 import { getGoogleReviews } from '@/server/BL/googleReviewsService';
 import Testimonial from '@/Components/Testimonial/Index';
-import Link from 'next/link';
+import Button from '@/Components/Button';
 import Image from 'next/image';
 
 // ISR: refresh the featured products hourly + on demand when products change
@@ -59,9 +59,7 @@ const Home = async () => {
           <div className={styles.subtext}>
             היי, אני אילה, קונדיטורית מוסמכת ומעצבת עוגות, עם תשוקה ליצור עוגות ייחודיות וקסומות שיהפכו כל אירוע לחגיגה בלתי נשכחת
           </div>
-          <div className={styles.btn}>
-            <Link href="/shop">לצפייה בעוגות</Link>
-          </div>
+          <Button href="/shop" size="lg">לצפייה בעוגות</Button>
         </div>
       </div>
       <div className={styles.topProducts}>

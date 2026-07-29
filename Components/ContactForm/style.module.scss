@@ -1,3 +1,5 @@
+@import '/app/mixins.scss';
+
 .squareForm {
   max-width: 600px;
   margin: 0 auto;
@@ -68,7 +70,7 @@
     font-family: var(--font);
 
     &:hover {
-      background-color: #532d34;
+      background-color: var(--secColor-muted);
 
       &:disabled {
         cursor: not-allowed;
@@ -137,13 +139,11 @@
     cursor: pointer;
     font-family: var(--font);
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex-center;
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    @include shadow-sm;
     transition: all 0.3s ease;
 
     &:hover {

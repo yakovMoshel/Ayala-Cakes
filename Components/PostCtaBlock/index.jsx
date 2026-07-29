@@ -1,4 +1,4 @@
-import PlatformButton from '@/Components/PlatformButton';
+import Button from '@/Components/Button';
 import ProductItem from '@/Components/ProductItem';
 import { isCtaEnabled, normalizePostCta } from '@/utils/postCta';
 import { sanitizeEmbedHtml } from '@/utils/sanitizeHtml';
@@ -37,14 +37,14 @@ export default function PostCtaBlock({
       {data.buttons.length > 0 && (
         <div className={styles.actions}>
           {data.buttons.map((btn, index) => (
-            <PlatformButton
+            <Button
               key={`${btn.url}-${index}`}
               href={btn.url}
               external={btn.openInNewTab || btn.linkType === 'external'}
               variant={index === 0 ? 'primary' : 'secondary'}
             >
               {btn.label}
-            </PlatformButton>
+            </Button>
           ))}
         </div>
       )}

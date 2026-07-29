@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./style.module.scss";
 import layout from "../layoutShared.module.scss";
+import Button from "@/Components/Button";
 import { 
   FileText, 
   Plus, 
@@ -87,50 +87,50 @@ export default function AdminPostsListPage() {
   return (
     <div className={`${styles.postsSection} ${layout.listPage}`}>
       <div className={layout.stickyChrome}>
-        <div className={styles.pageHeader}>
-          <div className={styles.headerTitle}>
-            <h1>ניהול פוסטים בבלוג</h1>
-            <p className={styles.subtitle}>כתבי, ערכי ונצלי פוסטים ומתכונים חדשים</p>
+        <div className={layout.listToolbar}>
+          <div className={layout.headerTitle}>
+            <h1 className={layout.pageTitle}>ניהול פוסטים בבלוג</h1>
+            <p className={layout.pageSubtitle}>כתבי, ערכי ונצלי פוסטים ומתכונים חדשים</p>
           </div>
-          <Link href="/admin/posts/new" className={styles.newPostButton}>
+          <Button href="/admin/posts/new" tone="admin">
             <Plus size={18} />
             <span>פוסט חדש</span>
-          </Link>
+          </Button>
         </div>
       </div>
 
       <div className={layout.listScroller}>
       {error && (
-        <div className={styles.errorMessage}>
+        <div className={layout.errorMessage}>
           <AlertCircle size={18} />
           <span>{error}</span>
         </div>
       )}
 
       {isLoading && (
-        <div className={styles.skeletonList}>
+        <div className={layout.skeletonList}>
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className={styles.skeletonRow}>
-              <div className={styles.skeletonThumb} />
-              <div className={styles.skeletonContent}>
-                <div className={styles.skeletonTitle} />
-                <div className={styles.skeletonMeta} />
+            <div key={i} className={layout.skeletonRow}>
+              <div className={layout.skeletonThumb} />
+              <div className={layout.skeletonContent}>
+                <div className={layout.skeletonTitle} />
+                <div className={layout.skeletonMeta} />
               </div>
-              <div className={styles.skeletonActions} />
+              <div className={layout.skeletonActions} />
             </div>
           ))}
         </div>
       )}
 
       {!isLoading && !error && posts.length === 0 && (
-        <div className={styles.emptyState}>
-          <FileText size={48} className={styles.emptyIcon} />
+        <div className={layout.emptyState}>
+          <FileText size={48} className={layout.emptyIcon} />
           <h3>אין פוסטים עדיין</h3>
           <p>כתבי את הפוסט הראשון שלך בבלוג כדי להציגו לקוראים באתר!</p>
-          <Link href="/admin/posts/new" className={styles.emptyBtn}>
+          <Button href="/admin/posts/new" tone="admin">
             <Plus size={18} />
             <span>צרי פוסט חדש</span>
-          </Link>
+          </Button>
         </div>
       )}
 
@@ -163,7 +163,15 @@ export default function AdminPostsListPage() {
                   <div className={styles.postSummary}>{post.summary}</div>
                 )}
                 <div className={styles.postMeta}>
-                  <span className={`${styles.badge} ${styles[post.status] || ""}`}>
+                  <span
+                    className={`${layout.badge} ${
+                      post.status === "published"
+                        ? layout.badgeSuccess
+                        : post.status === "draft"
+                          ? layout.badgeWarning
+                          : ""
+                    }`}
+                  >
                     {statusLabel[post.status] || post.status}
                   </span>
                   <span className={styles.metaItem}>
@@ -177,13 +185,13 @@ export default function AdminPostsListPage() {
                 </div>
               </div>
               <div
-                className={styles.rowActions}
+                className={layout.rowActions}
                 onClick={(e) => e.stopPropagation()}
               >
                 {post.status === "draft" ? (
                   <button
                     type="button"
-                    className={styles.actionPublish}
+                    className={layout.actionPublish}
                     disabled={actionId === post._id}
                     onClick={(e) => updateStatus(e, post._id, "published")}
                     title="פרסם פוסט באתר"
@@ -194,7 +202,7 @@ export default function AdminPostsListPage() {
                 ) : (
                   <button
                     type="button"
-                    className={styles.actionDraft}
+                    className={layout.actionDraft}
                     disabled={actionId === post._id}
                     onClick={(e) => updateStatus(e, post._id, "draft")}
                     title="העבר לטיוטה"
@@ -205,7 +213,7 @@ export default function AdminPostsListPage() {
                 )}
                 <button
                   type="button"
-                  className={styles.actionEdit}
+                  className={layout.actionEdit}
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/admin/posts/${post._id}/edit`);
@@ -217,7 +225,7 @@ export default function AdminPostsListPage() {
                 </button>
                 <button
                   type="button"
-                  className={styles.actionDelete}
+                  className={layout.actionDelete}
                   disabled={actionId === post._id}
                   onClick={(e) => deletePost(e, post._id)}
                   title="מחק פוסט"

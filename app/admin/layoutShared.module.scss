@@ -1,7 +1,7 @@
 @import '/app/mixins.scss';
 
 /* Background matches AdminWrapper content area */
-$adminContentBg: #fcf8f7;
+$adminContentBg: var(--grayColor);
 
 /* Sticky page chrome: titles, horizontal tab bars, action rows */
 .stickyChrome {
@@ -13,8 +13,8 @@ $adminContentBg: #fcf8f7;
   padding-top: 4px;
   padding-bottom: 14px;
   margin-bottom: 4px;
-  border-bottom: 1px solid rgba(109, 55, 67, 0.08);
-  box-shadow: 0 4px 12px rgba(109, 55, 67, 0.04);
+  border-bottom: 1px solid rgba(var(--secColor-rgb), 0.08);
+  box-shadow: 0 4px 12px rgba(var(--secColor-rgb), 0.04);
 }
 
 /* List pages: scrollable list body below sticky header */
@@ -40,4 +40,248 @@ $adminContentBg: #fcf8f7;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 24px;
   padding-inline-end: 4px;
+}
+
+/* —— Typography —— */
+.pageTitle {
+  @include text-page-title;
+  margin: 0 0 4px;
+}
+
+.pageSubtitle {
+  @include text-subtitle;
+  margin: 0;
+}
+
+/* —— List page toolbar (title + primary CTA) —— */
+.listToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+  margin-bottom: 0;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+/* —— Feedback —— */
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 14px 18px;
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-bg);
+  border-radius: var(--radius-admin-lg);
+  color: var(--color-error-text);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+/* —— Status badge base + color variants —— */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-admin-pill);
+  @include text-badge;
+}
+
+.badgeSuccess {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success-border);
+}
+
+.badgeError {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-border);
+}
+
+.badgeWarning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid var(--color-warning-border);
+}
+
+.badgeInfo {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  border: 1px solid var(--color-info-border);
+}
+
+.badgeNeutral {
+  background: var(--grayColorHover);
+  color: var(--darkGrayColor);
+  border: 1px solid var(--brightGrayColor);
+}
+
+/* —— Row action buttons —— */
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  align-items: center;
+
+  button {
+    border: none;
+    border-radius: var(--radius-admin-sm);
+    padding: 9px 15px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: all 0.2s ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+  }
+
+  @media (max-width: 768px) {
+    justify-content: flex-end;
+    border-top: 1px solid rgba(var(--secColor-rgb), 0.06);
+    padding-top: 12px;
+  }
+}
+
+.actionPublish {
+  background: var(--secColor);
+  color: var(--mainColor);
+
+  &:hover:not(:disabled) {
+    background: var(--secColor-deep);
+  }
+}
+
+.actionDraft {
+  background: var(--grayColorHover);
+  color: var(--darkGrayColor);
+  border: 1px solid var(--brightGrayColor);
+
+  &:hover:not(:disabled) {
+    background: var(--brightGrayColor);
+  }
+}
+
+.actionEdit {
+  background: white;
+  color: var(--midColor);
+  border: 1px solid var(--midColor);
+
+  &:hover:not(:disabled) {
+    background: var(--grayColor);
+  }
+}
+
+.actionDelete {
+  background: var(--color-danger-soft-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-bg);
+
+  &:hover:not(:disabled) {
+    background: var(--color-error-border);
+  }
+}
+
+/* —— Empty state —— */
+.emptyState {
+  background: white;
+  border-radius: var(--radius-admin-lg);
+  padding: 60px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  @include shadow;
+  border: 1px solid rgba(var(--secColor-rgb), 0.04);
+  max-width: 500px;
+  width: 100%;
+  margin: 40px auto;
+
+  h3 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--secColor);
+    margin: 0 0 10px;
+  }
+
+  p {
+    font-size: var(--text-base);
+    color: var(--text-color);
+    margin: 0 0 25px;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+}
+
+.emptyIcon {
+  color: var(--mainColor);
+  background-color: var(--grayColor);
+  padding: 16px;
+  border-radius: var(--radius-admin-circle);
+  margin-bottom: 20px;
+}
+
+/* —— List-row skeleton (products / posts) —— */
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.skeletonRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: 16px 20px;
+  background: white;
+  border-radius: var(--radius-admin-lg);
+  border: 1px solid rgba(var(--secColor-rgb), 0.03);
+}
+
+.skeletonThumb {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-admin-sm);
+  @include skeleton-shimmer;
+}
+
+.skeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeletonTitle {
+  height: 20px;
+  width: 40%;
+  border-radius: var(--radius-admin-sm);
+  @include skeleton-shimmer;
+}
+
+.skeletonMeta {
+  height: 14px;
+  width: 60%;
+  border-radius: var(--radius-admin-sm);
+  @include skeleton-shimmer;
+}
+
+.skeletonActions {
+  height: 38px;
+  width: 220px;
+  border-radius: var(--radius-admin-sm);
+  @include skeleton-shimmer;
 }

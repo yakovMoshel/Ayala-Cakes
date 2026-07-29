@@ -8,9 +8,9 @@ export default async function CategoriesAdminPage() {
   return (
     <div className={`${styles.categoriesPage} ${layout.listPage}`}>
       <div className={layout.stickyChrome}>
-        <div className={styles.pageHeader}>
-          <h1>ניהול קטגוריות</h1>
-          <p className={styles.subtitle}>הוסיפי קטגוריות חדשות וצפי בקטלוג הקיים</p>
+        <div>
+          <h1 className={layout.pageTitle}>ניהול קטגוריות</h1>
+          <p className={layout.pageSubtitle}>הוסיפי קטגוריות חדשות וצפי בקטלוג הקיים</p>
         </div>
       </div>
       <div className={layout.listScroller}>

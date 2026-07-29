@@ -4,7 +4,7 @@
   .modalContent {
     background-color: white;
     padding: 30px;
-    border-radius: 20px;
+    border-radius: var(--radius-admin-lg);
     width: 720px;
     max-width: 90vw;
     max-height: 90vh;
@@ -39,7 +39,7 @@
       cursor: pointer;
       color: var(--secColor);
       padding: 8px;
-      border-radius: 50%;
+      border-radius: var(--radius-admin-circle);
       transition: all 0.3s ease;
 
       &:hover {
@@ -52,18 +52,18 @@
   .tabContainer {
     flex-shrink: 0;
     background-color: var(--grayColor);
-    border-radius: 20px;
+    border-radius: var(--radius-admin-lg);
     padding: 8px;
     margin-bottom: 20px;
     display: flex;
-    gap: 8px;
+    gap: var(--space-3);
   }
 
   .tab {
     flex: 1;
     padding: 12px 20px;
     border: none;
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     background-color: transparent;
     color: var(--darkGrayColor);
     font-size: 16px;
@@ -74,7 +74,7 @@
     text-align: center;
 
     &:hover {
-      background-color: rgba(173, 128, 128, 0.1);
+      background-color: rgba(var(--midColor-rgb), 0.1);
     }
 
     &.active {
@@ -100,7 +100,7 @@
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--brightGrayColor);
-      border-radius: 10px;
+      border-radius: var(--radius-admin-sm);
       font-family: var(--font);
       font-size: 14px;
       background-color: white;
@@ -118,16 +118,16 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-6);
   }
 
   .searchRow {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-3);
     padding: 0 12px;
     border: 1px solid var(--brightGrayColor);
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     background: white;
 
     svg {
@@ -154,7 +154,7 @@
   .controlsRow {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--space-4);
     align-items: center;
     justify-content: space-between;
   }
@@ -162,13 +162,13 @@
   .filterChips {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-3);
   }
 
   .chip,
   .chipActive {
     padding: 8px 16px;
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     font-size: 14px;
     font-weight: 500;
     font-family: var(--font);
@@ -194,7 +194,7 @@
   .sortSelect {
     padding: 8px 12px;
     border: 1px solid var(--brightGrayColor);
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     font-family: var(--font);
     font-size: 14px;
     background: white;
@@ -212,7 +212,7 @@
     max-height: 280px;
     overflow-y: auto;
     border: 1px solid var(--brightGrayColor);
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     background: var(--grayColor);
     padding: 8px;
   }
@@ -222,12 +222,12 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: var(--space-1);
     width: 100%;
     padding: 12px 14px;
     margin-bottom: 6px;
     border: 2px solid transparent;
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     background: white;
     text-align: right;
     cursor: pointer;
@@ -252,7 +252,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     width: 100%;
   }
 
@@ -264,23 +264,23 @@
 
   .typeBadge {
     padding: 3px 10px;
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     font-size: 12px;
     font-weight: 600;
-    background: rgba(173, 128, 128, 0.15);
+    background: rgba(var(--midColor-rgb), 0.15);
     color: var(--secColor);
   }
 
   .type_page,
   .type_post,
   .type_product {
-    background: rgba(173, 128, 128, 0.15);
+    background: rgba(var(--midColor-rgb), 0.15);
     color: var(--secColor);
   }
 
   .statusBadge {
     padding: 3px 10px;
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     font-size: 12px;
     background: var(--grayColor);
     color: var(--darkGrayColor);
@@ -315,7 +315,7 @@
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--brightGrayColor);
-      border-radius: 10px;
+      border-radius: var(--radius-admin-sm);
       font-family: monospace, var(--font);
       font-size: 13px;
       background: white;
@@ -340,13 +340,13 @@
   .presetList {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-3);
   }
 
   .presetBtn {
     padding: 10px 16px;
     border: 2px solid var(--brightGrayColor);
-    border-radius: 15px;
+    border-radius: var(--radius-admin-sm);
     background: var(--grayColor);
     font-family: var(--font);
     font-size: 14px;
@@ -364,7 +364,7 @@
   .checkboxRow {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-3);
     font-size: 14px;
     color: var(--darkGrayColor);
     cursor: pointer;
@@ -387,7 +387,7 @@
   .errorText {
     margin: 0;
     padding: 8px 0;
-    color: #991b1b;
+    color: var(--color-error-text);
     font-size: 13px;
   }
 
@@ -395,7 +395,7 @@
     flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
-    gap: 15px;
+    gap: var(--space-7);
     margin-top: 20px;
     padding-top: 20px;
     border-top: 2px solid var(--grayColor);
@@ -406,7 +406,7 @@
       color: var(--darkGrayColor);
       border: 2px solid var(--brightGrayColor);
       padding: 12px 25px;
-      border-radius: 20px;
+      border-radius: var(--radius-admin-lg);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -424,7 +424,7 @@
       color: var(--mainColor);
       border: none;
       padding: 12px 25px;
-      border-radius: 20px;
+      border-radius: var(--radius-admin-lg);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -460,7 +460,7 @@
 
     .modalActions {
       flex-direction: column;
-      gap: 10px;
+      gap: var(--space-4);
 
       .cancelButton,
       .confirmButton {

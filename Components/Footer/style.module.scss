@@ -104,9 +104,7 @@
 }
 
 .endFooter {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   background-color: var(--secColor);
   min-height: 50px;
   font-size: 14px;

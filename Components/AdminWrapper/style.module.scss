@@ -9,7 +9,7 @@
   max-height: 100dvh;
   overflow: hidden;
   direction: rtl;
-  background-color: #fcf8f7;
+  background-color: var(--grayColor);
 
   .sidebar {
     width: 280px;
@@ -23,7 +23,7 @@
     position: sticky;
     top: 0;
     align-self: flex-start;
-    border-left: 1px solid rgba(173, 128, 128, 0.2);
+    border-left: 1px solid rgba(var(--midColor-rgb), 0.2);
     flex-shrink: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -32,17 +32,17 @@
     .logoContainer {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: var(--space-5);
       margin-bottom: 25px;
       padding-bottom: 20px;
-      border-bottom: 1px solid rgba(247, 231, 226, 0.15);
+      border-bottom: 1px solid rgba(var(--mainColor-rgb), 0.15);
 
       img {
         height: 48px;
         width: 48px;
         object-fit: contain;
         background-color: white;
-        border-radius: 50%;
+        border-radius: var(--radius-admin-circle);
         padding: 4px;
       }
 
@@ -57,22 +57,20 @@
     .userProfile {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: var(--space-5);
       margin-bottom: 30px;
       padding: 12px;
-      background-color: rgba(247, 231, 226, 0.08);
-      border-radius: 14px;
-      border: 1px solid rgba(247, 231, 226, 0.1);
+      background-color: rgba(var(--mainColor-rgb), 0.08);
+      border-radius: var(--radius-admin-sm);
+      border: 1px solid rgba(var(--mainColor-rgb), 0.1);
 
       .avatar {
         width: 40px;
         height: 40px;
-        border-radius: 50%;
+        border-radius: var(--radius-admin-circle);
         background-color: var(--midColor);
         color: var(--mainColor);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
         font-weight: 700;
         font-size: 1.1rem;
         @include shadow;
@@ -84,14 +82,14 @@
         text-align: right;
 
         .userName {
-          font-size: 0.95rem;
+          font-size: var(--text-base);
           font-weight: 600;
           color: white;
         }
 
         .userRole {
           font-size: 0.8rem;
-          color: rgba(247, 231, 226, 0.7);
+          color: rgba(var(--mainColor-rgb), 0.7);
         }
       }
     }
@@ -105,36 +103,36 @@
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: var(--space-3);
 
         li {
           margin: 0;
 
           &.divider {
             height: 1px;
-            background-color: rgba(247, 231, 226, 0.15);
+            background-color: rgba(var(--mainColor-rgb), 0.15);
             margin: 10px 0;
           }
 
           .navLink {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: rgba(247, 231, 226, 0.8);
+            gap: var(--space-5);
+            color: rgba(var(--mainColor-rgb), 0.8);
             text-decoration: none;
             padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.95rem;
+            border-radius: var(--radius-admin-sm);
+            font-size: var(--text-base);
             font-weight: 500;
             transition: all 0.2s ease;
 
             svg {
-              color: rgba(247, 231, 226, 0.6);
+              color: rgba(var(--mainColor-rgb), 0.6);
               transition: color 0.2s ease;
             }
 
             &:hover {
-              background-color: rgba(247, 231, 226, 0.08);
+              background-color: rgba(var(--mainColor-rgb), 0.08);
               color: white;
 
               svg {
@@ -158,19 +156,19 @@
             margin-right: 18px;
             padding-top: 9px;
             padding-bottom: 9px;
-            font-size: 0.88rem;
-            color: rgba(247, 231, 226, 0.65);
+            font-size: var(--text-sm);
+            color: rgba(var(--mainColor-rgb), 0.65);
           }
 
           .navLinkOut {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: rgba(247, 231, 226, 0.6);
+            gap: var(--space-5);
+            color: rgba(var(--mainColor-rgb), 0.6);
             text-decoration: none;
             padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.95rem;
+            border-radius: var(--radius-admin-sm);
+            font-size: var(--text-base);
             transition: all 0.2s ease;
 
             svg {
@@ -179,7 +177,7 @@
 
             &:hover {
               color: var(--mainColor);
-              background-color: rgba(247, 231, 226, 0.04);
+              background-color: rgba(var(--mainColor-rgb), 0.04);
 
               svg {
                 transform: translateX(-4px);
@@ -193,30 +191,28 @@
 
     .sidebarFooter {
       padding-top: 20px;
-      border-top: 1px solid rgba(247, 231, 226, 0.15);
+      border-top: 1px solid rgba(var(--mainColor-rgb), 0.15);
       margin-top: 20px;
 
       .logoutButton {
         width: 100%;
-        background-color: rgba(220, 53, 69, 0.1);
-        border: 1px solid rgba(220, 53, 69, 0.2);
-        color: #ff6b6b;
+        background-color: rgba(var(--secColor-rgb), 0.1);
+        border: 1px solid rgba(var(--secColor-rgb), 0.2);
+        color: var(--color-error-text);
         padding: 12px;
-        border-radius: 12px;
-        font-size: 0.95rem;
+        border-radius: var(--radius-admin-sm);
+        font-size: var(--text-base);
         font-weight: 600;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
+        @include flex-center;
+        gap: var(--space-4);
         font-family: var(--font);
         transition: all 0.2s ease;
 
         &:hover {
-          background-color: #dc3545;
+          background-color: var(--color-error-text);
           color: white;
-          border-color: #dc3545;
+          border-color: var(--color-error-text);
           @include shadow;
         }
 
@@ -247,7 +243,7 @@
       z-index: 50;
       padding: 12px 16px;
       background-color: white;
-      border-bottom: 1px solid rgba(109, 55, 67, 0.1);
+      border-bottom: 1px solid rgba(var(--secColor-rgb), 0.1);
       @include shadow;
     }
 
@@ -269,9 +265,7 @@
 
 /* Elegant general loading screen for auth check */
 .loadingScreen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   width: 100%;
   min-height: 100dvh;
   background-color: var(--mainColor);
@@ -281,12 +275,12 @@
   .loaderCard {
     background: white;
     padding: 40px;
-    border-radius: 24px;
+    border-radius: var(--radius-admin-lg);
     @include shadow;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: var(--space-10);
     max-width: 320px;
     width: 90%;
     text-align: center;

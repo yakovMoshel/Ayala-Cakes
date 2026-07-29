@@ -7,9 +7,7 @@
     border-radius: 20px;
     color: var(--secColor);
     padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    @include flex-between;
     @include shadow;
 
     position: sticky;
@@ -32,15 +30,11 @@
     .logo img {
         height: 50px;
         margin-left: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
     }
 
     .navMenu {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        @include flex-between;
         width: 100%;
 
         .desktopMenu {
@@ -58,9 +52,7 @@
                     font-size: 1.2rem;
                     width: 85px;
                     height: 30px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    @include flex-center;
                     text-align: center;
                     border-radius: 10px;
                     transition: background-color 0.2s ease-in, color 0.2s ease-in, transform 0.3s ease-in;
@@ -102,7 +94,7 @@
             width: 100%;
             padding: 10px 0;
             border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            @include shadow-sm;
             z-index: 1000;
 
             .menuItem {
@@ -114,9 +106,7 @@
                     font-size: 1.2rem;
                     width: 85px;
                     height: 30px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    @include flex-center;
                     text-align: center;
                     border-radius: 20px;
                     transition: background-color 0.2s ease-in, color 0.2s ease-in, transform 0.3s ease-in;

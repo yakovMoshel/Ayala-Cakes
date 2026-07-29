@@ -1,3 +1,5 @@
+@import '/app/mixins.scss';
+
 .blogPostPage {
   margin: auto;
   border-radius: 10px;
@@ -10,9 +12,7 @@
 
   .leftSide {
     width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex-center;
 
     .image {
       width: 100%;

@@ -1,3 +1,5 @@
+@import '/app/mixins.scss';
+
 .landingPage {
   width: 100%;
 //   max-width: 1200px;
@@ -46,9 +48,7 @@
 .hero {
   position: relative;
   min-height: 50vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   padding: 2rem;
   border-radius: 20px;
   margin-top: 0 !important;
@@ -69,7 +69,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background:linear-gradient(rgba(255, 255, 255, 0.9), rgba(247, 231, 226, 0.7));
+      background:linear-gradient(rgba(255, 255, 255, 0.9), rgba(var(--mainColor-rgb), 0.7));
       z-index: 2;
     }
   }
@@ -382,9 +382,7 @@
           width: 60px;
           height: 60px;
           border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          @include flex-center;
         }
 
         .benefitText {
@@ -574,15 +572,13 @@
       :global(.swiper-slide) {
         width: 100% !important;
         height: 100% !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
       }
 
       :global(.swiper-button-next),
       :global(.swiper-button-prev) {
         color: white;
-        background: rgba(105, 55, 67, 0.7);
+        background: rgba(var(--secColor-rgb), 0.7);
         width: 50px;
         height: 50px;
         border-radius: 50%;
@@ -711,7 +707,7 @@
     
     img {
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(105, 55, 67, 0.15);
+      box-shadow: 0 10px 30px rgba(var(--secColor-rgb), 0.15);
     }
   }
 
@@ -1006,11 +1002,9 @@
     border-radius: 50px;
     font-weight: 600;
     border: none;
-    box-shadow: 0 4px 15px rgba(105, 55, 67, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--secColor-rgb), 0.3);
     font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     gap: 0.5rem;
 
     &:active {

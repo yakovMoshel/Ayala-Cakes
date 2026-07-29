@@ -3,7 +3,7 @@
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: var(--space-13);
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
@@ -13,14 +13,12 @@
 }
 
 .welcomeBanner {
-  background: linear-gradient(135deg, var(--secColor) 0%, #4a212c 100%);
-  border-radius: 24px;
+  background: linear-gradient(135deg, var(--secColor) 0%, var(--secColor-deep) 100%);
+  border-radius: var(--radius-admin-lg);
   padding: 35px;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  @include flex-between;
+  gap: var(--space-10);
   @include shadow;
   position: relative;
   overflow: hidden;
@@ -32,8 +30,8 @@
     left: -50px;
     width: 150px;
     height: 150px;
-    border-radius: 50%;
-    background: rgba(247, 231, 226, 0.05);
+    border-radius: var(--radius-admin-circle);
+    background: rgba(var(--mainColor-rgb), 0.05);
     pointer-events: none;
   }
 
@@ -41,14 +39,14 @@
     flex: 1;
 
     h2 {
-      font-size: 1.85rem;
+      font-size: var(--text-2xl);
       font-weight: 700;
       margin-bottom: 10px;
       color: var(--mainColor);
     }
 
     p {
-      font-size: 1.05rem;
+      font-size: var(--text-base);
       line-height: 1.6;
       color: rgba(255, 255, 255, 0.85);
       margin: 0;
@@ -57,33 +55,31 @@
   }
 
   .bannerBadge {
-    background-color: rgba(247, 231, 226, 0.15);
+    background-color: rgba(var(--mainColor-rgb), 0.15);
     color: var(--mainColor);
     padding: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius-admin-circle);
+    @include flex-center;
     @include shadow;
-    border: 1px solid rgba(247, 231, 226, 0.1);
+    border: 1px solid rgba(var(--mainColor-rgb), 0.1);
   }
 }
 
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  gap: var(--space-10);
   width: 100%;
 }
 
 .statsCard {
   background: white;
-  border-radius: 20px;
+  border-radius: var(--radius-admin-lg);
   padding: 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  border: 1px solid rgba(109, 55, 67, 0.06);
+  gap: var(--space-10);
+  border: 1px solid rgba(var(--secColor-rgb), 0.06);
   @include shadow;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -95,44 +91,42 @@
   .statsIcon {
     width: 54px;
     height: 54px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius-admin-lg);
+    @include flex-center;
     @include shadow;
     flex-shrink: 0;
 
     &.blue {
-      background-color: #ecf3fe;
-      color: #3b82f6;
+      background-color: var(--badge-blue-bg);
+      color: var(--badge-blue-text);
     }
     &.purple {
-      background-color: #f3e8ff;
-      color: #a855f7;
+      background-color: var(--badge-purple-bg);
+      color: var(--badge-purple-text);
     }
     &.pink {
-      background-color: #fce7f3;
-      color: #ec4899;
+      background-color: var(--badge-pink-bg);
+      color: var(--badge-pink-text);
     }
     &.green {
-      background-color: #f0fdf4;
-      color: #22c55e;
+      background-color: var(--color-success-bg);
+      color: var(--badge-green-text);
     }
   }
 
   .statsInfo {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
 
     .label {
-      font-size: 0.88rem;
+      font-size: var(--text-sm);
       color: var(--darkGrayColor);
       font-weight: 500;
     }
 
     .value {
-      font-size: 1.85rem;
+      font-size: var(--text-2xl);
       font-weight: 700;
       color: var(--secColor);
       margin: 0;
@@ -143,10 +137,10 @@
 .quickLinksSection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-8);
 
   h3 {
-    font-size: 1.3rem;
+    font-size: var(--text-xl);
     font-weight: 700;
     color: var(--secColor);
     margin: 0;
@@ -156,17 +150,17 @@
 .quickLinksGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
+  gap: var(--space-8);
 }
 
 .quickLinkCard {
   background: white;
-  border: 1px solid rgba(109, 55, 67, 0.06);
-  border-radius: 18px;
+  border: 1px solid rgba(var(--secColor-rgb), 0.06);
+  border-radius: var(--radius-admin-lg);
   padding: 18px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-6);
   text-decoration: none;
   color: inherit;
   @include shadow;
@@ -175,12 +169,10 @@
   .quickLinkIcon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: var(--radius-admin-sm);
     background-color: var(--mainColor);
     color: var(--secColor);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     flex-shrink: 0;
     transition: transform 0.2s ease;
   }
@@ -189,17 +181,17 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
 
     h4 {
-      font-size: 1rem;
+      font-size: var(--text-md);
       font-weight: 700;
       color: var(--secColor);
       margin: 0;
     }
 
     p {
-      font-size: 0.82rem;
+      font-size: var(--text-sm);
       color: var(--darkGrayColor);
       margin: 0;
       line-height: 1.35;
@@ -213,7 +205,7 @@
 
   &:hover {
     border-color: var(--midColor);
-    box-shadow: 0 10px 24px rgba(173, 128, 128, 0.15);
+    box-shadow: 0 10px 24px rgba(var(--midColor-rgb), 0.15);
     transform: translateY(-2px);
 
     .quickLinkIcon {
@@ -232,7 +224,7 @@
 .insightsSection {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  gap: var(--space-12);
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -241,10 +233,10 @@
 
 .insightColumn {
   background: white;
-  border-radius: 20px;
+  border-radius: var(--radius-admin-lg);
   padding: 24px;
   @include shadow;
-  border: 1px solid rgba(109, 55, 67, 0.06);
+  border: 1px solid rgba(var(--secColor-rgb), 0.06);
 
   .columnHeader {
     display: flex;
@@ -252,17 +244,17 @@
     align-items: center;
     margin-bottom: 18px;
     padding-bottom: 12px;
-    border-bottom: 1px solid rgba(109, 55, 67, 0.08);
+    border-bottom: 1px solid rgba(var(--secColor-rgb), 0.08);
 
     h3 {
-      font-size: 1.15rem;
+      font-size: var(--text-lg);
       font-weight: 700;
       color: var(--secColor);
       margin: 0;
     }
 
     .viewAll {
-      font-size: 0.88rem;
+      font-size: var(--text-sm);
       color: var(--midColor);
       text-decoration: none;
       font-weight: 600;
@@ -278,26 +270,26 @@
 .insightList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-5);
 }
 
 .insightRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-5);
   padding: 12px 14px;
   background-color: var(--grayColor);
-  border-radius: 12px;
-  font-size: 0.92rem;
+  border-radius: var(--radius-admin-sm);
+  font-size: var(--text-sm);
   font-weight: 500;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: rgba(247, 231, 226, 0.4);
+    background-color: rgba(var(--mainColor-rgb), 0.4);
   }
 
   .rank {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--midColor);
     width: 25px;
@@ -314,17 +306,17 @@
   }
 
   .metricValue {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--secColor);
     background-color: white;
     padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(109, 55, 67, 0.06);
+    border-radius: var(--radius-admin-lg);
+    border: 1px solid rgba(var(--secColor-rgb), 0.06);
   }
 
   .emptyText {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     color: var(--darkGrayColor);
     text-align: center;
     margin: 20px 0;
@@ -334,33 +326,27 @@
 /* Dashboard Skeleton loading state */
 .welcomeBannerSkeleton {
   height: 140px;
-  border-radius: 24px;
-  background: linear-gradient(90deg, #f3eae6 25%, #e6dad5 50%, #f3eae6 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-admin-lg);
+  @include skeleton-shimmer;
 }
 
 .skeletonGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  gap: var(--space-10);
   width: 100%;
 }
 
 .skeletonCard {
   height: 106px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-admin-lg);
+  @include skeleton-shimmer;
 }
 
 .skeletonSection {
   height: 250px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-admin-lg);
+  @include skeleton-shimmer;
 }
 
 .errorContainer {
@@ -370,17 +356,17 @@
   justify-content: center;
   padding: 60px;
   background: white;
-  border-radius: 20px;
+  border-radius: var(--radius-admin-lg);
   @include shadow;
   text-align: center;
   max-width: 500px;
   margin: 50px auto;
-  border: 1px solid rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(var(--secColor-rgb), 0.1);
 
   h3 {
-    color: #b91c1c;
+    color: var(--color-error-text);
     margin: 0 0 10px;
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
   }
 
   p {
@@ -393,7 +379,7 @@
     color: var(--mainColor);
     border: none;
     padding: 10px 24px;
-    border-radius: 12px;
+    border-radius: var(--radius-admin-sm);
     font-weight: 600;
     cursor: pointer;
     font-family: var(--font);
@@ -403,9 +389,4 @@
       background-color: var(--midColorHover);
     }
   }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
 }

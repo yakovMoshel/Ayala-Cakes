@@ -14,3 +14,75 @@
     box-shadow: 0px 10px 20px rgba(87, 43, 43, 0.1);
 }
 
+@mixin shadow-sm {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@mixin skeleton-shimmer {
+    background: linear-gradient(90deg, #f8f1ef 25%, #ebdcd7 50%, #f8f1ef 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+/*
+ * Admin / forms typography only — NOT the public store look.
+ * Public site headings use @mixin title / @mixin subtitle (px scale) above.
+ * Prefer these for /admin, login, and form chrome; do not use on shop/blog pages.
+ */
+@mixin text-page-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--secColor);
+}
+
+@mixin text-subtitle {
+    font-size: var(--text-base);
+    color: var(--text-color);
+}
+
+@mixin text-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--secColor);
+}
+
+@mixin text-caption {
+    font-size: var(--text-sm);
+    color: var(--text-color);
+}
+
+@mixin text-badge {
+    font-size: var(--text-xs);
+    font-weight: 700;
+}
+
+/*
+ * Admin shape/spacing — use CSS vars from globals.css:
+ * --radius-admin-sm (8px), --radius-admin-lg (16px), --radius-admin-pill, --radius-admin-circle
+ * --space-1 … --space-14 (exact px values, admin/forms only)
+ */
+
+/* Layout — identical flex blocks only; leave gap / direction as local props */
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin inline-flex-center {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
