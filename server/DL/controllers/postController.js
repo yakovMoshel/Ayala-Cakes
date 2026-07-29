@@ -1,4 +1,6 @@
 import { postModel } from "../Models/postModel";
+/* Side-effect: register PostCategory so populate works in serverless isolates */
+import "../Models/postCategoryModel";
 import { serializeData } from "@/utils/serialization";
 import { withCategoryFields, withCategoryFieldsList } from "@/utils/categoryRef";
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { postModel } from "@/server/DL/Models/postModel";
+import "@/server/DL/Models/postCategoryModel";
 import { connectToMongo } from "@/server/DL/connectToMongo";
 import { revalidatePath } from 'next/cache';
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
