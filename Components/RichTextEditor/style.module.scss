@@ -1,5 +1,34 @@
+@import '/app/mixins.scss';
+
 .richTextEditor {
   width: 100%;
+
+  /* Match public SinglePost .content typography (beats Quill Snow defaults) */
+  :global(.ql-snow .ql-editor) {
+    @include rich-text;
+    direction: rtl;
+    text-align: right;
+    padding: 16px;
+    box-sizing: border-box;
+
+    /* Quill list DOM differs from public HTML; keep RTL editing usable */
+    :global(ol),
+    :global(ul) {
+      padding-left: 0;
+      padding-right: 1.5em;
+    }
+
+    :global(li) {
+      padding-left: 0 !important;
+      padding-right: 1.5em !important;
+    }
+
+    :global(li::before) {
+      margin-left: 0.3em !important;
+      margin-right: -1.5em !important;
+      text-align: left;
+    }
+  }
 }
 
 .editorLoading {

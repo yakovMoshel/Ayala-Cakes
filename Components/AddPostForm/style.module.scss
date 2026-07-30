@@ -438,37 +438,6 @@
     border-radius: var(--radius-admin-sm);
     overflow: hidden;
     
-    :global(.ql-editor) {
-      direction: rtl;
-      text-align: right;
-      min-height: var(--editor-min-height);
-      height: 100%; /* לקיחת כל הגובה הזמין */
-      font-family: var(--font);
-      padding: 16px;
-      font-size: 16px;
-      line-height: 1.6;
-      flex: 1; /* תופס את כל השטח הפנוי */
-      overflow-y: auto; /* מאפשר גלילה אם הטקסט ארוך מדי */
-
-      /* Quill defaults assume LTR lists; RTL editor needs mirrored spacing */
-      :global(ol),
-      :global(ul) {
-        padding-left: 0;
-        padding-right: 1.5em;
-      }
-
-      :global(li) {
-        padding-left: 0 !important;
-        padding-right: 1.5em !important;
-      }
-
-      :global(li::before) {
-        margin-left: 0.3em !important;
-        margin-right: -1.5em !important;
-        text-align: left;
-      }
-    }
-    
     :global(.ql-snow .ql-picker) {
       direction: rtl;
     }
@@ -480,6 +449,7 @@
     
     :global(.ql-toolbar) {
       direction: rtl;
+      flex-shrink: 0;
       border-radius: var(--radius-admin-sm) var(--radius-admin-sm) 0 0;
       background-color: var(--grayColor);
       border-color: var(--brightGrayColor);
@@ -487,9 +457,26 @@
     }
     
     :global(.ql-container) {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto !important;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       border-radius: 0 0 var(--radius-admin-sm) var(--radius-admin-sm);
       border-color: var(--brightGrayColor);
-      font-size: 16px;
+    }
+
+    :global(.ql-editor) {
+      direction: rtl;
+      text-align: right;
+      flex: 1 1 auto;
+      min-height: 0 !important;
+      height: 100% !important;
+      overflow-y: auto;
+      padding: 16px;
+      padding-bottom: 2.5rem; /* last-block margins from rich-text don't clip */
+      box-sizing: border-box;
     }
   }
   
@@ -502,11 +489,12 @@
   }
   
   .quillEditor {
-    min-height: var(--editor-min-height);
-    height: 500px; /* קביעת גובה קבוע */
-    max-height: 800px; /* הגבלת גובה מקסימלי */
-    font-family: var(--font);
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    max-height: 800px;
     width: 100%;
+    font-family: var(--font);
   }
 
   // סגנונות לסקציית AI
