@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useStore from '@/store/useStore';
 import { formatBlogDate } from '@/utils/formatBlogDate';
+import AdminRowMenu from '@/Components/AdminRowMenu';
+import { Edit3, Trash2 } from 'lucide-react';
 
 export default function PostItem({ post }) {
   const { _id, title, summary, image, createdAt, slug } = post;
@@ -15,26 +17,25 @@ export default function PostItem({ post }) {
   const isAuthenticated = useStore((state) => state.isAuthenticated);
 
   const [isDeleted, setIsDeleted] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
 
-  const handleEdit = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleEdit = () => {
     router.push(`/admin/posts/${_id}/edit`);
   };
 
-  const handleDeactivate = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDeactivate = async () => {
     const confirmation = window.confirm("האם אתה בטוח שברצונך למחוק פוסט זה?");
-    if (confirmation) {
-      try {
-        const response = await axios.put(`/api/post/${_id}`, { status: 'deleted' });
-        if (response.data.success) {
-          setIsDeleted(true);
-          router.refresh();
-        }
-      } catch (error) {
+    if (!confirmation) return;
+    setIsBusy(true);
+    try {
+      const response = await axios.put(`/api/post/${_id}`, { status: 'deleted' });
+      if (response.data.success) {
+        setIsDeleted(true);
+        router.refresh();
       }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -48,6 +49,35 @@ export default function PostItem({ post }) {
   return (
     <Link href={postLink} className={styles.itemLink}>
       <div className={styles.item}>
+        {isAuthenticated && (
+          <div
+            className={styles.adminMenu}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <AdminRowMenu
+              label={`פעולות עבור ${title}`}
+              disabled={isBusy}
+              items={[
+                {
+                  id: 'edit',
+                  label: 'עריכה',
+                  icon: <Edit3 size={14} />,
+                  onClick: handleEdit,
+                },
+                {
+                  id: 'delete',
+                  label: 'מחק',
+                  icon: <Trash2 size={14} />,
+                  tone: 'danger',
+                  onClick: handleDeactivate,
+                },
+              ]}
+            />
+          </div>
+        )}
         <div className={styles.imageContainer}>
           {/* fill matches the existing absolute-positioned CSS inside the aspect-ratio container */}
           {image && (
@@ -69,25 +99,9 @@ export default function PostItem({ post }) {
               {summary}
             </div>
             <div className={styles.createdAt}>
-  {formatBlogDate(createdAt)}
-</div>
-          </div>
-          {isAuthenticated && (
-            <div className={styles.buttonContainer}>
-              <button
-                onClick={handleDeactivate}
-                className={styles.deactivateButton}
-              >
-                מחק פוסט
-              </button>
-              <button
-                onClick={handleEdit}
-                className={styles.editButton}
-              >
-                ערוך פוסט
-              </button>
+              {formatBlogDate(createdAt)}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </Link>

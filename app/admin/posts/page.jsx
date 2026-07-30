@@ -6,6 +6,7 @@ import axios from "axios";
 import styles from "./style.module.scss";
 import layout from "../layoutShared.module.scss";
 import Button from "@/Components/Button";
+import AdminRowMenu from "@/Components/AdminRowMenu";
 import { 
   FileText, 
   Plus, 
@@ -13,7 +14,6 @@ import {
   Trash2, 
   CheckCircle, 
   Archive, 
-  Eye, 
   Calendar, 
   TrendingUp, 
   AlertCircle 
@@ -184,55 +184,41 @@ export default function AdminPostsListPage() {
                   </span>
                 </div>
               </div>
-              <div
-                className={layout.rowActions}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {post.status === "draft" ? (
-                  <button
-                    type="button"
-                    className={layout.actionPublish}
-                    disabled={actionId === post._id}
-                    onClick={(e) => updateStatus(e, post._id, "published")}
-                    title="פרסם פוסט באתר"
-                  >
-                    <CheckCircle size={14} />
-                    <span>פרסם</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className={layout.actionDraft}
-                    disabled={actionId === post._id}
-                    onClick={(e) => updateStatus(e, post._id, "draft")}
-                    title="העבר לטיוטה"
-                  >
-                    <Archive size={14} />
-                    <span>לטיוטה</span>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className={layout.actionEdit}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/admin/posts/${post._id}/edit`);
-                  }}
-                  title="ערוך פוסט"
-                >
-                  <Edit3 size={14} />
-                  <span>עריכה</span>
-                </button>
-                <button
-                  type="button"
-                  className={layout.actionDelete}
+              <div className={layout.rowActions}>
+                <AdminRowMenu
+                  label={`פעולות עבור ${post.title}`}
                   disabled={actionId === post._id}
-                  onClick={(e) => deletePost(e, post._id)}
-                  title="מחק פוסט"
-                >
-                  <Trash2 size={14} />
-                  <span>מחק</span>
-                </button>
+                  items={[
+                    {
+                      id: "edit",
+                      label: "עריכה",
+                      icon: <Edit3 size={14} />,
+                      onClick: () =>
+                        router.push(`/admin/posts/${post._id}/edit`),
+                    },
+                    post.status === "draft"
+                      ? {
+                          id: "publish",
+                          label: "פרסם",
+                          icon: <CheckCircle size={14} />,
+                          onClick: (e) =>
+                            updateStatus(e, post._id, "published"),
+                        }
+                      : {
+                          id: "draft",
+                          label: "לטיוטה",
+                          icon: <Archive size={14} />,
+                          onClick: (e) => updateStatus(e, post._id, "draft"),
+                        },
+                    {
+                      id: "delete",
+                      label: "מחק",
+                      icon: <Trash2 size={14} />,
+                      tone: "danger",
+                      onClick: (e) => deletePost(e, post._id),
+                    },
+                  ]}
+                />
               </div>
             </div>
           ))}

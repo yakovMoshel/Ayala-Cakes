@@ -40,7 +40,7 @@
 .description {
   font-size: 1rem;
   line-height: 1.65;
-  color: var(--text-color);
+  color: var(--mutedColor);
   margin: 0;
   white-space: pre-wrap;
 }
@@ -70,7 +70,7 @@
 
 .embed {
   font-size: 0.95rem;
-  color: var(--text-color);
+  color: var(--mutedColor);
   line-height: 1.6;
 
   :global(img) {

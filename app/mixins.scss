@@ -23,7 +23,7 @@
  * Safe to @include on any public content wrapper (like blog posts, terms, etc.).
  */
 @mixin rich-text {
-    color: var(--text-color);
+    color: var(--mutedColor);
     font-size: 1rem;
     font-weight: 350;
     line-height: 1.5;
@@ -159,7 +159,7 @@
 
 @mixin text-subtitle {
     font-size: var(--text-base);
-    color: var(--text-color);
+    color: var(--mutedColor);
 }
 
 @mixin text-label {
@@ -170,7 +170,7 @@
 
 @mixin text-caption {
     font-size: var(--text-sm);
-    color: var(--text-color);
+    color: var(--mutedColor);
 }
 
 @mixin text-badge {

@@ -1,0 +1,110 @@
+@import '/app/mixins.scss';
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.page {
+  width: 100%;
+}
+
+.panel {
+  background-color: var(--grayColor);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 50px;
+  width: 100%;
+  border-radius: 20px;
+  animation: fadeInUp 1.2s ease;
+}
+
+.title {
+  @include subtitle;
+  display: flex;
+  justify-content: right;
+  align-items: flex-start;
+  padding: 20px;
+  max-width: 220px;
+  text-align: right;
+  animation: fadeInLeft 1.2s ease;
+}
+
+.text {
+  @include rich-text;
+  padding: 50px;
+  width: 70%;
+  background-color: white;
+  border-radius: 20px;
+  @include shadow;
+  animation: fadeInRight 1.4s ease;
+}
+
+.updated {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--midColor);
+  margin-bottom: 1.2em;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .panel {
+    flex-direction: column;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .title {
+    justify-content: center;
+    padding: 10px;
+    max-width: none;
+    text-align: center;
+    animation: fadeInUp 1.2s ease;
+  }
+
+  .text {
+    padding: 20px;
+    width: 100%;
+    animation: fadeInUp 1.4s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .title,
+  .text {
+    animation: none;
+  }
+}

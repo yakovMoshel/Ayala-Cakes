@@ -187,7 +187,7 @@
         transition: background-color 0.3s;
 
         &:hover {
-          background: var(--secColor-muted);
+          background: var(--midColor);
         }
       }
     }
@@ -258,7 +258,7 @@
       font-family: var(--font);
 
       &:hover:not(:disabled) {
-        background-color: var(--secColor-muted);
+        background-color: var(--midColor);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
@@ -319,7 +319,7 @@
 
 .toolbarLabel {
   font-size: var(--text-sm);
-  color: var(--text-color);
+  color: var(--mutedColor);
 }
 
 .statusBadge {
@@ -335,7 +335,7 @@
 
   &.statusInactive {
     background: var(--grayColorHover);
-    color: var(--text-color);
+    color: var(--mutedColor);
   }
 }
 
@@ -369,13 +369,13 @@
 .toolbarBtnGhost {
   background: var(--grayColor);
   color: var(--secColor);
-  border: 1px solid var(--brightGrayColor);
+  border: 1px solid var(--darkGrayColor);
 }
 
 .toolbarBtnDraft {
   background: var(--grayColorHover);
-  color: var(--darkGrayColor);
-  border: 1px solid var(--brightGrayColor);
+  color: var(--mutedColor);
+  border: 1px solid var(--darkGrayColor);
 }
 
 .toolbarBtnPublish {
@@ -391,7 +391,7 @@
 
 .toolbarHint,
 .loadingProduct {
-  color: var(--text-color);
+  color: var(--mutedColor);
   font-size: var(--text-sm);
   margin-top: 12px;
 }

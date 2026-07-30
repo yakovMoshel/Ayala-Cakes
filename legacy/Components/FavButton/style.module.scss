@@ -22,7 +22,7 @@
   }
   
   .notFavorited {
-      color: var(--text-color);
+      color: var(--mutedColor);
       &:hover {
           color: var(--secColor);
       }

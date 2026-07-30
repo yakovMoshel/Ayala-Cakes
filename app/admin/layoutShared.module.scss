@@ -117,80 +117,20 @@ $adminContentBg: var(--grayColor);
 
 .badgeNeutral {
   background: var(--grayColorHover);
-  color: var(--darkGrayColor);
-  border: 1px solid var(--brightGrayColor);
+  color: var(--mutedColor);
+  border: 1px solid var(--darkGrayColor);
 }
 
-/* —— Row action buttons —— */
+/* —— Row action buttons / menu —— */
 .rowActions {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
   flex-shrink: 0;
   align-items: center;
-
-  button {
-    border: none;
-    border-radius: var(--radius-admin-sm);
-    padding: 9px 15px;
-    font-size: var(--text-sm);
-    font-weight: 700;
-    font-family: var(--font);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    transition: all 0.2s ease;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: wait;
-    }
-  }
+  align-self: center;
 
   @media (max-width: 768px) {
     justify-content: flex-end;
-    border-top: 1px solid rgba(var(--secColor-rgb), 0.06);
-    padding-top: 12px;
-  }
-}
-
-.actionPublish {
-  background: var(--secColor);
-  color: var(--mainColor);
-
-  &:hover:not(:disabled) {
-    background: var(--secColor-deep);
-  }
-}
-
-.actionDraft {
-  background: var(--grayColorHover);
-  color: var(--darkGrayColor);
-  border: 1px solid var(--brightGrayColor);
-
-  &:hover:not(:disabled) {
-    background: var(--brightGrayColor);
-  }
-}
-
-.actionEdit {
-  background: white;
-  color: var(--midColor);
-  border: 1px solid var(--midColor);
-
-  &:hover:not(:disabled) {
-    background: var(--grayColor);
-  }
-}
-
-.actionDelete {
-  background: var(--color-danger-soft-bg);
-  color: var(--color-error-text);
-  border: 1px solid var(--color-error-bg);
-
-  &:hover:not(:disabled) {
-    background: var(--color-error-border);
+    align-self: flex-end;
   }
 }
 
@@ -219,7 +159,7 @@ $adminContentBg: var(--grayColor);
 
   p {
     font-size: var(--text-base);
-    color: var(--text-color);
+    color: var(--mutedColor);
     margin: 0 0 25px;
     max-width: 320px;
     line-height: 1.5;
@@ -280,8 +220,8 @@ $adminContentBg: var(--grayColor);
 }
 
 .skeletonActions {
-  height: 38px;
-  width: 220px;
+  height: 36px;
+  width: 36px;
   border-radius: var(--radius-admin-sm);
   @include skeleton-shimmer;
 }

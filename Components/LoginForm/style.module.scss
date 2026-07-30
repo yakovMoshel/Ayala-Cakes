@@ -85,7 +85,7 @@
 
     p {
       font-size: var(--text-sm);
-      color: var(--text-color);
+      color: var(--mutedColor);
       margin: 0;
       line-height: 1.5;
     }
@@ -148,7 +148,7 @@
         }
 
         &::placeholder {
-          color: var(--brightGrayColor);
+          color: var(--darkGrayColor);
         }
 
         &:disabled {
@@ -223,7 +223,7 @@
     &:disabled {
       cursor: not-allowed;
       opacity: 0.6;
-      background-color: var(--brightGrayColor);
+      background-color: var(--darkGrayColor);
       box-shadow: none;
     }
 

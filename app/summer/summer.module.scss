@@ -39,7 +39,7 @@
   p {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: var(--text-color);
+    color: var(--mutedColor);
     margin-bottom: 1.5rem;
     text-align: right;
   }
@@ -170,7 +170,7 @@
 
       p {
         font-size: 1.1rem;
-        color: var(--text-color);
+        color: var(--mutedColor);
         margin-bottom: 1rem;
         line-height: 1.6;
       }
@@ -267,7 +267,7 @@
       }
 
       .duration {
-        color: var(--text-color);
+        color: var(--mutedColor);
         font-size: 1.1rem;
         margin-bottom: 1rem;
       }
@@ -289,7 +289,7 @@
 
         li {
           margin-bottom: 0.8rem;
-          color: var(--text-color);
+          color: var(--mutedColor);
           position: relative;
           padding-right: 1.5rem;
 
@@ -317,7 +317,7 @@
         }
 
         p {
-          color: var(--text-color);
+          color: var(--mutedColor);
           font-size: 0.9rem;
           line-height: 1.4;
         }
@@ -393,7 +393,7 @@
           }
 
           p {
-            color: var(--text-color);
+            color: var(--mutedColor);
             font-size: 1rem;
             line-height: 1.6;
             margin: 0;
@@ -452,7 +452,7 @@
       }
 
       p {
-        color: var(--text-color);
+        color: var(--mutedColor);
         line-height: 1.6;
       }
     }
@@ -507,7 +507,7 @@
         }
 
         a {
-          color: var(--text-color);
+          color: var(--mutedColor);
           text-decoration: none;
           font-size: 1.1rem;
           transition: color 0.3s ease;
@@ -638,7 +638,7 @@
       margin-bottom: 3rem;
 
       p {
-        color: var(--text-color);
+        color: var(--mutedColor);
         font-size: 1.1rem;
         line-height: 1.8;
         margin-bottom: 1.5rem;
@@ -679,7 +679,7 @@
         }
 
         p {
-          color: var(--text-color);
+          color: var(--mutedColor);
           font-size: 1.1rem;
           text-align: center;
         }
@@ -726,7 +726,7 @@
 
     .title {
       font-size: 1.2rem;
-      color: var(--text-color);
+      color: var(--mutedColor);
       margin-bottom: 1.5rem;
     }
 
@@ -734,7 +734,7 @@
       p {
         font-size: 1.1rem;
         line-height: 1.8;
-        color: var(--text-color);
+        color: var(--mutedColor);
         margin-bottom: 1rem;
 
         &:last-child {
@@ -761,7 +761,7 @@
 
         .label {
           font-size: 1rem;
-          color: var(--text-color);
+          color: var(--mutedColor);
         }
       }
     }

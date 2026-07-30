@@ -6,6 +6,7 @@ import axios from "axios";
 import styles from "./style.module.scss";
 import layout from "../layoutShared.module.scss";
 import Button from "@/Components/Button";
+import AdminRowMenu from "@/Components/AdminRowMenu";
 import { 
   ShoppingBag, 
   Plus, 
@@ -279,52 +280,40 @@ export default function AdminProductsListPage() {
                   </span>
                 </div>
               </div>
-              <div className={layout.rowActions} onClick={(e) => e.stopPropagation()}>
-                {product.isActive ? (
-                  <button
-                    type="button"
-                    className={layout.actionDraft}
-                    disabled={actionId === product._id}
-                    onClick={(e) => updateActive(e, product._id, false)}
-                    title="השבת מוצר מהחנות"
-                  >
-                    <ToggleRight size={16} />
-                    <span>השבת</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className={layout.actionPublish}
-                    disabled={actionId === product._id}
-                    onClick={(e) => updateActive(e, product._id, true)}
-                    title="הפעל והצג בחנות"
-                  >
-                    <ToggleLeft size={16} />
-                    <span>הפעל</span>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className={layout.actionEdit}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/admin/products/${product._id}/edit`);
-                  }}
-                  title="ערוך מוצר"
-                >
-                  <Edit3 size={14} />
-                  <span>עריכה</span>
-                </button>
-                <button
-                  type="button"
-                  className={layout.actionDelete}
+              <div className={layout.rowActions}>
+                <AdminRowMenu
+                  label={`פעולות עבור ${product.name}`}
                   disabled={actionId === product._id}
-                  onClick={(e) => deactivateProduct(e, product._id)}
-                  title="הסר מוצר מהחנות"
-                >
-                  <Trash2 size={14} />
-                  <span>הסר</span>
-                </button>
+                  items={[
+                    {
+                      id: "edit",
+                      label: "עריכה",
+                      icon: <Edit3 size={14} />,
+                      onClick: () =>
+                        router.push(`/admin/products/${product._id}/edit`),
+                    },
+                    product.isActive
+                      ? {
+                          id: "deactivate",
+                          label: "השבת",
+                          icon: <ToggleRight size={14} />,
+                          onClick: (e) => updateActive(e, product._id, false),
+                        }
+                      : {
+                          id: "activate",
+                          label: "הפעל",
+                          icon: <ToggleLeft size={14} />,
+                          onClick: (e) => updateActive(e, product._id, true),
+                        },
+                    {
+                      id: "remove",
+                      label: "הסר",
+                      icon: <Trash2 size={14} />,
+                      tone: "danger",
+                      onClick: (e) => deactivateProduct(e, product._id),
+                    },
+                  ]}
+                />
               </div>
             </div>
           ))}

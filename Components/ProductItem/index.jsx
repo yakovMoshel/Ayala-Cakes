@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useStore from '@/store/useStore';
+import AdminRowMenu from '@/Components/AdminRowMenu';
+import { Edit3, Trash2 } from 'lucide-react';
 
 
 export default function ProductItem({ product, hideAdminActions = false }) {
@@ -15,6 +17,7 @@ export default function ProductItem({ product, hideAdminActions = false }) {
     const isAuthenticated = useStore((state) => state.isAuthenticated);
 
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isBusy, setIsBusy] = useState(false);
 
     const handleEdit = () => {
         router.push(`/admin/products/${_id}/edit`);
@@ -22,14 +25,16 @@ export default function ProductItem({ product, hideAdminActions = false }) {
 
     const handleDeactivate = async () => {
         const confirmation = window.confirm("האם אתה בטוח שברצונך למחוק מוצר זה?");
-        if (confirmation) {
-            try {
-                const response = await axios.put(`/api/product/${_id}`, { isActive: false });
-                if (response.data.success) {
-                    setIsDeleted(true);
-                }
-            } catch (error) {
+        if (!confirmation) return;
+        setIsBusy(true);
+        try {
+            const response = await axios.put(`/api/product/${_id}`, { isActive: false });
+            if (response.data.success) {
+                setIsDeleted(true);
             }
+        } catch (error) {
+        } finally {
+            setIsBusy(false);
         }
     };
 
@@ -42,6 +47,29 @@ export default function ProductItem({ product, hideAdminActions = false }) {
 
     return (
         <div className={`${styles.item} ${isDeleted ? styles.deleted : ''}`}>
+            {isAuthenticated && !hideAdminActions && (
+                <div className={styles.adminMenu}>
+                    <AdminRowMenu
+                        label={`פעולות עבור ${name}`}
+                        disabled={isBusy}
+                        items={[
+                            {
+                                id: 'edit',
+                                label: 'עריכה',
+                                icon: <Edit3 size={14} />,
+                                onClick: handleEdit,
+                            },
+                            {
+                                id: 'delete',
+                                label: 'מחק',
+                                icon: <Trash2 size={14} />,
+                                tone: 'danger',
+                                onClick: handleDeactivate,
+                            },
+                        ]}
+                    />
+                </div>
+            )}
             <Link href={productLink} legacyBehavior>
                 <a className={styles.imageLink}>
                     {/* CSS (.image) controls the rendered 100% x 200px box */}
@@ -70,12 +98,6 @@ export default function ProductItem({ product, hideAdminActions = false }) {
                     <FavButton productId={product._id} />
                 </div> */}
             </div>
-            {isAuthenticated && !hideAdminActions && (
-                <div className={styles.buttonContainer}>
-                    <button onClick={handleDeactivate} className={styles.deactivateButton}>מחק מוצר</button>
-                    <button onClick={handleEdit} className={styles.editButton}>עריכת מוצר</button>
-                </div>
-            )}
         </div>
     );
 }
