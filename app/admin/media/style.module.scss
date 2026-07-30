@@ -42,7 +42,7 @@
 
   .folderInput {
     padding: 10px 15px;
-    border: 2px solid var(--brightGrayColor);
+    border: 2px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
     background-color: white;
     font-family: var(--font);
@@ -56,7 +56,7 @@
     }
 
     &::placeholder {
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
     }
   }
 
@@ -74,7 +74,7 @@
     @include shadow;
 
     &:hover {
-      background-color: var(--midColorHover);
+      background-color: var(--secColor);
       transform: translateY(-2px);
     }
 
@@ -88,7 +88,7 @@
       background-color: var(--secColor);
 
       &:hover {
-        background-color: var(--secColor-muted);
+        background-color: var(--midColor);
       }
     }
 
@@ -215,7 +215,7 @@
     font-family: var(--font);
 
     &:hover {
-      background-color: var(--midColorHover);
+      background-color: var(--secColor);
       transform: scale(1.05);
     }
 
@@ -230,7 +230,7 @@
 
   .name {
     font-size: 11px;
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -290,8 +290,8 @@
 
   .loadMoreButton {
     background-color: var(--grayColor);
-    color: var(--darkGrayColor);
-    border: 2px solid var(--brightGrayColor);
+    color: var(--mutedColor);
+    border: 2px solid var(--darkGrayColor);
     padding: 15px 30px;
     border-radius: var(--radius-admin-lg);
     font-size: 16px;
@@ -301,7 +301,7 @@
     font-family: var(--font);
 
     &:hover {
-      background-color: var(--brightGrayColor);
+      background-color: var(--darkGrayColor);
       border-color: var(--midColor);
       transform: translateY(-2px);
     }
@@ -368,7 +368,7 @@
   @include shadow;
 
   &:hover {
-    background: var(--midColorHover);
+    background: var(--secColor);
     transform: translateY(-50%) scale(1.1);
   }
 }
@@ -394,7 +394,7 @@
   font-family: var(--font);
 
   &:hover {
-    background-color: var(--midColorHover);
+    background-color: var(--secColor);
     transform: translateY(-2px);
   }
 

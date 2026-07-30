@@ -13,7 +13,7 @@
 }
 
 .welcomeBanner {
-  background: linear-gradient(135deg, var(--secColor) 0%, var(--secColor-deep) 100%);
+  background: linear-gradient(135deg, var(--secColor) 0%, var(--midColor) 100%);
   border-radius: var(--radius-admin-lg);
   padding: 35px;
   color: white;
@@ -96,21 +96,21 @@
     @include shadow;
     flex-shrink: 0;
 
-    &.blue {
-      background-color: var(--badge-blue-bg);
-      color: var(--badge-blue-text);
+    &.info {
+      background-color: var(--color-info-bg);
+      color: var(--color-info-text);
     }
-    &.purple {
-      background-color: var(--badge-purple-bg);
-      color: var(--badge-purple-text);
+    &.warning {
+      background-color: var(--color-warning-bg);
+      color: var(--color-warning-text);
     }
-    &.pink {
-      background-color: var(--badge-pink-bg);
-      color: var(--badge-pink-text);
+    &.error {
+      background-color: var(--color-error-bg);
+      color: var(--color-error-text);
     }
-    &.green {
+    &.success {
       background-color: var(--color-success-bg);
-      color: var(--badge-green-text);
+      color: var(--color-success-text);
     }
   }
 
@@ -121,7 +121,7 @@
 
     .label {
       font-size: var(--text-sm);
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
       font-weight: 500;
     }
 
@@ -192,14 +192,14 @@
 
     p {
       font-size: var(--text-sm);
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
       margin: 0;
       line-height: 1.35;
     }
   }
 
   .chevron {
-    color: var(--brightGrayColor);
+    color: var(--darkGrayColor);
     transition: transform 0.2s ease, color 0.2s ease;
   }
 
@@ -261,7 +261,7 @@
 
       &:hover {
         text-decoration: underline;
-        color: var(--midColorHover);
+        color: var(--secColor);
       }
     }
   }
@@ -298,7 +298,7 @@
 
   .title {
     flex: 1;
-    color: var(--text-color);
+    color: var(--mutedColor);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -317,7 +317,7 @@
 
   .emptyText {
     font-size: var(--text-sm);
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
     text-align: center;
     margin: 20px 0;
   }
@@ -370,7 +370,7 @@
   }
 
   p {
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
     margin: 0 0 20px;
   }
 
@@ -386,7 +386,7 @@
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: var(--midColorHover);
+      background-color: var(--secColor);
     }
   }
 }

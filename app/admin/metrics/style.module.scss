@@ -96,21 +96,21 @@
     @include shadow;
     flex-shrink: 0;
 
-    &.blue {
-      background-color: var(--badge-blue-bg);
-      color: var(--badge-blue-text);
+    &.info {
+      background-color: var(--color-info-bg);
+      color: var(--color-info-text);
     }
-    &.purple {
-      background-color: var(--badge-purple-bg);
-      color: var(--badge-purple-text);
+    &.warning {
+      background-color: var(--color-warning-bg);
+      color: var(--color-warning-text);
     }
-    &.green {
+    &.success {
       background-color: var(--color-success-bg);
-      color: var(--badge-green-text);
+      color: var(--color-success-text);
     }
-    &.pink {
-      background-color: var(--badge-pink-bg);
-      color: var(--badge-pink-text);
+    &.error {
+      background-color: var(--color-error-bg);
+      color: var(--color-error-text);
     }
   }
 
@@ -129,7 +129,7 @@
 
     .summaryLabel {
       font-size: var(--text-sm);
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
       font-weight: 500;
     }
   }
@@ -157,7 +157,7 @@
   }
 
   th {
-    background: var(--admin-surface-soft);
+    background: var(--grayColor);
     color: var(--secColor);
     font-weight: 700;
     font-size: var(--text-base);
@@ -192,7 +192,7 @@
 
 .viewCell,
 .uniqueCell {
-  color: var(--text-color);
+  color: var(--mutedColor);
   font-weight: 600;
   font-size: var(--text-base);
 

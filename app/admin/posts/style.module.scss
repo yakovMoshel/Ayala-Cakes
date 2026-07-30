@@ -29,11 +29,18 @@
   @include shadow;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 0;
 
   &:hover {
     border-color: var(--midColor);
     box-shadow: 0 10px 25px rgba(var(--secColor-rgb), 0.08);
     transform: translateY(-2px);
+  }
+
+  /* Keep open ⋮ menu above the next row */
+  &:has([aria-expanded="true"]) {
+    z-index: 5;
   }
 }
 
@@ -72,7 +79,7 @@
 
 .postSummary {
   font-size: var(--text-sm);
-  color: var(--text-color);
+  color: var(--mutedColor);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -85,13 +92,13 @@
   align-items: center;
   gap: var(--space-8);
   font-size: var(--text-sm);
-  color: var(--darkGrayColor);
+  color: var(--mutedColor);
 
   .metaItem {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
 
     svg {
       color: var(--midColor);

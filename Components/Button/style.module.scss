@@ -110,7 +110,7 @@
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background-color: var(--midColorHover);
+    background-color: var(--secColor);
     color: var(--mainColor);
     outline: none;
     box-shadow: none;

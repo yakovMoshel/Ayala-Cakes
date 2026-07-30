@@ -1,20 +1,6 @@
 // SeoEditor.module.scss
 @import '/app/mixins.scss';
 
-  // Variables
-// :root {
-//   --main-color: var(--mainColor);
-//   --secondary-color: var(--secColor);
-//   --border-radius: var(--radius-admin-sm);
-//   --success-color: #22c55e;
-//   --warning-color: #f59e0b;
-//   --danger-color: var(--color-error-text);
-//   --muted-color: var(--brightGrayColor);
-//   --light-bg: var(--grayColor);
-//   --focus-color: #3b82f6;
-//   --editor-min-height: 400px;
-// }
-
 .seoEditor {
   width: 100%;
   font-family: var(--font);
@@ -102,7 +88,7 @@
       
       label {
         font-weight: 500;
-        color: var(--darkGrayColor);
+        color: var(--mutedColor);
         display: flex;
         align-items: center;
         gap: var(--space-2);
@@ -112,7 +98,7 @@
     input, textarea, select {
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid var(--brightGrayColor);
+      border: 1px solid var(--darkGrayColor);
       border-radius: var(--radius-admin-sm);
       font-family: var(--font);
       font-size: 14px;
@@ -122,12 +108,12 @@
       
       &:focus {
         outline: none;
-        border-color: var(--focus-color);
+        border-color: var(--color-info-text);
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       }
       
       &::placeholder {
-        color: var(--brightGrayColor);
+        color: var(--darkGrayColor);
       }
     }
     
@@ -171,7 +157,7 @@
     margin: 0 0 12px;
     font-size: 13px;
     line-height: 1.5;
-    color: var(--text-color);
+    color: var(--mutedColor);
     text-align: right;
   }
 
@@ -179,7 +165,7 @@
     margin: -2px 0 8px;
     font-size: 12px;
     line-height: 1.45;
-    color: var(--text-color);
+    color: var(--mutedColor);
     text-align: right;
   }
 
@@ -187,7 +173,7 @@
     margin: 4px 0 12px;
     padding: 12px;
     background: var(--grayColor);
-    border: 1px solid var(--brightGrayColor);
+    border: 1px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
   }
 
@@ -195,7 +181,7 @@
     margin: 0 0 12px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
     text-align: right;
   }
 
@@ -204,7 +190,7 @@
     margin-bottom: 20px;
     padding: 16px;
     background: var(--grayColor);
-    border: 1px solid var(--brightGrayColor);
+    border: 1px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
     text-align: right;
 
@@ -218,7 +204,7 @@
     align-items: center;
     gap: var(--space-3);
     font-weight: 600;
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
 
     svg {
       color: var(--main-color);
@@ -237,7 +223,7 @@
     padding: 24px 16px;
     margin-bottom: 12px;
     background: white;
-    border: 2px dashed var(--brightGrayColor);
+    border: 2px dashed var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
     cursor: pointer;
     transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
@@ -251,7 +237,7 @@
 
     &:focus-visible {
       outline: none;
-      border-color: var(--focus-color);
+      border-color: var(--color-info-text);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     }
   }
@@ -263,7 +249,7 @@
     margin-bottom: 4px;
     border-radius: var(--radius-admin-circle);
     background: var(--grayColorHover);
-    color: var(--text-color);
+    color: var(--mutedColor);
 
     .imageUploadEmpty:hover & {
       background: #e0e7ff;
@@ -274,12 +260,12 @@
   .imageUploadTitle {
     font-size: 15px;
     font-weight: 600;
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
   }
 
   .imageUploadSub {
     font-size: 13px;
-    color: var(--text-color);
+    color: var(--mutedColor);
   }
 
   .imagePreviewCard {
@@ -289,7 +275,7 @@
     margin-bottom: 12px;
     padding: 12px;
     background: white;
-    border: 1px solid var(--brightGrayColor);
+    border: 1px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
 
     @media (min-width: 520px) {
@@ -306,7 +292,7 @@
     border-radius: var(--radius-admin-sm);
     overflow: hidden;
     background: var(--grayColorHover);
-    border: 1px solid var(--brightGrayColor);
+    border: 1px solid var(--darkGrayColor);
 
     @media (min-width: 520px) {
       width: 180px;
@@ -392,7 +378,7 @@
   .imageUrlLabel {
     font-size: 12px;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--mutedColor);
   }
 
   .imageUrlInput {
@@ -402,14 +388,14 @@
     font-family: monospace, var(--font);
     text-align: left;
     direction: ltr;
-    border: 1px solid var(--brightGrayColor);
+    border: 1px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
     background: white;
     transition: border-color 0.2s;
 
     &:focus {
       outline: none;
-      border-color: var(--focus-color);
+      border-color: var(--color-info-text);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
   }
@@ -418,14 +404,14 @@
   .metadataSection {
     margin-top: 8px;
     padding-top: 20px;
-    border-top: 1px solid var(--brightGrayColor);
+    border-top: 1px solid var(--darkGrayColor);
   }
 
   .metadataSectionTitle {
     margin: 0 0 12px;
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--mutedColor);
     text-transform: none;
     letter-spacing: 0;
   }
@@ -452,7 +438,7 @@
       flex-shrink: 0;
       border-radius: var(--radius-admin-sm) var(--radius-admin-sm) 0 0;
       background-color: var(--grayColor);
-      border-color: var(--brightGrayColor);
+      border-color: var(--darkGrayColor);
       padding: 10px;
     }
     
@@ -464,7 +450,7 @@
       display: flex;
       flex-direction: column;
       border-radius: 0 0 var(--radius-admin-sm) var(--radius-admin-sm);
-      border-color: var(--brightGrayColor);
+      border-color: var(--darkGrayColor);
     }
 
     :global(.ql-editor) {
@@ -485,7 +471,7 @@
     padding: 20px;
     text-align: center;
     border-radius: var(--radius-admin-sm);
-    color: var(--text-color);
+    color: var(--mutedColor);
   }
   
   .quillEditor {
@@ -500,7 +486,7 @@
   // סגנונות לסקציית AI
   .seoGenerateSection {
     background: var(--grayColor);
-    border: 2px solid var(--brightGrayColor);
+    border: 2px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-lg);
     padding: 24px;
     margin: 30px 0;
@@ -518,7 +504,7 @@
 
       p {
         margin: 0;
-        color: var(--darkGrayColor);
+        color: var(--mutedColor);
         font-size: 14px;
       }
     }
@@ -527,7 +513,7 @@
       background: white;
       border-radius: var(--radius-admin-sm);
       padding: 18px;
-      border: 1px solid var(--brightGrayColor);
+      border: 1px solid var(--darkGrayColor);
 
       .formGroup {
         margin-bottom: 14px;
@@ -538,14 +524,14 @@
           margin-bottom: 6px;
           font-size: 14px;
           font-weight: 500;
-          color: var(--darkGrayColor);
+          color: var(--mutedColor);
         }
 
         input,
         textarea {
           width: 100%;
           padding: 10px 12px;
-          border: 1px solid var(--brightGrayColor);
+          border: 1px solid var(--darkGrayColor);
           border-radius: var(--radius-admin-sm);
           font-family: var(--font);
           font-size: 14px;
@@ -574,13 +560,13 @@
     .aiModeHint {
       margin: 0 0 14px;
       font-size: 13px;
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
       line-height: 1.5;
     }
 
     .aiModeDivider {
       height: 1px;
-      background: var(--brightGrayColor);
+      background: var(--darkGrayColor);
       margin: 20px 0;
     }
 
@@ -609,7 +595,7 @@
       color: var(--mainColor);
 
       &:hover:not(:disabled) {
-        background-color: var(--midColorHover);
+        background-color: var(--secColor);
         transform: translateY(-2px);
       }
     }
@@ -617,18 +603,18 @@
     .generateSEOButton {
       background-color: white;
       color: var(--secColor);
-      border: 2px solid var(--brightGrayColor);
+      border: 2px solid var(--darkGrayColor);
 
       &:hover:not(:disabled) {
         border-color: var(--midColor);
-        background-color: var(--brightGrayColor);
+        background-color: var(--darkGrayColor);
       }
     }
 
     .requirement {
       margin-top: 12px;
       font-size: 13px;
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
       background: var(--grayColor);
       padding: 8px 12px;
       border-radius: var(--radius-admin-sm);
@@ -653,7 +639,7 @@
     margin-top: 16px;
     
     &:hover {
-      background-color: var(--secColor-muted);
+      background-color: var(--midColor);
       transform: translateY(-1px);
     }
     
@@ -691,19 +677,19 @@
       
       &.good {
         background-color: var(--color-success-bg);
-        border: 2px solid var(--success-color);
-        color: var(--success-color);
+        border: 2px solid var(--color-success-text);
+        color: var(--color-success-text);
       }
       
       &.ok {
         background-color: var(--color-warning-bg);
-        border: 2px solid var(--warning-color);
+        border: 2px solid var(--color-warning-text);
         color: var(--color-warning-text);
       }
       
       &.bad {
         background-color: var(--color-error-bg);
-        border: 2px solid var(--danger-color);
+        border: 2px solid var(--color-error-text);
         color: var(--color-error-text);
       }
       
@@ -716,13 +702,13 @@
     .scoreLabel {
       font-size: 16px;
       font-weight: 600;
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
     }
 
     .scoreSubtext {
       margin: 4px 0 0;
       font-size: 12px;
-      color: var(--brightGrayColor);
+      color: var(--darkGrayColor);
       text-align: center;
     }
   }
@@ -740,7 +726,7 @@
       align-items: center;
       padding: 16px;
       background-color: var(--grayColor);
-      border-bottom: 1px solid var(--brightGrayColor);
+      border-bottom: 1px solid var(--darkGrayColor);
       cursor: pointer;
       user-select: none;
       
@@ -753,7 +739,7 @@
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        color: var(--darkGrayColor);
+        color: var(--mutedColor);
         
         svg {
           color: var(--main-color);
@@ -761,7 +747,7 @@
       }
       
       .toggleIcon {
-        color: var(--text-color);
+        color: var(--mutedColor);
       }
     }
     
@@ -785,7 +771,7 @@
       color: var(--color-success-text);
       
       .goodIcon {
-        color: var(--success-color);
+        color: var(--color-success-text);
       }
     }
     
@@ -794,7 +780,7 @@
       color: var(--color-info-text);
       
       .okIcon {
-        color: var(--badge-blue-text);
+        color: var(--color-info-text);
       }
     }
     
@@ -803,7 +789,7 @@
       color: var(--color-warning-text);
       
       .warningIcon {
-        color: var(--warning-color);
+        color: var(--color-warning-text);
       }
     }
     
@@ -812,16 +798,16 @@
       color: var(--color-error-text);
       
       .badIcon {
-        color: var(--danger-color);
+        color: var(--color-error-text);
       }
     }
     
     &.pending {
       background-color: var(--grayColorHover);
-      color: var(--text-color);
+      color: var(--mutedColor);
       
       .pendingIcon {
-        color: var(--brightGrayColor);
+        color: var(--darkGrayColor);
       }
     }
   }
@@ -842,7 +828,7 @@
   .scoreBreakdown {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid var(--brightGrayColor);
+    border-top: 1px solid var(--darkGrayColor);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
@@ -854,7 +840,7 @@
       
       span {
         font-size: 14px;
-        color: var(--darkGrayColor);
+        color: var(--mutedColor);
       }
       
       .subScoreValue {
@@ -884,7 +870,7 @@
   // Google SERP Preview
   .serpPreview {
     padding: 16px;
-    border: 1px solid var(--brightGrayColor);
+    border: 1px solid var(--darkGrayColor);
     border-radius: var(--radius-admin-sm);
     margin: 0 16px 16px;
     background-color: white;
@@ -960,7 +946,7 @@
   padding: 14px 18px;
   margin-bottom: 20px;
   background: white;
-  border: 1px solid var(--brightGrayColor);
+  border: 1px solid var(--darkGrayColor);
   border-radius: var(--radius-admin-lg);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
@@ -973,7 +959,7 @@
 
 .toolbarLabel {
   font-size: var(--text-sm);
-  color: var(--text-color);
+  color: var(--mutedColor);
   font-weight: 500;
 }
 
@@ -1028,7 +1014,7 @@
 .toolbarBtnGhost {
   background: var(--grayColor);
   color: var(--secColor, #693743);
-  border: 1px solid var(--brightGrayColor);
+  border: 1px solid var(--darkGrayColor);
 
   &:hover {
     background: var(--grayColorHover);
@@ -1037,11 +1023,11 @@
 
 .toolbarBtnDraft {
   background: var(--grayColorHover);
-  color: var(--darkGrayColor);
-  border: 1px solid var(--brightGrayColor);
+  color: var(--mutedColor);
+  border: 1px solid var(--darkGrayColor);
 
   &:hover:not(:disabled) {
-    background: var(--brightGrayColor);
+    background: var(--darkGrayColor);
   }
 }
 
@@ -1051,7 +1037,7 @@
   box-shadow: 0 4px 12px rgba(var(--secColor-rgb), 0.2);
 
   &:hover:not(:disabled) {
-    background: var(--midColorHover, #8a6666);
+    background: var(--secColor);
     transform: translateY(-1px);
   }
 }
@@ -1070,7 +1056,7 @@
 .sidebarStatusNote {
   margin-top: 12px;
   font-size: var(--text-sm);
-  color: var(--text-color);
+  color: var(--mutedColor);
   line-height: 1.4;
 }
 
@@ -1089,7 +1075,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--secColor-muted);
+    background-color: var(--midColor);
   }
 }
 
@@ -1120,10 +1106,10 @@
 .statusButton {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid var(--brightGrayColor);
+  border: 1px solid var(--darkGrayColor);
   border-radius: var(--radius-admin-sm);
   background-color: white;
-  color: var(--darkGrayColor);
+  color: var(--mutedColor);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;

@@ -1,6 +1,8 @@
 @import '/app/mixins.scss';
 
 .item {
+    position: relative;
+    z-index: 0;
     width: 250px;
     border-radius: 20px;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
@@ -9,25 +11,38 @@
     align-items: center;
     font-family: 'Poppins', sans-serif;
     background-color: #fff;
-    color: var(--text-color);
+    color: var(--mutedColor);
     text-align: right;
     overflow: hidden;
     padding: 20px;
     gap: 10px;
+
     &:hover {
         box-shadow: none;
         outline: 2px solid var(--grayColor);
     }
 
-    
+    &:has([aria-expanded="true"]) {
+        z-index: 5;
+        overflow: visible;
+    }
 
     &.deleted {
         opacity: 0.5;
     }
 
+    .adminMenu {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 5;
+    }
+
     .imageLink {
         width: 100%;
         height: auto;
+        border-radius: 20px 20px 0 0;
+        overflow: hidden;
     }
 
     .image {
@@ -60,7 +75,7 @@
     .details {
         font-size: 14px;
         font-weight: 400;
-        color: var(--text-color);
+        color: var(--mutedColor);
         display: flex;
         align-items: right;
     }
@@ -71,43 +86,6 @@
         align-items: center;
         width: 100%;
         padding: 10px;
-    }
-
-    .buttonContainer {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-        margin-top: 10px;
-
-        .deactivateButton,
-        .editButton {
-            padding: 10px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-family: var(--font);
-            margin-left: 10px;
-
-            &:hover {
-                background-color: var(--secColor);
-                border: none;
-                color: var(--mainColor)
-            }
-        }
-
-        .deactivateButton {
-            background-color: white;
-            border: 1px solid red;
-            color: var(--secColor);
-        }
-
-        .editButton {
-            background-color: white;
-            border: 1px solid var(--secColor);
-            color: var(--secColor);
-        }
     }
 }
 

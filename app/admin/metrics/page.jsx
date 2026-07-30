@@ -94,7 +94,7 @@ export default function MetricsPage() {
         <>
           <div className={styles.summaryGrid}>
             <div className={styles.summaryCard}>
-              <div className={`${styles.cardIcon} ${styles.blue}`}>
+              <div className={`${styles.cardIcon} ${styles.info}`}>
                 <Eye size={20} />
               </div>
               <div className={styles.cardInfo}>
@@ -104,7 +104,7 @@ export default function MetricsPage() {
             </div>
 
             <div className={styles.summaryCard}>
-              <div className={`${styles.cardIcon} ${styles.purple}`}>
+              <div className={`${styles.cardIcon} ${styles.warning}`}>
                 <Users size={20} />
               </div>
               <div className={styles.cardInfo}>
@@ -116,7 +116,7 @@ export default function MetricsPage() {
             </div>
 
             <div className={styles.summaryCard}>
-              <div className={`${styles.cardIcon} ${styles.green}`}>
+              <div className={`${styles.cardIcon} ${styles.success}`}>
                 <CheckCircle2 size={20} />
               </div>
               <div className={styles.cardInfo}>
@@ -132,7 +132,7 @@ export default function MetricsPage() {
             </div>
 
             <div className={styles.summaryCard}>
-              <div className={`${styles.cardIcon} ${styles.pink}`}>
+              <div className={`${styles.cardIcon} ${styles.error}`}>
                 <Layers size={20} />
               </div>
               <div className={styles.cardInfo}>

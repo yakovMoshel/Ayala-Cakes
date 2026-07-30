@@ -57,8 +57,7 @@ const Home = async () => {
           {/* font: inherit keeps the exact .headTitle typography (UA h1 styles suppressed) */}
           <h1 style={{ font: 'inherit', margin: 0 }}>עוגה שהיא פשוט ואו</h1>
           <div className={styles.subtext}>
-            היי, אני אילה, קונדיטורית מוסמכת ומעצבת עוגות, עם תשוקה ליצור עוגות ייחודיות וקסומות שיהפכו כל אירוע לחגיגה בלתי נשכחת
-          </div>
+          היי, אני אילה, מעצבת עוגות וקונדיטורית מוסמכת, והאהבה הכי גדולה שלי היא ליצור עוגות מיוחדות שעושות ה-WOW של האירוע.          </div>
           <Button href="/shop" size="lg">לצפייה בעוגות</Button>
         </div>
       </div>

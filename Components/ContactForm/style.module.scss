@@ -70,11 +70,11 @@
     font-family: var(--font);
 
     &:hover {
-      background-color: var(--secColor-muted);
+      background-color: var(--midColor);
 
       &:disabled {
         cursor: not-allowed;
-        background-color: var(--midColorHover);
+        background-color: var(--secColor);
       }
     }
   }
@@ -108,7 +108,7 @@
     label {
       display: block;
       margin-bottom: 5px;
-      color: var(--text-color);
+      color: var(--mutedColor);
     }
 
     input,
@@ -201,7 +201,7 @@
 }
 
 .squareForm .consent {
-  color: var(--text-color);
+  color: var(--mutedColor);
 
   a {
     color: var(--secColor);

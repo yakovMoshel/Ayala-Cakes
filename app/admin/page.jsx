@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
 
       <div className={styles.statsGrid}>
         <div className={styles.statsCard}>
-          <div className={`${styles.statsIcon} ${styles.blue}`}>
+          <div className={`${styles.statsIcon} ${styles.info}`}>
             <TrendingUp size={24} />
           </div>
           <div className={styles.statsInfo}>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className={styles.statsCard}>
-          <div className={`${styles.statsIcon} ${styles.purple}`}>
+          <div className={`${styles.statsIcon} ${styles.warning}`}>
             <Users size={24} />
           </div>
           <div className={styles.statsInfo}>
@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className={styles.statsCard}>
-          <div className={`${styles.statsIcon} ${styles.pink}`}>
+          <div className={`${styles.statsIcon} ${styles.error}`}>
             <ShoppingBag size={24} />
           </div>
           <div className={styles.statsInfo}>
@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className={styles.statsCard}>
-          <div className={`${styles.statsIcon} ${styles.green}`}>
+          <div className={`${styles.statsIcon} ${styles.success}`}>
             <FileText size={24} />
           </div>
           <div className={styles.statsInfo}>

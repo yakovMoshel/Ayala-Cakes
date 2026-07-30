@@ -63,7 +63,7 @@
     label {
       display: block;
       margin-bottom: 5px;
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
     }
 
     input, textarea {
@@ -108,7 +108,7 @@
     @include shadow-sm;
     &:hover {
       cursor: pointer;
-      background-color: var(--midColorHover);
+      background-color: var(--secColor);
       box-shadow: none;
     }
     &:disabled {
@@ -199,7 +199,7 @@
     label {
       display: block;
       margin-bottom: 0x;
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
     }
   }
 }

@@ -12,12 +12,12 @@
   min-height: 44px;
   padding: 8px 10px;
   background: #fff;
-  border: 1px solid var(--brightGrayColor);
+  border: 1px solid var(--darkGrayColor);
   border-radius: var(--radius-admin-sm);
   transition: border-color 0.2s, box-shadow 0.2s;
 
   &:focus-within {
-    border-color: var(--focus-color, var(--badge-blue-text));
+    border-color: var(--color-info-text);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 }
@@ -29,10 +29,10 @@
   max-width: 100%;
   padding: 4px 6px 4px 10px;
   background: var(--grayColorHover);
-  border: 1px solid var(--brightGrayColor);
+  border: 1px solid var(--darkGrayColor);
   border-radius: var(--radius-admin-pill);
   font-size: 13px;
-  color: var(--darkGrayColor);
+  color: var(--mutedColor);
 }
 
 .tagText {
@@ -49,7 +49,7 @@
   border: none;
   border-radius: var(--radius-admin-circle);
   background: transparent;
-  color: var(--text-color);
+  color: var(--mutedColor);
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
 
@@ -73,10 +73,10 @@
   font-family: var(--font);
   font-size: 14px;
   text-align: right;
-  color: var(--darkGrayColor);
+  color: var(--mutedColor);
 
   &::placeholder {
-    color: var(--brightGrayColor);
+    color: var(--darkGrayColor);
   }
 
   &:disabled {
@@ -87,6 +87,6 @@
 .hint {
   margin: 6px 0 0;
   font-size: 12px;
-  color: var(--brightGrayColor);
+  color: var(--darkGrayColor);
   text-align: right;
 }

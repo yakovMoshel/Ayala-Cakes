@@ -73,7 +73,7 @@
     border: none;
     border-radius: var(--radius-admin-sm);
     background-color: transparent;
-    color: var(--darkGrayColor);
+    color: var(--mutedColor);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -104,7 +104,7 @@
     .uploadInput {
       margin-bottom: 15px;
       padding: 10px;
-      border: 1px solid var(--brightGrayColor);
+      border: 1px solid var(--darkGrayColor);
       border-radius: var(--radius-admin-sm);
       background-color: white;
       font-family: var(--font);
@@ -118,7 +118,7 @@
     }
 
     .uploadDescription {
-      color: var(--darkGrayColor);
+      color: var(--mutedColor);
       font-size: 14px;
       margin-top: 10px;
       line-height: 1.4;
@@ -138,7 +138,7 @@
       @include shadow;
 
       &:hover {
-        background-color: var(--midColorHover);
+        background-color: var(--secColor);
         transform: translateY(-2px);
       }
 
@@ -228,7 +228,7 @@
 
         .imageName {
           font-size: 12px;
-          color: var(--darkGrayColor);
+          color: var(--mutedColor);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -254,7 +254,7 @@
           font-family: var(--font);
 
           &:hover {
-            background-color: var(--midColorHover);
+            background-color: var(--secColor);
             transform: scale(1.05);
           }
 
@@ -272,8 +272,8 @@
     .loadMoreButton {
       width: 100%;
       background-color: var(--grayColor);
-      color: var(--darkGrayColor);
-      border: 2px solid var(--brightGrayColor);
+      color: var(--mutedColor);
+      border: 2px solid var(--darkGrayColor);
       padding: 12px;
       border-radius: var(--radius-admin-sm);
       font-size: 16px;
@@ -283,7 +283,7 @@
       font-family: var(--font);
 
       &:hover {
-        background-color: var(--brightGrayColor);
+        background-color: var(--darkGrayColor);
         border-color: var(--midColor);
       }
 
@@ -309,8 +309,8 @@
 
     .cancelButton {
       background-color: var(--grayColor);
-      color: var(--darkGrayColor);
-      border: 2px solid var(--brightGrayColor);
+      color: var(--mutedColor);
+      border: 2px solid var(--darkGrayColor);
       padding: 12px 25px;
       border-radius: var(--radius-admin-lg);
       font-size: 16px;
@@ -320,7 +320,7 @@
       font-family: var(--font);
 
       &:hover {
-        background-color: var(--brightGrayColor);
+        background-color: var(--darkGrayColor);
         border-color: var(--midColor);
       }
     }
@@ -339,7 +339,7 @@
       @include shadow;
 
       &:hover {
-        background-color: var(--midColorHover);
+        background-color: var(--secColor);
         transform: translateY(-2px);
       }
 
