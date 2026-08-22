@@ -21,8 +21,8 @@ export const metadata = {
     images: [
       {
         url: '/ayala-avraham.webp',
-        width: 1000,
-        height: 600,
+        width: 1200,
+        height: 900,
         alt: 'אילה אברהם - קונדיטורית מוסמכת',
       },
     ],
@@ -47,8 +47,8 @@ const Home = async () => {
           <Image
             src="/ayala-avraham.webp"
             alt="אילה אברהם - קונדיטורית מוסמכת"
-            width={1000}
-            height={600}
+            width={1200}
+            height={900}
             priority
             sizes="(max-width: 768px) 100vw, 40vw"
           />
