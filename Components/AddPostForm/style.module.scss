@@ -1127,6 +1127,40 @@
 }
 
 // Publishing tips
+.dateQuickActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: 10px;
+}
+
+.dateQuickButton {
+  padding: 6px 12px;
+  border: 1px solid var(--darkGrayColor);
+  border-radius: var(--radius-admin-sm);
+  background-color: white;
+  color: var(--mutedColor);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--midColor);
+    color: var(--secColor);
+  }
+}
+
+.publishDatePreview {
+  margin: 10px 0 0;
+  font-size: var(--text-sm);
+  color: var(--mutedColor);
+
+  strong {
+    color: var(--secColor);
+    font-weight: 600;
+  }
+}
+
 .publishTip {
   margin-top: 16px;
   display: flex;

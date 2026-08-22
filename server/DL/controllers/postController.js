@@ -9,7 +9,7 @@ const CATEGORY_POPULATE = { path: 'categoryId', select: 'name' };
 export const getPosts = async () => {
   const posts = await postModel
     .find({ status: 'published' })
-    .select('_id title summary image createdAt slug categoryId')
+    .select('_id title summary image createdAt publishDate slug categoryId')
     .populate(CATEGORY_POPULATE)
     .sort({ publishDate: -1, createdAt: -1 })
     .lean();

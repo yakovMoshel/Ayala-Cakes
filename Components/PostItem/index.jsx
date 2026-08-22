@@ -7,11 +7,12 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import useStore from '@/store/useStore';
 import { formatBlogDate } from '@/utils/formatBlogDate';
+import { getPostDisplayDate } from '@/utils/postPublishDate';
 import AdminRowMenu from '@/Components/AdminRowMenu';
 import { Edit3, Trash2 } from 'lucide-react';
 
 export default function PostItem({ post }) {
-  const { _id, title, summary, image, createdAt, slug } = post;
+  const { _id, title, summary, image, slug } = post;
 
   const router = useRouter();
   const isAuthenticated = useStore((state) => state.isAuthenticated);
@@ -93,7 +94,7 @@ export default function PostItem({ post }) {
               {summary}
             </div>
             <div className={styles.createdAt}>
-              {formatBlogDate(createdAt)}
+              {formatBlogDate(getPostDisplayDate(post))}
             </div>
           </div>
         </div>

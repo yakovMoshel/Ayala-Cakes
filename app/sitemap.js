@@ -1,6 +1,7 @@
 import { connectToMongo } from '@/server/DL/connectToMongo';
 import { getAllProducts } from '@/server/BL/productService';
 import { getAllPosts } from '@/server/BL/postService';
+import { getPostDisplayDate } from '@/utils/postPublishDate';
 
 export default async function sitemap() {
   const baseUrl = 'https://www.ayacakes.biz';
@@ -84,7 +85,7 @@ export default async function sitemap() {
     // Generate blog post pages
     const blogPages = posts?.map((post) => ({
       url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: post.updatedAt || post.createdAt || new Date(),
+      lastModified: getPostDisplayDate(post) || post.updatedAt || post.createdAt || new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
     })) || [];

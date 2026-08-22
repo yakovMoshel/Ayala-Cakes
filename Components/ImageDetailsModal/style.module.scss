@@ -1,0 +1,173 @@
+@import '/app/mixins.scss';
+
+.imageDetailsModal {
+  .modalContent {
+    background-color: white;
+    padding: 30px;
+    border-radius: var(--radius-admin-lg);
+    width: 560px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    @include shadow;
+    animation: modalFadeIn 0.3s ease;
+    font-family: var(--font);
+    direction: rtl;
+  }
+
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--grayColor);
+    padding-bottom: 15px;
+
+    h2 {
+      @include subtitle;
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .closeButton {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--secColor);
+      padding: 8px;
+      border-radius: var(--radius-admin-circle);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: var(--grayColor);
+      }
+    }
+  }
+
+  .previewRow {
+    margin-bottom: 20px;
+    text-align: center;
+
+    .preview {
+      max-width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      border-radius: var(--radius-admin-sm);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .field {
+    margin-bottom: 16px;
+
+    label {
+      @include text-label;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--darkGrayColor);
+      border-radius: var(--radius-admin-sm);
+      font-family: var(--font);
+      font-size: 15px;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: var(--midColor);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .hint {
+      @include text-caption;
+      margin: 6px 0 0;
+      line-height: 1.4;
+    }
+  }
+
+  .error {
+    color: var(--color-error-text);
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+
+  .modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-7);
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 2px solid var(--grayColor);
+
+    .cancelButton,
+    .confirmButton {
+      padding: 12px 25px;
+      border-radius: var(--radius-admin-lg);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.3s ease;
+    }
+
+    .cancelButton {
+      background-color: var(--grayColor);
+      color: var(--mutedColor);
+      border: 2px solid var(--darkGrayColor);
+
+      &:hover:not(:disabled) {
+        border-color: var(--midColor);
+      }
+    }
+
+    .confirmButton {
+      background-color: var(--midColor);
+      color: var(--mainColor);
+      border: none;
+      @include shadow;
+
+      &:hover:not(:disabled) {
+        background-color: var(--secColor);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .imageDetailsModal {
+    .modalActions {
+      flex-direction: column;
+
+      .cancelButton,
+      .confirmButton {
+        width: 100%;
+      }
+    }
+  }
+}

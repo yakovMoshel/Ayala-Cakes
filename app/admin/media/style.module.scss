@@ -344,6 +344,25 @@
   }
 }
 
+.previewAltField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--secColor);
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
 .modalActions {
   display: flex;
   gap: var(--space-7);

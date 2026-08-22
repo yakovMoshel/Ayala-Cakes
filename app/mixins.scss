@@ -101,6 +101,47 @@
         }
     }
 
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 12px;
+    }
+
+    p.blog-image {
+        margin: 1.5em 0 0.5em;
+        text-align: center;
+
+        img {
+            margin: 0 auto;
+        }
+    }
+
+    p.blog-image-caption {
+        margin: 0 0 1.5em;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--mutedColor);
+        line-height: 1.5;
+
+        .blog-image-title {
+            display: block;
+            font-weight: 600;
+            color: var(--secColor);
+        }
+
+        .blog-image-desc {
+            display: block;
+            margin-top: 0.35em;
+        }
+    }
+
+    /* Standalone inline images (legacy posts) */
+    p:not(.blog-image) > img:only-child {
+        margin: 1.5em auto;
+    }
+
     @media (max-width: 768px) {
         font-size: 1rem;
 

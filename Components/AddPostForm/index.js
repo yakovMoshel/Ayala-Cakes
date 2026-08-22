@@ -25,6 +25,13 @@ import PostCtaEditor from '@/Components/PostCtaBlock/PostCtaEditor';
 import { DEFAULT_POST_CTA, mapPostCtaFromPost, normalizePostCtaForDb } from '@/utils/postCta';
 import { analyzePost } from '@/utils/seoScore';
 import { normalizeKeywordsList } from '@/utils/keywords';
+import {
+  formatPublishDateInput,
+  getPostDisplayDate,
+  getPublishDateInputWithOffset,
+  normalizePublishDateForWrite,
+} from '@/utils/postPublishDate';
+import { formatBlogDate } from '@/utils/formatBlogDate';
 import KeywordTagsInput from '@/Components/KeywordTagsInput';
 import RichTextEditor from '@/Components/RichTextEditor';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
@@ -51,15 +58,6 @@ const getApiErrorMessage = (error, fallback) => {
   return fallback;
 };
 
-const formatPublishDate = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
 const mapPostToFormData = (post) => ({
   title: post.title || '',
   summary: post.summary || '',
@@ -75,7 +73,7 @@ const mapPostToFormData = (post) => ({
   callToAction: post.callToAction || '',
   socialImage: post.socialImage || '',
   status: post.status === 'deleted' ? 'draft' : (post.status || 'draft'),
-  publishDate: formatPublishDate(post.publishDate || post.createdAt),
+  publishDate: formatPublishDateInput(getPostDisplayDate(post)),
   category: post.category || '',
   categoryId:
     post.categoryId != null && post.categoryId !== ''
@@ -141,7 +139,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
   const [expandedSections, setExpandedSections] = useState({
     seo: true,
     contentReadability: false,
-    publishing: false
+    publishing: true
   });
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   
@@ -179,13 +177,9 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
   // Set current date for publish date field (new posts only)
   useEffect(() => {
     if (postId) return;
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
     setFormData(prev => ({
       ...prev,
-      publishDate: `${year}-${month}-${day}`
+      publishDate: getPublishDateInputWithOffset(0),
     }));
   }, [postId]);
 
@@ -416,13 +410,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
     }
   }, [formData.title, formData.slug]);
 
-  // Reset form
   const resetForm = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    
     setFormData({
       title: '',
       summary: '',
@@ -438,7 +426,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
       callToAction: '',
       socialImage: '',
       status: 'draft',
-      publishDate: `${year}-${month}-${day}`,
+      publishDate: getPublishDateInputWithOffset(0),
       category: '',
       categoryId: '',
       postCta: { ...DEFAULT_POST_CTA, buttons: [], productIds: [] },
@@ -486,6 +474,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
     const formattedData = {
       ...formData,
       status: targetStatus,
+      publishDate: normalizePublishDateForWrite(formData.publishDate),
       image: formData.image.trim(),
       seoTitle: formData.seoTitle || formData.title,
       secondaryKeywords: normalizeKeywordsList(formData.secondaryKeywords),
@@ -508,7 +497,13 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
         router.replace(`/admin/posts/${response.data.data._id}/edit`);
       }
 
-      setFormData((prev) => ({ ...prev, status: targetStatus }));
+      setFormData((prev) => ({
+        ...prev,
+        status: targetStatus,
+        publishDate: formatPublishDateInput(
+          getPostDisplayDate(response.data?.data) || prev.publishDate
+        ),
+      }));
 
       const successMessages = {
         published: editingPostId ? 'הפוסט עודכן ופורסם!' : 'הפוסט פורסם בהצלחה!',
@@ -959,17 +954,26 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
             {expandedSections.publishing && (
               <div className={styles.sectionContent}>
                 <div className={styles.formGroup}>
-                  <label>תאריך פרסום</label>
+                  <label htmlFor="publishDate">תאריך שיוצג באתר</label>
+                  <p className={styles.fieldHintCompact}>
+                    התאריך שיופיע בפוסט ובעמוד הבלוג. ניתן לבחור תאריך בעבר (למשל אתמול) או בעתיד.
+                  </p>
                   <input
+                    id="publishDate"
                     type="date"
                     name="publishDate"
                     value={formData.publishDate}
                     onChange={handleChange}
                   />
+                  {formData.publishDate && (
+                    <p className={styles.publishDatePreview}>
+                      יוצג באתר: <strong>{formatBlogDate(formData.publishDate)}</strong>
+                    </p>
+                  )}
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label>סטטוס (תצוגה מקדימה)</label>
+                  <label>סטטוס נוכחי</label>
                   <div className={styles.statusButtons}>
                     <button
                       type="button"
@@ -987,7 +991,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                     </button>
                   </div>
                   <p className={styles.sidebarStatusNote}>
-                    לשמירה בפועל השתמשי בכפתורים בסרגל העליון.
+                    כפתורי «שמור טיוטה» / «פרסם» בסרגל העליון שומרים את השינויים בפועל.
                   </p>
                 </div>
                 <div className={styles.publishTip}>
@@ -995,8 +999,8 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                     <Info size={14} />
                   </div>
                   <p className={styles.tipText}>
-                    פרסום מיידי יפרסם את הפוסט באתר מיד עם שמירתו. 
-                    אם תרצה לתזמן פרסום, בחר תאריך עתידי ולחץ על "פרסם".
+                    התאריך שבחרת נשמר ומוצג בדיוק כפי שהוא — גם אם הוא בעבר.
+                    לפרסום בפועל לחצי «פרסם» בסרגל העליון; לשמירה בלי פרסום — «שמור טיוטה».
                   </p>
                 </div>
               </div>

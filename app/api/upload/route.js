@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 import cloudinary from "@/utils/cloudinary";
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
+import { sanitizePublicIdBasename } from "@/utils/cloudinaryPublicId";
+import { buildCloudinaryContext } from "@/utils/cloudinaryContext";
 
 export async function POST(req) {
   const auth = await verifyAdminSession();
@@ -12,6 +14,11 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const file = formData.get('file');
+    const filename = formData.get('filename');
+    const alt = formData.get('alt');
+    const folder = process.env.CLOUDINARY_UPLOAD_FOLDER || "ayala-media";
+    const sanitizedFilename = filename ? sanitizePublicIdBasename(String(filename)) : '';
+    const uploadContext = buildCloudinaryContext(alt ? String(alt) : '');
     
     if (!file) {
       return NextResponse.json(
@@ -29,14 +36,15 @@ export async function POST(req) {
       cloudinary.uploader.upload_stream(
         {
           resource_type: "image",
-          folder: process.env.CLOUDINARY_UPLOAD_FOLDER || "ayala-media",
+          ...(sanitizedFilename
+            ? { public_id: `${folder}/${sanitizedFilename}`, use_filename: false, unique_filename: false }
+            : { folder, use_filename: true, unique_filename: true }),
           format: "webp", // המרה ל-WEBP כבר בעלאה
           quality: "auto", // דחיסה חכמה
           transformation: [
             { width: 2000, crop: "limit" } // מגביל רוחב מירבי כדי לשמור על משקל
           ],
-          use_filename: true,
-          unique_filename: true,
+          ...(uploadContext ? { context: uploadContext } : {}),
           overwrite: false,
         },
         (error, result) => {

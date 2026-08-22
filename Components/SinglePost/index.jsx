@@ -5,6 +5,7 @@ import PostViewTracker from '@/Components/PostViewTracker';
 import PostCtaBlock from '@/Components/PostCtaBlock';
 import { sanitizeBlogHtml } from '@/utils/sanitizeHtml';
 import { formatBlogDate } from '@/utils/formatBlogDate';
+import { getPostDisplayDate } from '@/utils/postPublishDate';
 
 export default function SinglePost({ post, ctaProducts = [] }) {
   const safeContent = sanitizeBlogHtml(post.content);
@@ -16,7 +17,9 @@ export default function SinglePost({ post, ctaProducts = [] }) {
       )}
       <h1 className={styles.title}>{post.title}</h1>
       <p className={styles.summary}>{post.summary}</p>
-      <p className={styles.author}>נכתב על ידי {post.author} בתאריך {formatBlogDate(post.createdAt)}</p>
+      <p className={styles.author}>
+        נכתב על ידי {post.author} בתאריך {formatBlogDate(getPostDisplayDate(post))}
+      </p>
       {/* CSS (.image) sets width 100% + 3/2 aspect ratio; attrs only reserve space */}
       {post.image && (
         <Image
