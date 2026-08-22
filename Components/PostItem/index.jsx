@@ -47,37 +47,31 @@ export default function PostItem({ post }) {
   const postLink = slug ? `/blog/${slug}` : `/UniquePost/${_id}`;
 
   return (
-    <Link href={postLink} className={styles.itemLink}>
-      <div className={styles.item}>
-        {isAuthenticated && (
-          <div
-            className={styles.adminMenu}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <AdminRowMenu
-              label={`פעולות עבור ${title}`}
-              disabled={isBusy}
-              items={[
-                {
-                  id: 'edit',
-                  label: 'עריכה',
-                  icon: <Edit3 size={14} />,
-                  onClick: handleEdit,
-                },
-                {
-                  id: 'delete',
-                  label: 'מחק',
-                  icon: <Trash2 size={14} />,
-                  tone: 'danger',
-                  onClick: handleDeactivate,
-                },
-              ]}
-            />
-          </div>
-        )}
+    <div className={styles.item}>
+      {isAuthenticated && (
+        <div className={styles.adminMenu}>
+          <AdminRowMenu
+            label={`פעולות עבור ${title}`}
+            disabled={isBusy}
+            items={[
+              {
+                id: 'edit',
+                label: 'עריכה',
+                icon: <Edit3 size={14} />,
+                onClick: handleEdit,
+              },
+              {
+                id: 'delete',
+                label: 'מחק',
+                icon: <Trash2 size={14} />,
+                tone: 'danger',
+                onClick: handleDeactivate,
+              },
+            ]}
+          />
+        </div>
+      )}
+      <Link href={postLink} className={styles.itemLink}>
         <div className={styles.imageContainer}>
           {/* fill matches the existing absolute-positioned CSS inside the aspect-ratio container */}
           {image && (
@@ -103,7 +97,7 @@ export default function PostItem({ post }) {
             </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
