@@ -1,4 +1,5 @@
 import sanitizeHtml from 'sanitize-html';
+import { getOptimizedCloudinaryUrl } from '@/utils/cloudinaryUrl';
 
 /**
  * Sanitize rich HTML from the blog editor (ReactQuill) for safe public render.
@@ -53,6 +54,21 @@ export function sanitizeBlogHtml(html) {
     },
     allowedSchemes: ['http', 'https', 'mailto', 'tel', 'data'],
     allowProtocolRelative: false,
+    transformTags: {
+      img: (_tagName, attribs) => {
+        const src = attribs.src ? getOptimizedCloudinaryUrl(attribs.src, 800) : attribs.src;
+        return {
+          tagName: 'img',
+          attribs: {
+            src,
+            alt: attribs.alt || '',
+            loading: attribs.loading || 'lazy',
+            ...(attribs.title ? { title: attribs.title } : {}),
+            ...(attribs.class ? { class: attribs.class } : {}),
+          },
+        };
+      },
+    },
   });
 }
 

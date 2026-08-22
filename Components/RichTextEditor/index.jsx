@@ -3,6 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { isInternalUrl } from '@/utils/siteLinks';
+import { getOptimizedCloudinaryUrl } from '@/utils/cloudinaryUrl';
+import { extractPublicIdFromCloudinaryUrl } from '@/utils/cloudinaryPublicId';
+import {
+  buildBlogImageHtml,
+  isBlogImageCaptionParagraph,
+  isBlogImageParagraph,
+  parseBlogImageCaption,
+  replaceBlogImageBlock,
+} from '@/utils/blogImageHtml';
 import styles from './style.module.scss';
 
 // Direct client import (not next/dynamic) so the ReactQuill ref forwards correctly.
@@ -13,6 +22,14 @@ if (typeof window !== 'undefined') {
 }
 
 const LinkPickerModal = dynamic(() => import('@/Components/LinkPickerModal'), {
+  ssr: false,
+});
+
+const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), {
+  ssr: false,
+});
+
+const ImageDetailsModal = dynamic(() => import('@/Components/ImageDetailsModal'), {
   ssr: false,
 });
 
@@ -79,8 +96,14 @@ export default function RichTextEditor({
 }) {
   const quillRef = useRef(null);
   const linkHandlerRef = useRef(() => {});
+  const imageHandlerRef = useRef(() => {});
+  const imagePickerRangeRef = useRef(null);
+  const editingImageRef = useRef(null);
   const [quillLoaded, setQuillLoaded] = useState(false);
   const [showLinkPicker, setShowLinkPicker] = useState(false);
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [showImageDetails, setShowImageDetails] = useState(false);
+  const [pendingImage, setPendingImage] = useState(null);
   const [linkPickerState, setLinkPickerState] = useState({
     initialUrl: '',
     initialLinkType: 'internal',
@@ -118,7 +141,25 @@ export default function RichTextEditor({
     setShowLinkPicker(true);
   }, []);
 
+  const openImagePicker = useCallback(() => {
+    const quill = quillRef.current?.getEditor?.();
+    if (quill) {
+      const range = quill.getSelection(true);
+      imagePickerRangeRef.current = range
+        ? { index: range.index, length: range.length }
+        : { index: quill.getLength(), length: 0 };
+    } else {
+      imagePickerRangeRef.current = { index: 0, length: 0 };
+    }
+    setShowImagePicker(true);
+  }, []);
+
+  const closeMediaPicker = useCallback(() => {
+    setShowImagePicker(false);
+  }, []);
+
   linkHandlerRef.current = openLinkPicker;
+  imageHandlerRef.current = openImagePicker;
 
   const modules = useMemo(
     () => ({
@@ -126,6 +167,7 @@ export default function RichTextEditor({
         container: TOOLBAR,
         handlers: {
           link: () => linkHandlerRef.current(),
+          image: () => imageHandlerRef.current(),
         },
       },
     }),
@@ -143,6 +185,115 @@ export default function RichTextEditor({
       setShowLinkPicker(false);
     },
     [linkPickerState.savedRange, onChange]
+  );
+
+  const handleMediaSelect = useCallback((selected) => {
+    const image = Array.isArray(selected) ? selected[0] : null;
+    if (!image?.secure_url) return;
+    editingImageRef.current = null;
+    setPendingImage(image);
+    setShowImagePicker(false);
+    setShowImageDetails(true);
+  }, []);
+
+  const closeImageFlow = useCallback(() => {
+    setShowImageDetails(false);
+    setShowImagePicker(false);
+    setPendingImage(null);
+    imagePickerRangeRef.current = null;
+    editingImageRef.current = null;
+  }, []);
+
+  const openEmbeddedImageEditor = useCallback((img) => {
+    const quill = quillRef.current?.getEditor?.();
+    if (!quill || !img) return;
+
+    const editorRoot = quill.root;
+    const imageParagraph = img.closest('p');
+    if (!imageParagraph || !editorRoot.contains(imageParagraph)) return;
+    if (!isBlogImageParagraph(imageParagraph)) return;
+
+    let captionParagraph = imageParagraph.nextElementSibling;
+    if (captionParagraph && !isBlogImageCaptionParagraph(captionParagraph)) {
+      captionParagraph = null;
+    }
+
+    const src = img.getAttribute('src') || '';
+    const alt = img.getAttribute('alt') || '';
+    const description = parseBlogImageCaption(captionParagraph);
+
+    editingImageRef.current = { imageParagraph, captionParagraph };
+    imagePickerRangeRef.current = null;
+    setPendingImage({
+      secure_url: src,
+      alt,
+      description,
+      public_id: extractPublicIdFromCloudinaryUrl(src),
+      isEdit: true,
+    });
+    setShowImageDetails(true);
+  }, []);
+
+  useEffect(() => {
+    const quill = quillRef.current?.getEditor?.();
+    if (!quill || !quillLoaded) return;
+
+    const editorRoot = quill.root;
+    const handleClick = (event) => {
+      const img = event.target.closest('img');
+      if (!img || !editorRoot.contains(img)) return;
+      if (!isBlogImageParagraph(img.closest('p'))) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      openEmbeddedImageEditor(img);
+    };
+
+    editorRoot.addEventListener('click', handleClick);
+    return () => editorRoot.removeEventListener('click', handleClick);
+  }, [quillLoaded, openEmbeddedImageEditor]);
+
+  const handleImageDetailsConfirm = useCallback(
+    (imageData) => {
+      const quill = quillRef.current?.getEditor?.();
+      const range = imagePickerRangeRef.current;
+      const editTarget = editingImageRef.current;
+
+      if (!quill || !imageData?.secure_url) {
+        closeImageFlow();
+        return;
+      }
+
+      const url = getOptimizedCloudinaryUrl(imageData.secure_url, 800);
+      const html = buildBlogImageHtml({
+        url,
+        alt: imageData.alt,
+        description: imageData.description,
+      });
+
+      if (editTarget?.imageParagraph) {
+        replaceBlogImageBlock({
+          imageParagraph: editTarget.imageParagraph,
+          captionParagraph: editTarget.captionParagraph,
+          html,
+        });
+        onChange(quill.root.innerHTML);
+        closeImageFlow();
+        return;
+      }
+
+      const insertIndex = range?.index ?? quill.getLength();
+      const deleteLength = range?.length ?? 0;
+
+      if (deleteLength > 0) {
+        quill.deleteText(insertIndex, deleteLength);
+      }
+      quill.clipboard.dangerouslyPasteHTML(insertIndex, html);
+      quill.setSelection(insertIndex + 1);
+      onChange(quill.root.innerHTML);
+      closeImageFlow();
+    },
+    [closeImageFlow, onChange]
   );
 
   if (!quillLoaded || !ReactQuill) {
@@ -171,6 +322,23 @@ export default function RichTextEditor({
           initialLinkType={linkPickerState.initialLinkType}
           selectedText={linkPickerState.selectedText}
           excludePostId={excludePostId}
+        />
+      )}
+
+      {showImagePicker && (
+        <MediaPickerModal
+          isOpen={showImagePicker}
+          onClose={closeMediaPicker}
+          onConfirm={handleMediaSelect}
+        />
+      )}
+
+      {showImageDetails && pendingImage && (
+        <ImageDetailsModal
+          isOpen={showImageDetails}
+          image={pendingImage}
+          onClose={closeImageFlow}
+          onConfirm={handleImageDetailsConfirm}
         />
       )}
     </div>

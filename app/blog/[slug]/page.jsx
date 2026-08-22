@@ -1,5 +1,6 @@
 import styles from './style.module.scss';
 import { connectToMongo } from '@/server/DL/connectToMongo';
+import { getPostDisplayDate } from '@/utils/postPublishDate';
 import { getPostBySlug } from '@/server/BL/postService';
 import { getPostCtaProducts } from '@/server/BL/postCtaService';
 import SinglePost from '@/Components/SinglePost';
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }) {
       description: post.metaDescription || post.summary,
       images: post.socialImage ? [post.socialImage] : (post.image ? [post.image] : []),
       type: 'article',
-      publishedTime: post.createdAt,
+      publishedTime: getPostDisplayDate(post),
       authors: [post.author || 'אילה אברהם']
     },
     alternates: {

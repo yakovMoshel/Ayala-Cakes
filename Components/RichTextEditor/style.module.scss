@@ -28,6 +28,11 @@
       margin-right: -1.5em !important;
       text-align: left;
     }
+
+    :global(p.blog-image img),
+    :global(p[class*='blog-image']:not([class*='caption']) img) {
+      cursor: pointer;
+    }
   }
 }
 

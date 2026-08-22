@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import cloudinary from "@/utils/cloudinary";
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
+import { getAltFromCloudinaryResource } from "@/utils/cloudinaryContext";
 
 export async function GET(req) {
   const auth = await verifyAdminSession();
@@ -18,6 +19,7 @@ export async function GET(req) {
       resource_type: "image",
       type: "upload",
       max_results: 30,
+      context: true,
     };
 
     if (nextCursor) options.next_cursor = nextCursor;
@@ -36,6 +38,7 @@ export async function GET(req) {
         height: r.height,
         created_at: r.created_at,
         folder: r.folder,
+        alt: getAltFromCloudinaryResource(r),
       })),
       next_cursor: result.next_cursor || null,
     };

@@ -1,0 +1,177 @@
+@import '/app/mixins.scss';
+
+.panel {
+  font-family: var(--font);
+  direction: rtl;
+
+  &.embedded {
+    overflow-y: auto;
+    max-height: 100%;
+  }
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--grayColor);
+  padding-bottom: 15px;
+
+  h2 {
+    @include subtitle;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--secColor);
+    padding: 8px;
+    border-radius: var(--radius-admin-circle);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--grayColor);
+    }
+  }
+}
+
+.previewRow {
+  margin-bottom: 12px;
+  text-align: center;
+
+  .preview {
+    max-width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: var(--radius-admin-sm);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.publicId {
+  @include text-caption;
+  margin: 0 0 16px;
+  word-break: break-all;
+  text-align: center;
+  color: var(--mutedColor);
+}
+
+.field {
+  margin-bottom: 16px;
+
+  label {
+    @include text-label;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--darkGrayColor);
+    border-radius: var(--radius-admin-sm);
+    font-family: var(--font);
+    font-size: 15px;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: var(--midColor);
+    }
+  }
+}
+
+.error {
+  color: var(--color-error-text);
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+
+.panelActions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 2px solid var(--grayColor);
+
+  .cancelButton,
+  .confirmButton,
+  .secondaryButton,
+  .dangerButton {
+    padding: 12px 20px;
+    border-radius: var(--radius-admin-lg);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: all 0.3s ease;
+  }
+
+  .secondaryButton {
+    background-color: var(--grayColor);
+    color: var(--secColor);
+    border: 2px solid var(--darkGrayColor);
+    margin-inline-end: auto;
+
+    &:hover:not(:disabled) {
+      border-color: var(--midColor);
+    }
+  }
+
+  .dangerButton {
+    background-color: var(--color-error-text);
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-error-hover);
+    }
+  }
+
+  .cancelButton {
+    background-color: var(--grayColor);
+    color: var(--mutedColor);
+    border: 2px solid var(--darkGrayColor);
+
+    &:hover:not(:disabled) {
+      border-color: var(--midColor);
+    }
+  }
+
+  .confirmButton {
+    background-color: var(--midColor);
+    color: var(--mainColor);
+    border: none;
+    @include shadow;
+
+    &:hover:not(:disabled) {
+      background-color: var(--secColor);
+    }
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 768px) {
+  .panelActions {
+    flex-direction: column;
+
+    .secondaryButton {
+      margin-inline-end: 0;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}

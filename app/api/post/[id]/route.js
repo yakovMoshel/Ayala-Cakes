@@ -6,25 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { normalizeCategoryIdWrite, withCategoryFields } from "@/utils/categoryRef";
 import { serializeData } from "@/utils/serialization";
-import { sanitizeBlogHtml, sanitizeEmbedHtml } from "@/utils/sanitizeHtml";
-
-function sanitizePostWritePayload(data) {
-  if (!data || typeof data !== 'object') return data;
-  const next = { ...data };
-
-  if (typeof next.content === 'string') {
-    next.content = sanitizeBlogHtml(next.content);
-  }
-
-  if (next.postCta && typeof next.postCta === 'object') {
-    next.postCta = { ...next.postCta };
-    if (typeof next.postCta.embedHtml === 'string') {
-      next.postCta.embedHtml = sanitizeEmbedHtml(next.postCta.embedHtml);
-    }
-  }
-
-  return next;
-}
+import { sanitizePostWritePayload } from '@/utils/postWritePayload';
 
 export async function GET(req, { params }) {
   const auth = await verifyAdminSession();

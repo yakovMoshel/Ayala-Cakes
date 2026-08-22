@@ -176,7 +176,7 @@ export default function AdminPostsListPage() {
                   </span>
                   <span className={styles.metaItem}>
                     <Calendar size={13} />
-                    <span>{formatDate(post.createdAt)}</span>
+                    <span>{formatDate(post.publishDate || post.createdAt)}</span>
                   </span>
                   <span className={styles.metaItem}>
                     <TrendingUp size={13} />

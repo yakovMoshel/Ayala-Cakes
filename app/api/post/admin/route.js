@@ -16,8 +16,8 @@ export async function GET() {
     await connectToMongo();
     const posts = await postModel
       .find({ status: { $ne: 'deleted' } })
-      .select('title slug status createdAt views image summary')
-      .sort({ createdAt: -1 })
+      .select('title slug status createdAt publishDate views image summary')
+      .sort({ publishDate: -1, createdAt: -1 })
       .lean();
 
     return NextResponse.json({ success: true, data: posts });
