@@ -31,7 +31,7 @@ const localBusinessSchema = {
   url: baseUrl,
   logo: `${baseUrl}/ayala-cakes-logo.png`,
   image: `${baseUrl}/ayala-avraham.webp`,
-  telephone: '+972-58-7990503',
+  telephone: '+972-58-7995083',
   email: 'ayalapastry@gmail.com',
   founder: { '@type': 'Person', name: 'אילה אברהם' },
   areaServed: [
