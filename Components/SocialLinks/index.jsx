@@ -8,7 +8,7 @@ export default function index() {
       <ul>
         <li>
           <FaFacebook className={styles.icon} />
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a href="https://www.facebook.com/Ayalacake/" target="_blank" rel="noopener noreferrer">Facebook</a>
         </li>
         <li>
           <svg xmlns="http://www.w3.org/2000/svg" className={styles.icon} viewBox="0 0 48 48">
