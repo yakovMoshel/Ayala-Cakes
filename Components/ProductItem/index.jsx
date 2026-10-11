@@ -8,10 +8,12 @@ import axios from 'axios';
 import useStore from '@/store/useStore';
 import AdminRowMenu from '@/Components/AdminRowMenu';
 import { Edit3, Trash2 } from 'lucide-react';
+import { productImageAlt } from '@/utils/productImageAlt';
 
 
 export default function ProductItem({ product, hideAdminActions = false }) {
-    const { _id, name, subtitle, images, slug } = product;
+    const { _id, name, subtitle, images, slug, altText } = product;
+    const imageAlt = productImageAlt({ name, altText });
 
     const router = useRouter();
     const isAuthenticated = useStore((state) => state.isAuthenticated);
@@ -75,7 +77,7 @@ export default function ProductItem({ product, hideAdminActions = false }) {
                     {/* CSS (.image) controls the rendered 100% x 200px box */}
                     <Image
                         src={images[0]}
-                        alt={name}
+                        alt={imageAlt}
                         width={500}
                         height={400}
                         sizes="250px"

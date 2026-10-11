@@ -1,6 +1,9 @@
 /** Production origin. Canonicals, sitemap, robots, og:url, and first-party JSON-LD use this host. */
 export const SITE_URL = 'https://ayacakes.biz';
 
+/** Stable id for the site-wide Bakery entity in app/layout.js. */
+export const SITE_ENTITY_ID = `${SITE_URL}/#bakery`;
+
 const WWW_ORIGIN = /https?:\/\/www\.ayacakes\.biz(?=[:/?#]|$)/gi;
 
 /** Absolute first-party URL. External http(s) URLs are returned unchanged, except www.ayacakes.biz. */

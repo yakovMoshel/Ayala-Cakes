@@ -2,7 +2,7 @@ import { Assistant } from "next/font/google";
 import "./globals.css";
 import Providers from "@/Components/Providers";
 import ConditionalSiteShell from "@/Components/ConditionalSiteShell";
-import { SITE_URL, jsonLd, toAbsoluteSiteUrl } from "@/utils/siteUrl";
+import { SITE_ENTITY_ID, SITE_URL, jsonLd, toAbsoluteSiteUrl } from "@/utils/siteUrl";
 
 const assistant = Assistant({ subsets: ["hebrew", "latin"], display: "swap" });
 
@@ -23,6 +23,7 @@ export const metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'Bakery',
+  '@id': SITE_ENTITY_ID,
   name: 'Ayala Cakes',
   alternateName: 'אילה קייקס',
   description:

@@ -7,7 +7,7 @@ export const bentoWorkshop = {
         serviceName: 'סדנת עוגות בנטו',
     },
     cta: {
-        href: 'https://wa.me/972587995083?text=היי אילה, הגעתי דרך האתר ואשמח לשריין תאריך! 🎈',
+        href: 'https://wa.me/972587995083?text=היי אילה, הגעתי דרך האתר ואשמח לשריין תאריך פנוי לסדנה!',
         heroLabel: 'לבדיקת תאריך פנוי 📅',
         heroAriaLabel: 'לבדיקת תאריך פנוי בוואטסאפ',
         finalLabel: 'לשריון תאריך בוואטסאפ 📅',
