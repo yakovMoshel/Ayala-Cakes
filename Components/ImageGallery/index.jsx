@@ -3,10 +3,21 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from './style.module.scss';
+import { productImageAlt } from '@/utils/productImageAlt';
 
-export default function ImageGallery({ images }) {
+export default function ImageGallery({ images, name = '', altText = '', imageAlts = [] }) {
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [isEnlarged, setIsEnlarged] = useState(false);
+  const altFor = (image) => {
+    const index = images.indexOf(image);
+    const meta = index >= 0 ? imageAlts[index] : null;
+    return productImageAlt({
+      name,
+      altText: meta?.alt || altText,
+      decorative: Boolean(meta?.decorative),
+    });
+  };
+  const alt = altFor(selectedImage);
 
   const toggleEnlarged = () => {
     setIsEnlarged(!isEnlarged);
@@ -18,7 +29,7 @@ export default function ImageGallery({ images }) {
         {/* CSS sizes the rendered box (350x350); priority = product page LCP */}
         <Image
           src={selectedImage}
-          alt="תמונת המוצר"
+          alt={alt}
           width={700}
           height={700}
           sizes="350px"
@@ -34,7 +45,7 @@ export default function ImageGallery({ images }) {
           >
             <Image
               src={image}
-              alt={`תמונת מוצר ${index + 1}`}
+              alt={altFor(image)}
               width={200}
               height={200}
               sizes="100px"
@@ -46,7 +57,7 @@ export default function ImageGallery({ images }) {
         <div className={styles.enlargedView} onClick={toggleEnlarged}>
           <Image
             src={selectedImage}
-            alt="תמונת המוצר מוגדלת"
+            alt={alt}
             width={1200}
             height={1200}
             sizes="100vw"

@@ -1,8 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import StaticContentPage from '@/Components/StaticContentPage';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ayacakes.biz';
+import { toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 export const metadata = {
   title: 'אודות אילה | מעצבת עוגות וקונדיטורית מוסמכת בקריות',
@@ -36,19 +35,19 @@ const aboutPageSchema = {
   name: 'אודות אילה - מעצבת עוגות וקונדיטורית מוסמכת',
   description:
     'אני אילה, מעצבת עוגות וקונדיטורית מוסמכת. עוגות מעוצבות בהתאמה אישית מחומרי גלם איכותיים, וסדנאות עיצוב עוגות בנטו בקריות והסביבה.',
-  url: `${baseUrl}/about`,
+  url: toAbsoluteSiteUrl('/about'),
   mainEntity: {
     '@type': 'Person',
     name: 'אילה אברהם',
     jobTitle: 'מעצבת עוגות וקונדיטורית מוסמכת',
     description:
       'מעצבת עוגות וקונדיטורית מוסמכת המתמחה בעוגות מעוצבות בהתאמה אישית ובסדנאות עיצוב עוגות בנטו.',
-    url: baseUrl,
-    image: `${baseUrl}/ayala-avraham.webp`,
+    url: toAbsoluteSiteUrl('/'),
+    image: toAbsoluteSiteUrl('/ayala-avraham.webp'),
     worksFor: {
       '@type': 'Bakery',
       name: 'Ayala Cakes',
-      url: baseUrl,
+      url: toAbsoluteSiteUrl('/'),
     },
     sameAs: [
       'https://www.instagram.com/ayala_cakes',

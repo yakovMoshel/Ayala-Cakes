@@ -1,4 +1,5 @@
 import { STATIC_SITE_PAGES } from './siteLinks';
+import { GENERAL_WHATSAPP_URL } from './whatsapp';
 
 export const MAX_CTA_BUTTONS = 2;
 export const MAX_CTA_PRODUCTS = 2;
@@ -12,8 +13,7 @@ export const INTERNAL_LINK_OPTIONS = STATIC_SITE_PAGES.map(({ label, value }) =>
 export const EXTERNAL_LINK_OPTIONS = [
   {
     label: 'WhatsApp — שליחת הודעה',
-    value:
-      'https://api.whatsapp.com/send?phone=972587995083&text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%99%D7%A0%D7%A1%D7%98%D7%92%D7%A8%D7%9D%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%9C%D7%94%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%A7%D7%A9%D7%A8%20%D7%9C',
+    value: GENERAL_WHATSAPP_URL,
   },
 ];
 

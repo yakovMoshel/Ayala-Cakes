@@ -3,11 +3,10 @@ import BlogClient from './BlogClient';
 import { getAllPosts } from '@/server/BL/postService';
 import { getAllPostCategories } from '@/server/BL/postCategoryService';
 import { connectToMongo } from '@/server/DL/connectToMongo';
+import { jsonLd, toAbsoluteContentUrl, toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 // ISR: revalidated hourly + on demand when posts change (revalidatePath in API routes)
 export const revalidate = 3600;
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ayacakes.biz';
 
 // מטא-דטה סטטית לדף הבלוג הראשי
 export async function generateMetadata() {
@@ -22,6 +21,7 @@ export async function generateMetadata() {
       description:
         'טיפים שימושיים, מתכונים מפתיעים, והשראה לעוגות ייחודיות מאת הקונדיטורית אילה אברהם',
       type: 'website',
+      url: '/blog',
       images: [
         {
           url: '/ayala-avraham.webp',
@@ -44,11 +44,11 @@ function buildBlogCollectionSchema(posts = []) {
     name: 'בלוג קונדיטוריה - טיפים ומתכונים',
     description:
       'בלוג הקונדיטוריה של אילה - טיפים שימושיים, מתכונים מפתיעים, והשראה לעוגות ייחודיות.',
-    url: `${baseUrl}/blog`,
+    url: toAbsoluteSiteUrl('/blog'),
     isPartOf: {
       '@type': 'WebSite',
       name: 'Ayala Cakes',
-      url: baseUrl,
+      url: toAbsoluteSiteUrl('/'),
     },
     mainEntity: {
       '@type': 'ItemList',
@@ -56,7 +56,7 @@ function buildBlogCollectionSchema(posts = []) {
       itemListElement: posts.slice(0, 20).map((post, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: `${baseUrl}/blog/${post.slug}`,
+        url: toAbsoluteContentUrl('/blog', post.slug),
         name: post.title,
       })),
     },
@@ -74,7 +74,7 @@ export default async function Blog() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schema).replace(/</g, '\\u003c'),
+          __html: jsonLd(schema),
         }}
       />
       <BlogClient posts={list} categories={categories || []} />

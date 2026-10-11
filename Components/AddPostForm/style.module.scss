@@ -80,6 +80,12 @@
     margin-bottom: 8px;
     text-align: right;
     
+    .labelWithHelp {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .fieldHeader {
       display: flex;
       justify-content: space-between;

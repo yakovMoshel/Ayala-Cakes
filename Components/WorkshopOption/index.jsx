@@ -27,14 +27,14 @@ const WorkshopOption = ({
             {badge && <div className={styles.badge}>{badge}</div>}
             <div className={styles.headerSection}>
                 <h3 className={styles.packageHeader}>
-                    <span className={styles.packageType}>חבילת {packageType}</span>
+                    <span className={styles.packageType}>{packageType}</span>
                     {packageTitle && <span className={styles.packageTitle}>{packageTitle}</span>}
                 </h3>
                 <div className={styles.duration}>{duration}</div>
                 <div className={styles.emphasis}>{emphasis}</div>
             </div>
             <ul>
-                {features.map((feature, index) => (
+                {(features || []).map((feature, index) => (
                     <li 
                         key={index}
                         dangerouslySetInnerHTML={{ __html: feature }}
@@ -46,6 +46,7 @@ const WorkshopOption = ({
                     <p>{bonus}</p>
                 </div>
             )}
+            {price && (
             <div className={styles.priceContainer}>
                 {(() => {
                     // מפרק את המחיר: "180 ₪ למשתתפת" -> "180 ₪" ו-"למשתתפת"
@@ -72,6 +73,7 @@ const WorkshopOption = ({
                     );
                 })()}
             </div>
+            )}
         </div>
     );
 };

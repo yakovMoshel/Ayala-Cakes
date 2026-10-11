@@ -7,14 +7,85 @@
   direction: rtl;
   font-family: var(--font);
   width: 100%;
-  max-width: 1100px;
+  max-width: none;
   margin: 0 auto;
   text-align: right;
+
+  &#{&} {
+    max-width: none;
+  }
 }
 
 .pageHeader {
   display: flex;
   flex-direction: column;
+}
+
+.rangeBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: 12px;
+}
+
+.rangeBtn {
+  border: 1px solid rgba(var(--secColor-rgb), 0.12);
+  background: white;
+  padding: 8px 14px;
+  border-radius: var(--radius-admin-pill);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--secColor);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: rgba(var(--midColor-rgb), 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--secColor);
+    outline-offset: 2px;
+  }
+}
+
+.rangeBtnActive {
+  background: var(--secColor);
+  color: white;
+  border-color: var(--secColor);
+
+  &:hover {
+    background: var(--secColor);
+    color: white;
+  }
+}
+
+.rangeHint {
+  margin: 8px 0 0;
+  font-size: var(--text-sm);
+  color: var(--mutedColor);
+  line-height: 1.5;
+}
+
+.siteStrip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.siteHeading {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--secColor);
+}
+
+.pathCell {
+  color: var(--mutedColor);
+  font-size: var(--text-sm);
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .tabBar {
@@ -53,6 +124,11 @@
   &:hover {
     background: rgba(var(--midColor-rgb), 0.1);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--secColor);
+    outline-offset: 2px;
+  }
 }
 
 .tabActive {
@@ -68,20 +144,22 @@
 
 .summaryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-10);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 12px;
   width: 100%;
 }
 
 .summaryCard {
   background: white;
   border-radius: var(--radius-admin-lg);
-  padding: 24px;
+  padding: 16px 12px;
   border: 1px solid rgba(var(--secColor-rgb), 0.05);
   @include shadow;
   display: flex;
   align-items: center;
-  gap: var(--space-9);
+  gap: 10px;
+  min-width: 0;
   transition: transform 0.2s ease;
 
   &:hover {
@@ -89,8 +167,8 @@
   }
 
   .cardIcon {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--radius-admin-sm);
     @include flex-center;
     @include shadow;
@@ -119,9 +197,10 @@
     flex-direction: column;
     gap: var(--space-1);
     text-align: right;
+    min-width: 0;
 
     .summaryValue {
-      font-size: 1.75rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: var(--secColor);
       line-height: 1.1;
@@ -131,6 +210,7 @@
       font-size: var(--text-sm);
       color: var(--mutedColor);
       font-weight: 500;
+      line-height: 1.35;
     }
   }
 }
@@ -270,7 +350,8 @@
 
 .skeletonGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: var(--space-10);
   width: 100%;
 }
@@ -288,11 +369,27 @@
 }
 
 @media (max-width: 768px) {
-  .summaryGrid {
+  .summaryGrid,
+  .skeletonGrid {
+    grid-auto-flow: row;
     grid-template-columns: 1fr 1fr;
   }
 
   .table {
     min-width: 600px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .rangeBtn,
+  .summaryCard,
+  .table tr,
+  .btnAction {
+    transition: none;
+  }
+
+  .summaryCard:hover {
+    transform: none;
   }
 }

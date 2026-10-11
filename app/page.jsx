@@ -18,6 +18,7 @@ export const metadata = {
     title: 'אילה - קונדיטורית | עוגות מעוצבות, סדנאות ועוד בקריות',
     description: 'עוגות ייחודיות וקסומות לכל אירוע, בהתאמה אישית - קונדיטורית מוסמכת בקריות והסביבה',
     type: 'website',
+    url: '/',
     images: [
       {
         url: '/ayala-avraham.webp',

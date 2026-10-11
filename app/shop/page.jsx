@@ -13,6 +13,7 @@ export const metadata = {
         title: 'מגוון עוגות מעוצבות להזמנה בקריות והסביבה',
         description: 'עוגות בנטו, עוגות לימי הולדת, מארזים, והכל בהתאמה אישית. הזמינו עכשיו',
         type: 'website',
+        url: '/shop',
     },
     alternates: {
         canonical: '/shop',

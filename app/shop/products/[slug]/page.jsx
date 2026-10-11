@@ -6,6 +6,7 @@ import ImageGallery from '@/Components/ImageGallery';
 import OrderButton from '@/Components/OrderButton';
 import ProductPageTracker from '@/Components/ProductPageTracker';
 import { notFound } from 'next/navigation';
+import { jsonLd, toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 // ISR: revalidated hourly + on demand when a product is edited (see API routes)
 export const revalidate = 3600;
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }) {
       description: product.metaDescription || `הזמינו ${product.name} - עוגה מעוצבת בהתאמה אישית`,
       images: product.images?.length > 0 ? [product.images[0]] : [],
       type: 'website',
+      url: `/shop/products/${params.slug}`,
     },
     alternates: {
       canonical: `/shop/products/${params.slug}`
@@ -101,7 +103,7 @@ export default async function ProductPage({ params }) {
             {item.slug && <ProductPageTracker slug={item.slug} />}
             <div className={styles.productPage}>
                 <div className={styles.leftSide}>
-                    <ImageGallery images={images} />
+                    <ImageGallery images={images} name={name} altText={item.altText} imageAlts={item.imageAlts || []} />
                 </div>
                 <div className={styles.rightSide}>
                     <h1 className={styles.name}>
@@ -121,15 +123,23 @@ export default async function ProductPage({ params }) {
                     </div>
                     <div className={styles.infoAndOrder}>
                         <div className={styles.additionalInfo}>
-                            <div className={styles.infoItem}>
-                                קוטר: {diameter} ס"מ
-                            </div>
-                            <div className={styles.separator}></div>
+                            {isPresentDimension(diameter) && (
+                                <>
+                                    <div className={styles.infoItem}>
+                                        קוטר: {diameter} ס&quot;מ
+                                    </div>
+                                    <div className={styles.separator}></div>
+                                </>
+                            )}
 
-                            <div className={styles.infoItem}>
-                                גובה: {height} ס"מ
-                            </div>
-                            <div className={styles.separator}></div>
+                            {isPresentDimension(height) && (
+                                <>
+                                    <div className={styles.infoItem}>
+                                        גובה: {height} ס&quot;מ
+                                    </div>
+                                    <div className={styles.separator}></div>
+                                </>
+                            )}
 
                             <div className={styles.infoItem}>
                                 טעמים: {flavors.join(', ')}
@@ -158,11 +168,16 @@ export default async function ProductPage({ params }) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(item.structuredData || buildProductSchema(plainItem))
+                    __html: jsonLd(item.structuredData || buildProductSchema(plainItem))
                 }}
             />
         </>
     );
+}
+
+function isPresentDimension(value) {
+    const number = typeof value === 'number' ? value : Number(String(value ?? '').trim());
+    return Number.isFinite(number) && number > 0;
 }
 
 // Fallback Product JSON-LD so every product has schema even without a stored one
@@ -173,14 +188,14 @@ function buildProductSchema(product) {
         name: product.name,
         description: (product.description || '').split('\n')[0],
         image: product.images || [],
-        url: `https://www.ayacakes.biz/shop/products/${product.slug}`,
+        url: toAbsoluteSiteUrl(`/shop/products/${product.slug}`),
         brand: { '@type': 'Brand', name: 'Ayala Cakes' },
         offers: {
             '@type': 'Offer',
             price: product.price,
             priceCurrency: 'ILS',
             availability: 'https://schema.org/InStock',
-            url: `https://www.ayacakes.biz/shop/products/${product.slug}`,
+            url: toAbsoluteSiteUrl(`/shop/products/${product.slug}`),
         },
     };
 } 

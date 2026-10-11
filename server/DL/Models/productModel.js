@@ -26,6 +26,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   }],
+  imageAlts: [{
+    alt: { type: String, default: '' },
+    decorative: { type: Boolean, default: false },
+  }],
   colors: [{
     type: String
   }],
@@ -35,6 +39,9 @@ const productSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  updatedAt: {
+    type: Date,
   },
   isActive: {
     type: Boolean,
@@ -50,11 +57,11 @@ const productSchema = new mongoose.Schema({
   },
   diameter: {
     type: Number,
-    required: true
+    required: false
   },
   height: {
     type: Number,
-    required: true
+    required: false
   },
   filling: [{
     type: String

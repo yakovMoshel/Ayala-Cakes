@@ -12,6 +12,7 @@ import {
   parseBlogImageCaption,
   replaceBlogImageBlock,
 } from '@/utils/blogImageHtml';
+import { uploadImageFile } from '@/utils/uploadImageFile';
 import styles from './style.module.scss';
 
 // Direct client import (not next/dynamic) so the ReactQuill ref forwards correctly.
@@ -34,7 +35,7 @@ const ImageDetailsModal = dynamic(() => import('@/Components/ImageDetailsModal')
 });
 
 const TOOLBAR = [
-  [{ header: [1, 2, 3, false] }],
+  [{ header: [2, 3, false] }],
   ['bold', 'italic', 'underline', 'strike'],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['link', 'image'],
@@ -59,6 +60,46 @@ function escapeHtml(text) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+function extractDataUrls(html) {
+  const urls = [];
+  let from = 0;
+  while (from < html.length) {
+    const start = html.indexOf('data:image/', from);
+    if (start === -1) break;
+    const quote = html[start - 1];
+    if (quote === '"' || quote === "'") {
+      const end = html.indexOf(quote, start);
+      if (end === -1) break;
+      urls.push(html.slice(start, end));
+      from = end + 1;
+      continue;
+    }
+    from = start + 'data:image/'.length;
+  }
+  return [...new Set(urls)];
+}
+
+function dataUrlToFile(dataUrl, index) {
+  const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]+)$/);
+  if (!match) return null;
+  const mime = match[1];
+  const binary = atob(match[2].replace(/\s/g, ''));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  const ext = mime.split('/')[1]?.replace('+xml', '') || 'png';
+  return new File([bytes], `pasted-image-${index + 1}.${ext}`, { type: mime });
+}
+
+function imageFilesFromList(files) {
+  return [...(files || [])].filter((file) => file && file.type.startsWith('image/'));
+}
+
+function hostedImageHtml(secureUrl) {
+  return buildBlogImageHtml({
+    url: getOptimizedCloudinaryUrl(secureUrl, 800),
+  });
 }
 
 function applyLinkToEditor(quill, range, { url, linkText, linkType, openInNewTab }) {
@@ -110,6 +151,13 @@ export default function RichTextEditor({
     selectedText: '',
     savedRange: null,
   });
+  const [imageMessage, setImageMessage] = useState('');
+  const [imageMessageIsError, setImageMessageIsError] = useState(false);
+  const onChangeRef = useRef(onChange);
+  const uploadingImagesRef = useRef(false);
+  const messageTimerRef = useRef(null);
+
+  onChangeRef.current = onChange;
 
   useEffect(() => {
     import('react-quill/dist/quill.snow.css');
@@ -234,11 +282,144 @@ export default function RichTextEditor({
     setShowImageDetails(true);
   }, []);
 
+  useEffect(() => () => clearTimeout(messageTimerRef.current), []);
+
+  const showImageMessage = useCallback((message, isError = false) => {
+    clearTimeout(messageTimerRef.current);
+    setImageMessage(message);
+    setImageMessageIsError(isError);
+    if (!isError) {
+      messageTimerRef.current = setTimeout(() => setImageMessage(''), 2500);
+    }
+  }, []);
+
   useEffect(() => {
     const quill = quillRef.current?.getEditor?.();
-    if (!quill || !quillLoaded) return;
+    if (!quill || !quillLoaded || !ReactQuill) return;
+
+    if (!quill.__hostedImageMatcher) {
+      const Delta = ReactQuill.Quill.import('delta');
+      quill.clipboard.addMatcher('IMG', (node, delta) => {
+        const src = node.getAttribute?.('src') || '';
+        if (typeof src === 'string' && src.startsWith('data:')) return new Delta();
+        return delta;
+      });
+      quill.clipboard.addMatcher('H1', (_node, delta) => {
+        delta.ops?.forEach((op) => {
+          if (op.attributes?.header) op.attributes.header = 2;
+        });
+        return delta;
+      });
+      quill.__hostedImageMatcher = true;
+    }
+
+    const insertHostedFiles = async (files, range) => {
+      let index = range?.index ?? quill.getLength();
+      const deleteLength = range?.length ?? 0;
+      if (deleteLength > 0) {
+        quill.deleteText(index, deleteLength);
+      }
+
+      for (const file of files) {
+        const uploaded = await uploadImageFile(file);
+        quill.clipboard.dangerouslyPasteHTML(index, hostedImageHtml(uploaded.url));
+        index += 1;
+      }
+      quill.setSelection(index);
+      onChangeRef.current(quill.root.innerHTML);
+    };
+
+    const replacePastedDataUrls = async (html, range) => {
+      const dataUrls = extractDataUrls(html);
+      let nextHtml = html;
+      for (let i = 0; i < dataUrls.length; i += 1) {
+        const file = dataUrlToFile(dataUrls[i], i);
+        if (!file) throw new Error('Upload failed');
+        const uploaded = await uploadImageFile(file);
+        const hostedUrl = getOptimizedCloudinaryUrl(uploaded.url, 800);
+        nextHtml = nextHtml.split(dataUrls[i]).join(hostedUrl);
+      }
+
+      const index = range?.index ?? quill.getLength();
+      const deleteLength = range?.length ?? 0;
+      if (deleteLength > 0) {
+        quill.deleteText(index, deleteLength);
+      }
+      quill.clipboard.dangerouslyPasteHTML(index, nextHtml);
+      quill.setSelection(index + 1);
+      onChangeRef.current(quill.root.innerHTML);
+    };
+
+    const uploadClipboardImages = async ({ files, html, range }) => {
+      if (uploadingImagesRef.current) return;
+      uploadingImagesRef.current = true;
+      showImageMessage('מעלה תמונה...');
+      try {
+        if (html && extractDataUrls(html).length) {
+          await replacePastedDataUrls(html, range);
+        } else if (files.length) {
+          await insertHostedFiles(files, range);
+        } else {
+          throw new Error('Upload failed');
+        }
+        showImageMessage('התמונה הועלתה');
+      } catch (error) {
+        console.error('Editor image upload failed:', error);
+        showImageMessage('העלאת התמונה נכשלה. התמונה לא נוספה לתוכן.', true);
+      } finally {
+        uploadingImagesRef.current = false;
+      }
+    };
 
     const editorRoot = quill.root;
+
+    const onPaste = (event) => {
+      const clipboard = event.clipboardData;
+      if (!clipboard) return;
+
+      const itemFiles = imageFilesFromList(
+        [...clipboard.items]
+          .filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
+          .map((item) => item.getAsFile())
+      );
+      const files = itemFiles.length ? itemFiles : imageFilesFromList(clipboard.files);
+      const html = clipboard.getData('text/html') || '';
+      const hasDataUrl = html.includes('data:image/');
+      if (!files.length && !hasDataUrl) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      const range = quill.getSelection(true);
+      uploadClipboardImages({
+        files,
+        html: hasDataUrl ? html : '',
+        range: range ? { index: range.index, length: range.length } : null,
+      });
+    };
+
+    const onDragOver = (event) => {
+      if (imageFilesFromList(event.dataTransfer?.files).length || [...(event.dataTransfer?.items || [])].some((item) => item.type.startsWith('image/'))) {
+        event.preventDefault();
+      }
+    };
+
+    const onDrop = (event) => {
+      const files = imageFilesFromList(event.dataTransfer?.files);
+      if (!files.length) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const range = quill.getSelection(true);
+      uploadClipboardImages({
+        files,
+        html: '',
+        range: range ? { index: range.index, length: range.length } : null,
+      });
+    };
+
+    editorRoot.addEventListener('paste', onPaste, true);
+    editorRoot.addEventListener('dragover', onDragOver);
+    editorRoot.addEventListener('drop', onDrop, true);
+
     const handleClick = (event) => {
       const img = event.target.closest('img');
       if (!img || !editorRoot.contains(img)) return;
@@ -250,8 +431,13 @@ export default function RichTextEditor({
     };
 
     editorRoot.addEventListener('click', handleClick);
-    return () => editorRoot.removeEventListener('click', handleClick);
-  }, [quillLoaded, openEmbeddedImageEditor]);
+    return () => {
+      editorRoot.removeEventListener('paste', onPaste, true);
+      editorRoot.removeEventListener('dragover', onDragOver);
+      editorRoot.removeEventListener('drop', onDrop, true);
+      editorRoot.removeEventListener('click', handleClick);
+    };
+  }, [quillLoaded, openEmbeddedImageEditor, showImageMessage]);
 
   const handleImageDetailsConfirm = useCallback(
     (imageData) => {
@@ -312,6 +498,14 @@ export default function RichTextEditor({
         placeholder={placeholder}
         className={className}
       />
+      {imageMessage && (
+        <p
+          className={imageMessageIsError ? styles.imageError : styles.imageStatus}
+          role={imageMessageIsError ? 'alert' : 'status'}
+        >
+          {imageMessage}
+        </p>
+      )}
 
       {showLinkPicker && (
         <LinkPickerModal

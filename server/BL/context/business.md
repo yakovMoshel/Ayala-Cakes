@@ -27,7 +27,7 @@
 
 ## פרטים שמותר להזכיר
 
-- אתר: https://www.ayacakes.biz
+- אתר: https://ayacakes.biz
 - אינסטגרם: @ayala_cakes
 - טיקטוק: @ayala_cakes1
 - טלפון: 058-7995083

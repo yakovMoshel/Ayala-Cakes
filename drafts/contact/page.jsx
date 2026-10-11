@@ -7,22 +7,17 @@ import ContactDetails from '@/Components/ContactDetails';
 import ContactForm from '@/Components/ContactForm';
 import SocialLinks from '@/Components/SocialLinks';
 
-// מטא-דטה לדף יצירת קשר
+// Draft only. Not a route. Do not mount this under app/.
 export const metadata = {
   title: 'יצירת קשר - אילה קונדיטורית | הזמנת עוגות מעוצבות בקריות',
   description: 'צרו קשר עם אילה הקונדיטורית להזמנת עוגות מעוצבות ומפתיעות. זמינה לשירות אישי בקריות והסביבה. טלפון: 058-7995083',
-  keywords: 'יצירת קשר, הזמנת עוגות, קונדיטורית בקריות, אילה אברהם, עוגות מעוצבות הזמנה',
-  openGraph: {
-    title: 'יצירת קשר - אילה קונדיטורית',
-    description: 'צרו קשר עם אילה הקונדיטורית להזמנת עוגות מעוצבות ומפתיעות בקריות והסביבה',
-    type: 'website',
+  robots: {
+    index: false,
+    follow: false,
   },
-  alternates: {
-    canonical: '/contact'
-  }
 };
 
-export default function Contact() {
+export default function ContactDraft() {
   return (
     <div className={styles.contact}>
       <h2>יצירת קשר</h2>
