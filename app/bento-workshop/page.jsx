@@ -1,7 +1,6 @@
 import WorkshopLanding from '@/Components/WorkshopLanding';
 import { bentoWorkshop } from '@/content/workshops/bento';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ayacakes.biz';
+import { jsonLd, toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 export const metadata = {
     title: bentoWorkshop.seo.title,
@@ -28,12 +27,12 @@ const workshopSchema = {
     '@type': 'Service',
     name: bentoWorkshop.seo.serviceName,
     description: bentoWorkshop.seo.description,
-    url: `${baseUrl}${bentoWorkshop.seo.canonical}`,
-    image: `${baseUrl}${bentoWorkshop.hero.image}`,
+    url: toAbsoluteSiteUrl(bentoWorkshop.seo.canonical),
+    image: toAbsoluteSiteUrl(bentoWorkshop.hero.image),
     provider: {
         '@type': 'Bakery',
         name: 'Ayala Cakes',
-        url: baseUrl,
+        url: toAbsoluteSiteUrl('/'),
     },
 };
 
@@ -43,7 +42,7 @@ export default function BentoWorkshopPage() {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(workshopSchema).replace(/</g, '\\u003c'),
+                    __html: jsonLd(workshopSchema),
                 }}
             />
             <WorkshopLanding content={bentoWorkshop} />

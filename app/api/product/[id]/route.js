@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { productModel } from "@/server/DL/Models/productModel";
 import { connectToMongo } from "@/server/DL/connectToMongo";
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
-import { revalidatePath } from "next/cache";
+import { revalidatePublicContent } from "@/server/functions/revalidatePublicContent";
 import { normalizeCategoryIdWrite, withCategoryFields } from "@/utils/categoryRef";
 import { serializeData } from "@/utils/serialization";
 
@@ -45,12 +45,20 @@ export async function PUT(req, { params }) {
       );
     }
 
-    const product = await productModel.findByIdAndUpdate(id, data, { new: true });
-    revalidatePath('/shop');
-    revalidatePath('/');
-    if (product?.slug) {
-      revalidatePath(`/shop/products/${product.slug}`);
+    if (typeof data.slug === 'string') {
+      data.slug = data.slug.trim();
+      if (!data.slug) delete data.slug;
     }
+
+    const previous = await productModel.findById(id).select('slug').lean();
+    data.updatedAt = new Date();
+    const product = await productModel.findByIdAndUpdate(id, data, { new: true });
+    revalidatePublicContent([
+      '/shop',
+      '/',
+      previous?.slug ? `/shop/products/${previous.slug}` : null,
+      product?.slug ? `/shop/products/${product.slug}` : null,
+    ]);
     return NextResponse.json({ success: true, data: product });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 400 });

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Header from "@/Components/Header";
 import Footer from "@/Components/Footer";
 import CookieConsent from "@/Components/CookieConsent";
+import PageViewTracker from "@/Components/PageViewTracker";
 
 const ADMIN_SHELL_PATHS = ["/admin", "/login"];
 
@@ -31,6 +32,7 @@ export default function ConditionalSiteShell({ children }) {
   return (
     <>
       <Header />
+      <PageViewTracker />
       {/* display:contents keeps children as direct flex items of body (no layout change) */}
       <main style={{ display: 'contents' }}>{children}</main>
       <Footer />

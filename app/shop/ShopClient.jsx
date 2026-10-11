@@ -55,6 +55,7 @@ export default function ShopClient({ products, dbCategories = [] }) {
         selectedMobileLabel={(label) => `מציג ${label}`}
       />
       <div className={styles.content}>
+        <h1 className={styles.title}>עוגות בנטו ועוגות מעוצבות</h1>
         <ProductsList productByCat={filteredProducts} isLoading={false} />
         {filteredProducts.length === 0 && (
           <p className={styles.empty}>לא נמצאו מוצרים בקטגוריה זו</p>

@@ -27,7 +27,7 @@ app/shop/ShopClient.jsx    → 'use client', filtering/UI only, receives product
 
 ### Metadata
 - Root layout (`app/layout.js`) MUST define:
-  - `metadataBase: new URL('https://www.ayacakes.biz')`
+  - `metadataBase: new URL('https://ayacakes.biz')` from `@/utils/siteUrl`
   - Default `title`, `description`, and `openGraph` (`siteName`, `locale: 'he_IL'`)
 - Every public page MUST export page-level `metadata` or `generateMetadata` with:
   - `title`, `description`
@@ -36,9 +36,8 @@ app/shop/ShopClient.jsx    → 'use client', filtering/UI only, receives product
 - Client components **cannot** export metadata. If a route is `'use client'`, place metadata in a parent server `layout.js` or convert the page to a server component.
 
 ### Routing & casing
-- Routes are **lowercase**: `/contact`, `/about`, `/shop` — not `/Contact`.
-- Legacy `/Contact` is permanently redirected to `/contact` via `next.config.mjs`. Do not reintroduce capitalized route folders.
-- On Windows, rename case-sensitive folders via two-step `git mv` (e.g. `Contact` → `contact-tmp` → `contact`).
+- Routes are **lowercase**: `/about`, `/shop` — not `/About`.
+- The contact page is a draft in `drafts/contact/`. It is not a route, a redirect, or a public path. The live contact form is the homepage `#contact` anchor.
 
 ### Middleware
 - `middleware.js` protects `/admin/:path*` at the edge via JWT verification (`jose` + `SECRET_CODE`).
@@ -141,16 +140,16 @@ Inject via:
 - Set `alternates.canonical` in metadata (relative paths; resolved via `metadataBase`).
 - Sitemap lives at `app/sitemap.js` (dynamic). **Do not** add `next-sitemap` or a static `public/sitemap.xml` that shadows it.
 
-### robots.txt (`public/robots.txt`)
+### robots.txt (`app/robots.js`)
 ```
 Disallow: /admin
 Disallow: /login
 Disallow: /UniquePost
-Sitemap: https://www.ayacakes.biz/sitemap.xml
+Sitemap: https://ayacakes.biz/sitemap.xml
 ```
 
 ### Sitemap coverage
-Static entries MUST include: `/`, `/about`, `/contact`, `/shop`, `/blog`, `/bento-workshop`, `/summer`, plus dynamic product and blog slugs from MongoDB.
+Static entries MUST include: `/`, `/about`, `/shop`, `/blog`, `/bento-workshop`, `/summer`, plus dynamic product and blog slugs from MongoDB. The contact draft is not a public path and stays out of the sitemap.
 
 ### AIO (LLM optimization)
 - Public pages MUST server-render meaningful text content (product names, descriptions, blog body) — not empty shells filled by client JS.
@@ -258,7 +257,7 @@ Before merging any PR, verify:
 - [ ] Metadata + canonical on every new public route
 - [ ] `revalidatePath` called on any content mutation API
 - [ ] No `next-sitemap` package or `postbuild` sitemap script
-- [ ] Route folders are lowercase (`/contact`, not `/Contact`)
+- [ ] Route folders are lowercase (`/about`, not `/About`)
 - [ ] Semantic landmarks preserved (`header`, `nav`, `main`, `footer`, one `h1` per page)
 
 ---

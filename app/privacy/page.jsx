@@ -1,7 +1,6 @@
 import React from 'react';
 import StaticContentPage from '@/Components/StaticContentPage';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ayacakes.biz';
+import { toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 export const metadata = {
   title: 'מדיניות פרטיות | Ayala Cakes',
@@ -31,12 +30,12 @@ const privacyPageSchema = {
   '@type': 'WebPage',
   name: 'מדיניות פרטיות — Ayala Cakes',
   description: 'מדיניות הפרטיות של אתר Ayala Cakes.',
-  url: `${baseUrl}/privacy`,
+  url: toAbsoluteSiteUrl('/privacy'),
   dateModified: '2026-07-26',
   isPartOf: {
     '@type': 'WebSite',
     name: 'Ayala Cakes',
-    url: baseUrl,
+    url: toAbsoluteSiteUrl('/'),
   },
 };
 
@@ -70,7 +69,7 @@ export default function Privacy() {
         לצורך טיפול בפנייתך או בהזמנתך.
       </p>
       <p>
-        <strong>טופס יצירת קשר</strong> (מופיע בעמוד &quot;צור קשר&quot; ובתחתית האתר):
+        <strong>טופס יצירת קשר</strong> (מופיע בתחתית האתר):
       </p>
       <ul>
         <li>שם</li>

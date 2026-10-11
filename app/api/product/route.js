@@ -3,7 +3,7 @@ import { productModel } from "@/server/DL/Models/productModel";
 import { connectToMongo } from "@/server/DL/connectToMongo";
 import { generateUniqueSlug } from "@/server/BL/productService";
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
-import { revalidatePath } from "next/cache";
+import { revalidatePublicContent } from "@/server/functions/revalidatePublicContent";
 import { normalizeCategoryIdWrite } from "@/utils/categoryRef";
 
 export const GET = async () => {
@@ -20,6 +20,9 @@ export async function POST(req) {
   const data = normalizeCategoryIdWrite(await req.json());
 
   try {
+    if (typeof data.slug === 'string') {
+      data.slug = data.slug.trim();
+    }
     if (data.name && !data.slug) {
       data.slug = await generateUniqueSlug(data.name);
     }
@@ -31,9 +34,13 @@ export async function POST(req) {
       );
     }
 
+    data.updatedAt = new Date();
     const product = await productModel.create(data);
-    revalidatePath('/shop');
-    revalidatePath('/');
+    revalidatePublicContent([
+      '/shop',
+      '/',
+      product?.slug ? `/shop/products/${product.slug}` : null,
+    ]);
     return NextResponse.json({ success: true, data: product });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 400 });

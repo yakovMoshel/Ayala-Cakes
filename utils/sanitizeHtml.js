@@ -1,6 +1,12 @@
 import sanitizeHtml from 'sanitize-html';
 import { getOptimizedCloudinaryUrl } from '@/utils/cloudinaryUrl';
 
+/** Article title is the page H1. Body headings start at H2. */
+function demoteArticleH1(html) {
+  if (!/<h1[\s>]/i.test(html)) return html;
+  return html.replace(/<(\/?)h1\b/gi, '<$1h2');
+}
+
 /**
  * Sanitize rich HTML from the blog editor (ReactQuill) for safe public render.
  * Uses sanitize-html (Node-safe) instead of isomorphic-dompurify/jsdom,
@@ -9,11 +15,10 @@ import { getOptimizedCloudinaryUrl } from '@/utils/cloudinaryUrl';
 export function sanitizeBlogHtml(html) {
   if (!html || typeof html !== 'string') return '';
 
-  return sanitizeHtml(html, {
+  return sanitizeHtml(demoteArticleH1(html), {
     allowedTags: [
-      ...sanitizeHtml.defaults.allowedTags,
+      ...sanitizeHtml.defaults.allowedTags.filter((tag) => tag !== 'h1'),
       'img',
-      'h1',
       'h2',
       'span',
       'u',
@@ -30,7 +35,6 @@ export function sanitizeBlogHtml(html) {
       span: ['class', 'style'],
       p: ['class', 'style'],
       div: ['class', 'style'],
-      h1: ['class'],
       h2: ['class'],
       h3: ['class'],
       h4: ['class'],
@@ -52,7 +56,7 @@ export function sanitizeBlogHtml(html) {
         'text-align': [/^left$/, /^right$/, /^center$/, /^justify$/],
       },
     },
-    allowedSchemes: ['http', 'https', 'mailto', 'tel', 'data'],
+    allowedSchemes: ['http', 'https', 'mailto', 'tel'],
     allowProtocolRelative: false,
     transformTags: {
       img: (_tagName, attribs) => {

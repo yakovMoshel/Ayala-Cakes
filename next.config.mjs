@@ -18,11 +18,28 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // Old capitalized route (was app/Contact) — preserve any indexed/bookmarked URLs
+      // Host redirect: www → apex. Preserves path and query string. 308 is permanent.
       {
-        source: '/Contact',
-        destination: '/contact',
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.ayacakes.biz' }],
+        destination: 'https://ayacakes.biz/:path*',
         permanent: true,
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/sitemap.xml',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      },
+      {
+        source: '/robots.txt',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
       },
     ];
   },

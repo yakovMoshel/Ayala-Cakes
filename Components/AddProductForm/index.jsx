@@ -249,6 +249,7 @@ export default function AddProductForm({ categories, productId }) {
       isActive,
       height: parseFloat(formData.height),
       diameter: parseFloat(formData.diameter),
+      slug: typeof formData.slug === 'string' ? formData.slug.trim() : formData.slug,
       glutenFreeOption: formData.glutenContent === 'ללא גלוטן',
       notDairyOption: formData.dairyContent === 'כן',
       secondaryKeywords: formData.secondaryKeywords
@@ -406,6 +407,22 @@ export default function AddProductForm({ categories, productId }) {
               />
             </div>
             
+            <div className={styles.formField}>
+              <label htmlFor="product-slug">סלאג (כתובת URL)</label>
+              <input
+                id="product-slug"
+                type="text"
+                name="slug"
+                value={formData.slug}
+                onChange={handleChange}
+                placeholder="עוגת-יום-הולדת או birthday-cake"
+                aria-describedby="product-slug-hint"
+              />
+              <p id="product-slug-hint" className={styles.fieldHint}>
+                מומלץ סלאג בעברית ברורה, או מילה אנגלית ברורה ואינפורמטיבית.
+              </p>
+            </div>
+
             <div className={styles.formField}>
               <label>כותרת משנה</label>
               <input
@@ -618,17 +635,6 @@ export default function AddProductForm({ categories, productId }) {
             {showSEOSection && (
               <>
                 <div className={styles.formGrid}>
-                  <div className={styles.formField}>
-                    <label>Slug (כתובת URL)</label>
-                    <input
-                      type="text"
-                      name="slug"
-                      value={formData.slug}
-                      onChange={handleChange}
-                      placeholder="product-url-slug"
-                    />
-                  </div>
-                  
                   <div className={styles.formField}>
                     <label>כותרת SEO</label>
                     <input

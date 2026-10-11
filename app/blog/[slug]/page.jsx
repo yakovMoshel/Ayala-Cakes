@@ -6,6 +6,7 @@ import { getPostCtaProducts } from '@/server/BL/postCtaService';
 import SinglePost from '@/Components/SinglePost';
 import { serializeData } from '@/utils/serialization';
 import { notFound, permanentRedirect } from 'next/navigation';
+import { jsonLd } from '@/utils/siteUrl';
 
 // ISR: revalidated hourly + on demand when a post is edited (see API routes)
 export const revalidate = 3600;
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }) {
       description: post.metaDescription || post.summary,
       images: post.socialImage ? [post.socialImage] : (post.image ? [post.image] : []),
       type: 'article',
+      url: `/blog/${params.slug}`,
       publishedTime: getPostDisplayDate(post),
       authors: [post.author || 'אילה אברהם']
     },
@@ -66,7 +68,7 @@ export default async function BlogPostPage({ params }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(post.structuredData)
+            __html: jsonLd(post.structuredData)
           }}
         />
       )}

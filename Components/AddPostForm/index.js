@@ -474,6 +474,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
     const formattedData = {
       ...formData,
       status: targetStatus,
+      slug: typeof formData.slug === 'string' ? formData.slug.trim() : formData.slug,
       publishDate: normalizePublishDateForWrite(formData.publishDate),
       image: formData.image.trim(),
       seoTitle: formData.seoTitle || formData.title,
@@ -500,6 +501,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
       setFormData((prev) => ({
         ...prev,
         status: targetStatus,
+        slug: formattedData.slug,
         publishDate: formatPublishDateInput(
           getPostDisplayDate(response.data?.data) || prev.publishDate
         ),

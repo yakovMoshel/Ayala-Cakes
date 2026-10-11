@@ -1,13 +1,33 @@
+@import '/app/mixins.scss';
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .shop {
     display: flex;
     flex-direction: column;
     width: 100%;
 
+    .title {
+        @include subtitle;
+        animation: fadeInUp 1s ease;
+    }
+
     .content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex: 1;
         padding: 10px;
         text-align: center;
-        justify-content: center;
-
     }
 
     .empty {
@@ -22,5 +42,11 @@
         .content {
             padding: 0;
         }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .shop .title {
+        animation: none;
     }
 }

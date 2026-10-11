@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import popupStyles from "@/Components/OrderPopup/style.module.scss";
 import MediaDetailsPanel from "@/Components/MediaDetailsPanel";
 import { getPublicIdBasename } from "@/utils/cloudinaryPublicId";
+import { uploadImageFile } from "@/utils/uploadImageFile";
 import styles from "./style.module.scss";
 
 export default function MediaPickerModal({
@@ -74,13 +75,10 @@ export default function MediaPickerModal({
     setUploading(true);
     try {
       for (const file of files) {
-        const formData = new FormData();
-        formData.append("file", file);
-        if (uploadFilename.trim()) formData.append("filename", uploadFilename.trim());
-        if (uploadAlt.trim()) formData.append("alt", uploadAlt.trim());
-        const res = await fetch("/api/upload", { method: "POST", body: formData });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Upload failed");
+        await uploadImageFile(file, {
+          filename: uploadFilename,
+          alt: uploadAlt,
+        });
       }
       if (fileInputRef.current) fileInputRef.current.value = "";
       setUploadFilename("");

@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { postModel } from "@/server/DL/Models/postModel";
 import "@/server/DL/Models/postCategoryModel";
 import { connectToMongo } from "@/server/DL/connectToMongo";
-import { revalidatePath } from 'next/cache';
+import { revalidatePublicContent } from '@/server/functions/revalidatePublicContent';
 import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { normalizeCategoryIdWrite, withCategoryFields } from "@/utils/categoryRef";
 import { serializeData } from "@/utils/serialization";
-import { sanitizePostWritePayload } from '@/utils/postWritePayload';
+import { preparePostWritePayload } from '@/utils/postWritePayload';
 
 function withCategoryFieldsListSafe(posts) {
   return (posts || []).map((p) => withCategoryFields(serializeData(p)));
@@ -33,11 +33,12 @@ export async function POST(req) {
   }
 
   await connectToMongo();
-  const data = sanitizePostWritePayload(normalizeCategoryIdWrite(await req.json()));
+  const data = await preparePostWritePayload(normalizeCategoryIdWrite(await req.json()));
 
   try {
+    data.updatedAt = new Date();
     const post = await postModel.create(data);
-    revalidatePath('/blog');
+    revalidatePublicContent(['/blog', post?.slug ? `/blog/${post.slug}` : null]);
     return NextResponse.json({ success: true, data: post });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 400 });

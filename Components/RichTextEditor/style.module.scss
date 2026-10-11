@@ -42,3 +42,21 @@
   color: var(--darkGrayColor);
   font-size: 14px;
 }
+
+.imageStatus,
+.imageError {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+
+.imageStatus {
+  color: var(--mutedColor);
+}
+
+.imageError {
+  color: var(--color-error-text);
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}

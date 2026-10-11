@@ -6,6 +6,8 @@ import { postModel } from '@/server/DL/Models/postModel';
 import { postViewModel } from '@/server/DL/Models/postViewModel';
 import { productModel } from '@/server/DL/Models/productModel';
 import { productViewModel } from '@/server/DL/Models/productViewModel';
+import { recordContentView, recordPageView } from '@/server/BL/metricsService';
+import { normalizePublicPath } from '@/utils/publicPages';
 
 const VISITOR_COOKIE = 'visitor_id';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -31,13 +33,26 @@ function setVisitorCookie(response, visitorId) {
 
 export async function POST(req) {
   try {
-    const { slug, type = 'post' } = await req.json();
-    if (!slug) {
-      return NextResponse.json({ success: false, error: 'slug is required' }, { status: 400 });
-    }
+    const { slug, type = 'post', path } = await req.json();
 
     await connectToMongo();
     const visitorId = await getVisitorId();
+
+    if (type === 'page') {
+      const normalizedPath = normalizePublicPath(path);
+      if (!normalizedPath) {
+        return NextResponse.json({ success: false, error: 'Invalid path' }, { status: 400 });
+      }
+
+      await recordPageView({ path: normalizedPath, visitorId });
+      const response = NextResponse.json({ success: true });
+      setVisitorCookie(response, visitorId);
+      return response;
+    }
+
+    if (!slug) {
+      return NextResponse.json({ success: false, error: 'slug is required' }, { status: 400 });
+    }
 
     if (type === 'product') {
       const product = await productModel
@@ -55,12 +70,19 @@ export async function POST(req) {
         visitorId,
       });
 
+      const viewedAt = new Date();
       if (existing) {
-        existing.lastViewedAt = new Date();
+        existing.lastViewedAt = viewedAt;
         await existing.save();
       } else {
-        await productViewModel.create({ productId: product._id, visitorId });
+        await productViewModel.create({ productId: product._id, visitorId, firstViewedAt: viewedAt, lastViewedAt: viewedAt });
       }
+      await recordContentView({
+        entityType: 'product',
+        entityId: product._id,
+        visitorId,
+        viewedAt,
+      });
     } else {
       const post = await postModel
         .findOne({ slug, status: 'published' })
@@ -77,12 +99,19 @@ export async function POST(req) {
         visitorId,
       });
 
+      const viewedAt = new Date();
       if (existing) {
-        existing.lastViewedAt = new Date();
+        existing.lastViewedAt = viewedAt;
         await existing.save();
       } else {
-        await postViewModel.create({ postId: post._id, visitorId });
+        await postViewModel.create({ postId: post._id, visitorId, firstViewedAt: viewedAt, lastViewedAt: viewedAt });
       }
+      await recordContentView({
+        entityType: 'post',
+        entityId: post._id,
+        visitorId,
+        viewedAt,
+      });
     }
 
     const response = NextResponse.json({ success: true });

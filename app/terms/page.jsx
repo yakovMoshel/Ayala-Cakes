@@ -1,7 +1,6 @@
 import React from 'react';
 import StaticContentPage from '@/Components/StaticContentPage';
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ayacakes.biz';
+import { toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 export const metadata = {
   title: 'תקנון האתר ותנאי שימוש | Ayala Cakes',
@@ -31,12 +30,12 @@ const termsPageSchema = {
   '@type': 'WebPage',
   name: 'תקנון האתר ותנאי שימוש — Ayala Cakes',
   description: 'תקנון האתר ותנאי השימוש של אתר Ayala Cakes.',
-  url: `${baseUrl}/terms`,
+  url: toAbsoluteSiteUrl('/terms'),
   dateModified: '2026-07-26',
   isPartOf: {
     '@type': 'WebSite',
     name: 'Ayala Cakes',
-    url: baseUrl,
+    url: toAbsoluteSiteUrl('/'),
   },
 };
 
