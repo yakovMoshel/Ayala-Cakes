@@ -16,6 +16,7 @@ const STATIC_PAGES = [
   { path: '/shop', file: './shop/page.jsx', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/blog', file: './blog/page.jsx', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/bento-workshop', file: './bento-workshop/page.jsx', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/paint-cake-workshop', file: './paint-cake-workshop/page.jsx', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/summer', file: './summer/page.jsx', changeFrequency: 'monthly', priority: 0.7 },
 ];
 
@@ -130,8 +131,12 @@ export default async function sitemap() {
     if (page.path === '/summer') {
       lastModified = latestDate([fileDate, fileModified('./summer/SummerClient.jsx')]);
     }
-    if (page.path === '/bento-workshop') {
-      lastModified = latestDate([fileDate, fileModified('../content/workshops/bento.js')]);
+    const workshopContent = {
+      '/bento-workshop': '../content/workshops/bento.js',
+      '/paint-cake-workshop': '../content/workshops/paintCake.js',
+    };
+    if (workshopContent[page.path]) {
+      lastModified = latestDate([fileDate, fileModified(workshopContent[page.path])]);
     }
     return entry(toAbsoluteSiteUrl(page.path), lastModified, page.changeFrequency, page.priority);
   });

@@ -7,6 +7,9 @@ import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { normalizeCategoryIdWrite, withCategoryFields } from "@/utils/categoryRef";
 import { serializeData } from "@/utils/serialization";
 import { preparePostWritePayload } from '@/utils/postWritePayload';
+import { contentChanged, POST_CONTENT_KEYS } from '@/utils/adminContentRules';
+import { applyPostWrite } from '@/server/functions/postWrite';
+import { duplicateSlugMessage, fieldsErrorResponse } from '@/server/functions/uniqueSlug';
 
 export async function GET(req, { params }) {
   const auth = await verifyAdminSession();
@@ -30,7 +33,8 @@ export async function GET(req, { params }) {
       data: withCategoryFields(serializeData(post)),
     });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    console.error('Post read failed:', error);
+    return NextResponse.json({ success: false, error: 'Request failed' }, { status: 400 });
   }
 }
 
@@ -42,11 +46,24 @@ export async function PUT(req, { params }) {
 
   await connectToMongo();
   const { id } = params;
-  const data = await preparePostWritePayload(normalizeCategoryIdWrite(await req.json()));
-
+  let data;
   try {
-    const previous = await postModel.findById(id).select('slug').lean();
-    data.updatedAt = new Date();
+    data = await preparePostWritePayload(normalizeCategoryIdWrite(await req.json()));
+    const previous = await postModel.findById(id).lean();
+    const fields = applyPostWrite(data, { isCreate: false });
+    delete data.slugGenerated;
+    if (previous?.slug && data.slug === previous.slug) delete fields.slug;
+    if (data.slug && !fields.slug) {
+      const duplicate = await duplicateSlugMessage(postModel, data.slug, id);
+      if (duplicate) fields.slug = duplicate;
+    }
+    if (Object.keys(fields).length) {
+      return NextResponse.json(fieldsErrorResponse(fields), { status: 400 });
+    }
+
+    if (contentChanged(previous, data, POST_CONTENT_KEYS)) {
+      data.updatedAt = new Date();
+    }
     const post = await postModel.findByIdAndUpdate(id, data, { new: true });
     revalidatePublicContent([
       '/blog',
@@ -55,6 +72,13 @@ export async function PUT(req, { params }) {
     ]);
     return NextResponse.json({ success: true, data: post });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    if (error?.fields) {
+      return NextResponse.json(fieldsErrorResponse(error.fields), { status: 400 });
+    }
+    console.error('Post update failed:', error);
+    if (error?.code === 11000) {
+      return NextResponse.json(fieldsErrorResponse({ slug: 'הכתובת כבר בשימוש. בחרו כתובת אחרת.' }), { status: 400 });
+    }
+    return NextResponse.json({ success: false, error: 'Request failed' }, { status: 400 });
   }
 }

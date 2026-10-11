@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './style.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,10 +14,14 @@ export default function Header() {
     const setAuthenticated = useStore((state) => state.setAuthenticated);
     const setUser = useStore((state) => state.setUser);
     const [isOpen, setIsOpen] = useState(false);
+    const [workshopsOpen, setWorkshopsOpen] = useState(false);
     // Pulse animation for favorites menu item — restore with favorites below
     // const [isPulsing, setIsPulsing] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const path = usePathname();
+    const workshopsButtonRef = useRef(null);
+    const backButtonRef = useRef(null);
+    const drawerWasOpen = useRef(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -61,47 +65,188 @@ export default function Header() {
     // }, [favorites.length]);
 
     const handleToggleBurger = () => {
-        setIsOpen(!isOpen);
+        setIsOpen((open) => !open);
+        setWorkshopsOpen(false);
     };
+
+    useEffect(() => {
+        if (!isOpen) {
+            drawerWasOpen.current = false;
+            return;
+        }
+        if (workshopsOpen) {
+            backButtonRef.current?.focus();
+            drawerWasOpen.current = true;
+            return;
+        }
+        if (drawerWasOpen.current) {
+            workshopsButtonRef.current?.focus();
+            drawerWasOpen.current = false;
+        }
+    }, [isOpen, workshopsOpen]);
 
     const handleMenuItemClick = () => {
         setIsOpen(false);
+        setWorkshopsOpen(false);
     };
 
     const menuItems = [
         { href: '/', label: 'בית' },
         { href: '/about', label: 'אודות' },
         { href: '/shop', label: 'חנות' },
-        { href: '/bento-workshop', label: 'סדנת בנטו' },
+        {
+            label: 'סדנאות',
+            children: [
+                { href: '/bento-workshop', label: 'סדנת בנטו' },
+                { href: '/paint-cake-workshop', label: 'סדנת ציור על עוגות' },
+            ],
+        },
         { href: '/blog', label: 'בלוג' },
         // Favorites nav link disabled for now — uncomment to show "מועדפים" in menu again
         // { href: '/favorites', label: 'מועדפים', isFavorites: true },
     ];
 
-    const renderMenuItem = (item) => (
-        // When favorites menu is back: add ${item.isFavorites ? styles.favorites : ''} to className below
-        <div key={item.href} className={styles.menuItem}>
-            <Link 
-                href={item.href} 
-                // When favorites menu is back: add ${item.isFavorites && isPulsing ? styles.pulse : ''} to className below
-                className={path === item.href ? styles.active : ''}
-                onClick={handleMenuItemClick}
-            >
-                {item.label}
-            </Link>
-        </div>
-    );
+    const renderMenuItem = (item) => {
+        if (item.children) {
+            const groupActive = item.children.some((child) => child.href === path);
+
+            return (
+                <div
+                    key={item.label}
+                    className={`${styles.menuItem} ${styles.hasSubmenu} ${workshopsOpen ? styles.submenuOpen : ''}`}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Escape') setWorkshopsOpen(false);
+                    }}
+                >
+                    <button
+                        type="button"
+                        className={groupActive ? styles.active : ''}
+                        aria-expanded={workshopsOpen}
+                        aria-haspopup="true"
+                        aria-controls="workshops-submenu"
+                        onClick={() => setWorkshopsOpen((open) => !open)}
+                    >
+                        {item.label}
+                    </button>
+                    <div id="workshops-submenu" className={styles.submenu} role="menu">
+                        {item.children.map((child) => (
+                            <Link
+                                key={child.href}
+                                href={child.href}
+                                role="menuitem"
+                                className={path === child.href ? styles.active : ''}
+                                onClick={handleMenuItemClick}
+                            >
+                                {child.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            // When favorites menu is back: add ${item.isFavorites ? styles.favorites : ''} to className below
+            <div key={item.href} className={styles.menuItem}>
+                <Link
+                    href={item.href}
+                    // When favorites menu is back: add ${item.isFavorites && isPulsing ? styles.pulse : ''} to className below
+                    className={path === item.href ? styles.active : ''}
+                    onClick={handleMenuItemClick}
+                >
+                    {item.label}
+                </Link>
+            </div>
+        );
+    };
+
+    const workshopItem = menuItems.find((item) => item.children);
 
     const renderMobileMenu = () => (
-        <nav className={`${styles.mobileMenu} ${isOpen ? styles.open : ''}`}>
-            {menuItems.map(renderMenuItem)}
-            {isAuthenticated && (
-                <div className={styles.menuItem}>
-                    <Link href="/admin" className={path === '/admin' ? styles.active : ''} onClick={handleMenuItemClick}>
-                        ניהול
-                    </Link>
+        <nav
+            className={`${styles.mobileMenu} ${isOpen ? styles.open : ''}`}
+            onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                    if (workshopsOpen) setWorkshopsOpen(false);
+                    else setIsOpen(false);
+                }
+            }}
+        >
+            <div className={styles.mobileStack}>
+                <div
+                    className={`${styles.mobileLevel} ${workshopsOpen ? styles.levelHidden : ''}`}
+                    aria-hidden={workshopsOpen}
+                    {...(workshopsOpen ? { inert: '' } : {})}
+                >
+                    {menuItems.map((item) => (
+                        item.children ? (
+                            <div key={item.label} className={styles.menuItem}>
+                                <button
+                                    ref={workshopsButtonRef}
+                                    type="button"
+                                    className={`${styles.submenuTrigger} ${item.children.some((child) => child.href === path) ? styles.active : ''}`}
+                                    aria-expanded={workshopsOpen}
+                                    aria-haspopup="true"
+                                    aria-controls="workshops-submenu"
+                                    onClick={() => setWorkshopsOpen(true)}
+                                >
+                                    <span>{item.label}</span>
+                                    <span className={styles.chevron} aria-hidden="true">›</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <div key={item.href} className={styles.menuItem}>
+                                <Link
+                                    href={item.href}
+                                    className={path === item.href ? styles.active : ''}
+                                    onClick={handleMenuItemClick}
+                                >
+                                    {item.label}
+                                </Link>
+                            </div>
+                        )
+                    ))}
+                    {isAuthenticated && (
+                        <div className={styles.menuItem}>
+                            <Link href="/admin" className={path === '/admin' ? styles.active : ''} onClick={handleMenuItemClick}>
+                                ניהול
+                            </Link>
+                        </div>
+                    )}
                 </div>
-            )}
+                <div
+                    id="workshops-submenu"
+                    className={`${styles.mobileDrawer} ${workshopsOpen ? styles.drawerOpen : ''}`}
+                    role="region"
+                    aria-labelledby="workshops-drawer-title"
+                    aria-hidden={!workshopsOpen}
+                    {...(workshopsOpen ? {} : { inert: '' })}
+                >
+                    <button
+                        ref={backButtonRef}
+                        type="button"
+                        className={styles.backButton}
+                        onClick={() => setWorkshopsOpen(false)}
+                    >
+                        <span className={styles.chevron} aria-hidden="true">‹</span>
+                        <span>חזרה</span>
+                    </button>
+                    <p id="workshops-drawer-title" className={styles.drawerTitle}>{workshopItem?.label}</p>
+                    <div className={styles.drawerLinks} role="menu">
+                        {workshopItem?.children.map((child) => (
+                            <Link
+                                key={child.href}
+                                href={child.href}
+                                role="menuitem"
+                                className={path === child.href ? styles.active : ''}
+                                onClick={handleMenuItemClick}
+                            >
+                                {child.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </nav>
     );
 

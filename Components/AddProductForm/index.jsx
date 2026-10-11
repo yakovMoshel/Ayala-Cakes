@@ -4,7 +4,35 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import styles from './style.module.scss';
 import dynamic from 'next/dynamic';
+import { FieldError, FieldLabel, FieldWarning, SlugChangeDialog } from '@/Components/FieldHelp';
+import {
+  ALT_HELP,
+  DIMENSION_HELP,
+  DIMENSION_REPEAT_NOTE,
+  SEO_DESCRIPTION_HELP,
+  SLUG_HELP,
+  firstFieldKey,
+  normalizeTypedSlug,
+  parseDimensionField,
+  seoDescriptionWarnings,
+  validateImageAltsForPublish,
+  validateSlug,
+} from '@/utils/adminContentRules';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
+
+const imageItemFromStored = (url, meta, productName, legacyAlt, index) => {
+  const stored = String(meta?.alt || (index === 0 ? legacyAlt : '') || '').trim();
+  const decorative = Boolean(meta?.decorative);
+  return {
+    url,
+    alt: stored || productName || '',
+    decorative,
+    altEdited: Boolean(stored),
+    missingStored: !stored && !decorative,
+  };
+};
+
+const PRODUCT_FIELD_ORDER = ['slug', 'diameter', 'height'];
 
 const mapProductToForm = (product) => ({
   name: product.name || '',
@@ -79,13 +107,16 @@ export default function AddProductForm({ categories, productId }) {
     return map;
   }, [categories]);
   
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [imageItems, setImageItems] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [savedSlug, setSavedSlug] = useState('');
+  const [savedPublic, setSavedPublic] = useState(false);
+  const [slugPrompt, setSlugPrompt] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingSEO, setIsGeneratingSEO] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [showSEOSection, setShowSEOSection] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
-  const [selectedImageUrls, setSelectedImageUrls] = useState([]);
   // TODO: ADD FAQ state when needed in the future
 
   useEffect(() => {
@@ -104,7 +135,16 @@ export default function AddProductForm({ categories, productId }) {
         if (response.data.success) {
           const product = response.data.data;
           setFormData(mapProductToForm(product));
-          setSelectedImageUrls(product.images || []);
+          setImageItems((product.images || []).map((url, index) => imageItemFromStored(
+            url,
+            product.imageAlts?.[index],
+            product.name || '',
+            product.altText || '',
+            index,
+          )));
+          setSavedSlug(product.slug || '');
+          setSavedPublic(Boolean(product.isActive));
+          setFieldErrors({});
         }
       } catch (error) {
         setFeedback({
@@ -125,23 +165,31 @@ export default function AddProductForm({ categories, productId }) {
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedImages(prevImages => [...prevImages, ...files]);
+    if (name === 'name') {
+      setImageItems((items) => items.map((item) => (
+        item.altEdited ? item : { ...item, alt: value }
+      )));
+    }
+    setFieldErrors((errors) => {
+      if (!errors[name]) return errors;
+      const next = { ...errors };
+      delete next[name];
+      return next;
+    });
   };
 
   const removeImage = (index) => {
-    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
-    setSelectedImageUrls(prev => prev.filter((_, i) => i !== index));
+    setImageItems((items) => items.filter((_, i) => i !== index));
   };
 
   const openMediaPicker = () => setShowMediaPicker(true);
   const closeMediaPicker = () => setShowMediaPicker(false);
   const handleMediaConfirm = (selection) => {
     const urls = selection.map(s => s.secure_url);
-    setSelectedImageUrls(prev => [...prev, ...urls]);
+    setImageItems((items) => [
+      ...items,
+      ...urls.map((url) => imageItemFromStored(url, null, formData.name, '', 1)),
+    ]);
     closeMediaPicker();
   };
 
@@ -176,7 +224,7 @@ export default function AddProductForm({ categories, productId }) {
         
         setFormData(prev => ({
           ...prev,
-          slug: seoData.slug || '',
+          slug: savedPublic && savedSlug ? prev.slug : (seoData.slug || prev.slug || ''),
           seoTitle: seoData.seoTitle || '',
           metaDescription: seoData.metaDescription || '',
           focusKeyword: seoData.focusKeyword || '',
@@ -232,7 +280,10 @@ export default function AddProductForm({ categories, productId }) {
       ogImage: '',
       twitterCard: 'summary_large_image'
     });
-    setSelectedImages([]);
+    setImageItems([]);
+    setFieldErrors({});
+    setSavedSlug('');
+    setSavedPublic(false);
           // TODO: ADD FAQ reset when needed
     setShowSEOSection(false);
   };
@@ -243,13 +294,17 @@ export default function AddProductForm({ categories, productId }) {
       ...rest,
       categoryId: formData.categoryId || null,
       price: parseFloat(formData.price),
-      images: [...selectedImageUrls],
+      images: imageItems.map((item) => item.url),
+      imageAlts: imageItems.map((item) => ({
+        alt: item.alt.trim(),
+        decorative: item.decorative,
+      })),
       colors: formData.colors ? formData.colors.split(',').map((c) => c.trim()) : [],
       flavors: formData.flavors ? formData.flavors.split(',').map((f) => f.trim()) : [],
       isActive,
-      height: parseFloat(formData.height),
-      diameter: parseFloat(formData.diameter),
-      slug: typeof formData.slug === 'string' ? formData.slug.trim() : formData.slug,
+      height: parseDimensionField(formData.height).value,
+      diameter: parseDimensionField(formData.diameter).value,
+      slug: normalizeTypedSlug(formData.slug),
       glutenFreeOption: formData.glutenContent === 'ללא גלוטן',
       notDairyOption: formData.dairyContent === 'כן',
       secondaryKeywords: formData.secondaryKeywords
@@ -259,7 +314,51 @@ export default function AddProductForm({ categories, productId }) {
     };
   };
 
-  const saveProduct = async (active) => {
+  const collectProductErrors = (active) => {
+    const errors = {};
+    const slug = normalizeTypedSlug(formData.slug);
+    if (editingProductId && !slug) {
+      errors.slug = 'יש להזין כתובת.';
+    } else if (slug && !(savedSlug && slug === savedSlug)) {
+      const slugError = validateSlug(slug);
+      if (slugError) errors.slug = slugError;
+    }
+    const diameter = parseDimensionField(formData.diameter);
+    const height = parseDimensionField(formData.height);
+    if (diameter.error) errors.diameter = diameter.error;
+    if (height.error) errors.height = height.error;
+    if (active) {
+      Object.assign(errors, validateImageAltsForPublish(imageItems));
+    }
+    return errors;
+  };
+
+  const focusProductField = (key) => {
+    const id = key.startsWith('imageAlt-')
+      ? `product-image-alt-${key.slice('imageAlt-'.length)}`
+      : { slug: 'product-slug', diameter: 'product-diameter', height: 'product-height' }[key];
+    document.getElementById(id)?.focus();
+  };
+
+  const saveProduct = async (active, { slugConfirmed = false } = {}) => {
+    const errors = collectProductErrors(active);
+    if (Object.keys(errors).length) {
+      setFieldErrors(errors);
+      const order = [
+        ...PRODUCT_FIELD_ORDER,
+        ...imageItems.map((_, index) => `imageAlt-${index}`),
+      ];
+      focusProductField(firstFieldKey(errors, order));
+      return;
+    }
+    setFieldErrors({});
+
+    const nextSlug = normalizeTypedSlug(formData.slug);
+    if (!slugConfirmed && savedPublic && savedSlug && nextSlug && nextSlug !== savedSlug) {
+      setSlugPrompt(active);
+      return;
+    }
+
     setIsLoading(true);
     setFeedback({ type: '', message: '' });
 
@@ -276,6 +375,13 @@ export default function AddProductForm({ categories, productId }) {
       }
 
       setFormData((prev) => ({ ...prev, isActive: active ? 'true' : 'false' }));
+      setSavedPublic(active);
+      if (formattedData.slug) setSavedSlug(formattedData.slug);
+      setImageItems((items) => items.map((item) => ({
+        ...item,
+        missingStored: item.decorative ? false : !item.alt.trim(),
+        altEdited: item.altEdited || Boolean(item.alt.trim()),
+      })));
 
       setFeedback({
         type: 'success',
@@ -291,14 +397,22 @@ export default function AddProductForm({ categories, productId }) {
       if (!editingProductId && !response.data?.data?._id) {
         resetForm();
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
+      const fields = error.response?.data?.fields;
+      if (fields && typeof fields === 'object') {
+        setFieldErrors(fields);
+        focusProductField(firstFieldKey(fields, [
+          ...PRODUCT_FIELD_ORDER,
+          ...imageItems.map((_, index) => `imageAlt-${index}`),
+        ]));
+      }
       setFeedback({
         type: 'error',
         message: error.response?.data?.error || 'אירעה שגיאה בשמירת המוצר',
       });
     } finally {
       setIsLoading(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -408,19 +522,20 @@ export default function AddProductForm({ categories, productId }) {
             </div>
             
             <div className={styles.formField}>
-              <label htmlFor="product-slug">סלאג (כתובת URL)</label>
+              <FieldLabel htmlFor="product-slug" help={SLUG_HELP} helpLabel="הסבר על הכתובת">
+                סלאג (כתובת URL)
+              </FieldLabel>
               <input
                 id="product-slug"
                 type="text"
                 name="slug"
                 value={formData.slug}
                 onChange={handleChange}
-                placeholder="עוגת-יום-הולדת או birthday-cake"
-                aria-describedby="product-slug-hint"
+                placeholder="עוגת-בנטו-לב"
+                aria-invalid={Boolean(fieldErrors.slug)}
+                aria-describedby="product-slug-error"
               />
-              <p id="product-slug-hint" className={styles.fieldHint}>
-                מומלץ סלאג בעברית ברורה, או מילה אנגלית ברורה ואינפורמטיבית.
-              </p>
+              <FieldError id="product-slug-error">{fieldErrors.slug}</FieldError>
             </div>
 
             <div className={styles.formField}>
@@ -488,12 +603,54 @@ export default function AddProductForm({ categories, productId }) {
               בחר תמונות מספריית המדיה
             </button>
             <div className={styles.selectedImages}>
-              {selectedImageUrls.map((url, index) => (
-                <div key={index} className={styles.imagePreview}>
-                  <img src={url} alt={`תמונה ${index + 1}`} />
-                  <button type="button" onClick={() => removeImage(index)}>
+              {imageItems.map((item, index) => (
+                <div key={`${item.url}-${index}`} className={styles.imagePreview}>
+                  <img src={item.url} alt={item.decorative ? '' : item.alt} />
+                  <button type="button" onClick={() => removeImage(index)} aria-label={`הסרת תמונה ${index + 1}`}>
                     הסר
                   </button>
+                  <FieldLabel htmlFor={`product-image-alt-${index}`} help={ALT_HELP} helpLabel="הסבר על טקסט חלופי">
+                    טקסט חלופי
+                  </FieldLabel>
+                  <input
+                    id={`product-image-alt-${index}`}
+                    type="text"
+                    value={item.alt}
+                    disabled={item.decorative}
+                    aria-invalid={Boolean(fieldErrors[`imageAlt-${index}`])}
+                    aria-describedby={`product-image-alt-${index}-error`}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setImageItems((items) => items.map((current, itemIndex) => (
+                        itemIndex === index
+                          ? { ...current, alt: value, altEdited: true }
+                          : current
+                      )));
+                      setFieldErrors((errors) => {
+                        if (!errors[`imageAlt-${index}`]) return errors;
+                        const next = { ...errors };
+                        delete next[`imageAlt-${index}`];
+                        return next;
+                      });
+                    }}
+                  />
+                  <label className={styles.fieldHint}>
+                    <input
+                      type="checkbox"
+                      checked={item.decorative}
+                      onChange={(event) => {
+                        const decorative = event.target.checked;
+                        setImageItems((items) => items.map((current, itemIndex) => (
+                          itemIndex === index ? { ...current, decorative } : current
+                        )));
+                      }}
+                    />
+                    {' '}תמונה דקורטיבית
+                  </label>
+                  {item.missingStored && !item.decorative && (
+                    <p className={styles.sectionNote}>לא נשמר עדיין טקסט חלופי לתמונה הזו. השדה מציג את שם המוצר.</p>
+                  )}
+                  <FieldError id={`product-image-alt-${index}-error`}>{fieldErrors[`imageAlt-${index}`]}</FieldError>
                 </div>
               ))}
             </div>
@@ -502,29 +659,44 @@ export default function AddProductForm({ categories, productId }) {
 
         <div className={styles.formSection}>
           <h4>מפרט טכני</h4>
+          <p className={styles.sectionNote}>{DIMENSION_REPEAT_NOTE}</p>
           <div className={styles.formGrid}>
             <div className={styles.formField}>
-              <label>גובה (בס״מ)</label>
+              <FieldLabel htmlFor="product-height" help={DIMENSION_HELP} helpLabel="הסבר על הגובה">
+                גובה (בס״מ)
+              </FieldLabel>
               <input
+                id="product-height"
                 type="number"
                 name="height"
+                min="0"
+                step="any"
                 value={formData.height}
                 onChange={handleChange}
-                required
                 placeholder="גובה"
+                aria-invalid={Boolean(fieldErrors.height)}
+                aria-describedby="product-height-error"
               />
+              <FieldError id="product-height-error">{fieldErrors.height}</FieldError>
             </div>
             
             <div className={styles.formField}>
-              <label>קוטר (בס״מ)</label>
+              <FieldLabel htmlFor="product-diameter" help={DIMENSION_HELP} helpLabel="הסבר על הקוטר">
+                קוטר (בס״מ)
+              </FieldLabel>
               <input
+                id="product-diameter"
                 type="number"
                 name="diameter"
+                min="0"
+                step="any"
                 value={formData.diameter}
                 onChange={handleChange}
-                required
                 placeholder="קוטר"
+                aria-invalid={Boolean(fieldErrors.diameter)}
+                aria-describedby="product-diameter-error"
               />
+              <FieldError id="product-diameter-error">{fieldErrors.diameter}</FieldError>
             </div>
           </div>
         </div>
@@ -649,14 +821,27 @@ export default function AddProductForm({ categories, productId }) {
                 </div>
 
                 <div className={styles.formField}>
-                  <label>Meta Description</label>
+                  <FieldLabel htmlFor="product-meta-description" help={SEO_DESCRIPTION_HELP} helpLabel="הסבר על תיאור החיפוש">
+                    Meta Description
+                  </FieldLabel>
                   <textarea
+                    id="product-meta-description"
                     name="metaDescription"
                     value={formData.metaDescription}
                     onChange={handleChange}
                     placeholder="תיאור המוצר למנועי חיפוש"
                   ></textarea>
                   <small>{formData.metaDescription.length}/155 תווים</small>
+                  <FieldWarning id="product-meta-warning">
+                    {seoDescriptionWarnings({
+                      text: formData.metaDescription,
+                      siblingTexts: [formData.name, formData.seoTitle, (formData.description || '').split('\n')[0]],
+                    })}
+                  </FieldWarning>
+                  <div className={styles.seoPreview}>
+                    <strong>{formData.seoTitle || formData.name || 'כותרת המוצר'}</strong>
+                    <span>{formData.metaDescription || 'באתר יוצג תיאור ברירת מחדל אם השדה ריק.'}</span>
+                  </div>
                 </div>
 
                 <div className={styles.formGrid}>
@@ -686,6 +871,7 @@ export default function AddProductForm({ categories, productId }) {
                 <div className={styles.formGrid}>
                   <div className={styles.formField}>
                     <label>Alt Text לתמונה</label>
+                    <p className={styles.sectionNote}>טקסט חלופי לכל תמונה נערך ליד התמונה עצמה.</p>
                     <input
                       type="text"
                       name="altText"
@@ -728,6 +914,17 @@ export default function AddProductForm({ categories, productId }) {
           שמירה והפעלה מתבצעות מהסרגל העליון.
         </p>
       </form>
+
+      {slugPrompt !== null && (
+        <SlugChangeDialog
+          onCancel={() => setSlugPrompt(null)}
+          onConfirm={() => {
+            const active = slugPrompt;
+            setSlugPrompt(null);
+            saveProduct(active, { slugConfirmed: true });
+          }}
+        />
+      )}
 
       {showMediaPicker && (
         <MediaPickerModal

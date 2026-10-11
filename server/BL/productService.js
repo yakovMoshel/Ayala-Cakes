@@ -1,6 +1,7 @@
 import { getProducts, getOneProduct, getSomeProducts, getProductBySlug as getProductBySlugController, getPopularProducts as getPopularProductsController } from "../DL/controllers/productController";
 import { productModel } from "../DL/Models/productModel";
-import { createSlugFromHebrew, ensureUniqueSlug } from "../../utils/slugUtils";
+import { ensureUniqueSlug } from "../../utils/slugUtils";
+import { slugFromTitle } from "../../utils/adminContentRules";
 
 export const getProduct = (id) => getOneProduct(id);
 export const getProductsByIds = (ids) => getSomeProducts(ids);
@@ -21,7 +22,8 @@ export const getProductBySlug = (slug) => getProductBySlugController(slug);
  * @returns {Promise<string>} - slug ייחודי
  */
 export const generateUniqueSlug = async (productName) => {
-  const baseSlug = createSlugFromHebrew(productName);
+  const baseSlug = slugFromTitle(productName);
+  if (!baseSlug) return '';
   
   const checkExists = async (slug) => {
     const existing = await productModel.findOne({ slug });

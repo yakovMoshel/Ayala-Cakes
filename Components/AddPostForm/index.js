@@ -34,6 +34,21 @@ import {
 import { formatBlogDate } from '@/utils/formatBlogDate';
 import KeywordTagsInput from '@/Components/KeywordTagsInput';
 import RichTextEditor from '@/Components/RichTextEditor';
+import { FieldError, FieldHelp, FieldWarning, SlugChangeDialog } from '@/Components/FieldHelp';
+import {
+  EMBEDDED_IMAGE_ERROR,
+  HEADING_HELP,
+  EDITOR_IMAGE_HELP,
+  SEO_DESCRIPTION_HELP,
+  SLUG_HELP,
+  firstFieldKey,
+  hasEmbeddedDataImage,
+  normalizeTypedSlug,
+  seoDescriptionWarnings,
+  slugFromTitle,
+  validateSlug,
+} from '@/utils/adminContentRules';
+import { SITE_URL } from '@/utils/siteUrl';
 const MediaPickerModal = dynamic(() => import('@/Components/MediaPickerModal'), { ssr: false });
 
 const getApiErrorMessage = (error, fallback) => {
@@ -94,6 +109,10 @@ const STATUS_LABELS = {
 export default function SeoEditor({ postId, blogCategories = [] }) {
   const router = useRouter();
   const [editingPostId, setEditingPostId] = useState(postId || null);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [savedSlug, setSavedSlug] = useState('');
+  const [savedPublic, setSavedPublic] = useState(false);
+  const [slugPrompt, setSlugPrompt] = useState(null);
   const [isLoadingPost, setIsLoadingPost] = useState(!!postId);
 
   // State for form data
@@ -198,7 +217,11 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
       try {
         const response = await axios.get(`/api/post/${postId}`);
         if (response.data.success) {
-          setFormData(mapPostToFormData(response.data.data));
+          const loaded = response.data.data;
+          setFormData(mapPostToFormData(loaded));
+          setSavedSlug(loaded.slug || '');
+          setSavedPublic(loaded.status === 'published');
+          setFieldErrors({});
         }
       } catch (error) {
         setFeedback({
@@ -268,7 +291,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
         
         setFormData(prev => ({
           ...prev,
-          slug: seoData.slug || '',
+          slug: savedPublic && savedSlug ? prev.slug : (seoData.slug || prev.slug || ''),
           seoTitle: seoData.seoTitle || '',
           metaDescription: seoData.metaDescription || '',
           focusKeyword: seoData.focusKeyword || '',
@@ -348,7 +371,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
           summary: post.summary || '',
           content: post.content || '',
           author: post.author || formData.author,
-          slug: post.slug || '',
+          slug: savedPublic && savedSlug ? savedSlug : (post.slug || ''),
           seoTitle: post.seoTitle || post.title || '',
           metaDescription: post.metaDescription || '',
           focusKeyword: post.focusKeyword || '',
@@ -397,11 +420,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
   useEffect(() => {
     if (formData.title && !formData.slug) {
       // Create slug from title
-      const newSlug = formData.title
-        .toLowerCase()
-        .replace(/[^\u0590-\u05FF\w\s]/g, '') // Keep Hebrew and English letters
-        .replace(/\s+/g, '-')
-        .trim();
+      const newSlug = slugFromTitle(formData.title);
         
       setFormData(prev => ({
         ...prev,
@@ -467,14 +486,46 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
     }));
   };
 
-  const savePost = async (targetStatus) => {
+  const focusPostField = (key) => {
+    if (key === 'content') {
+      document.querySelector('#post-content-editor .ql-editor')?.focus();
+      return;
+    }
+    const id = { slug: 'post-slug', metaDescription: 'post-meta-description' }[key];
+    document.getElementById(id)?.focus();
+  };
+
+  const savePost = async (targetStatus, { slugConfirmed = false } = {}) => {
+    const errors = {};
+    const slug = normalizeTypedSlug(formData.slug);
+    if (editingPostId && !slug) {
+      errors.slug = 'יש להזין כתובת.';
+    } else if (slug && !(savedSlug && slug === savedSlug)) {
+      const slugError = validateSlug(slug);
+      if (slugError) errors.slug = slugError;
+    }
+    if (hasEmbeddedDataImage(formData.content)) {
+      errors.content = EMBEDDED_IMAGE_ERROR;
+    }
+    if (Object.keys(errors).length) {
+      setFieldErrors(errors);
+      focusPostField(firstFieldKey(errors, ['slug', 'content']));
+      return;
+    }
+    setFieldErrors({});
+
+    if (!slugConfirmed && savedPublic && savedSlug && slug && slug !== savedSlug) {
+      setSlugPrompt(targetStatus);
+      return;
+    }
+
     setIsLoading(true);
     setFeedback({ type: '', message: '' });
 
     const formattedData = {
       ...formData,
       status: targetStatus,
-      slug: typeof formData.slug === 'string' ? formData.slug.trim() : formData.slug,
+      slug: normalizeTypedSlug(formData.slug),
       publishDate: normalizePublishDateForWrite(formData.publishDate),
       image: formData.image.trim(),
       seoTitle: formData.seoTitle || formData.title,
@@ -498,6 +549,8 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
         router.replace(`/admin/posts/${response.data.data._id}/edit`);
       }
 
+      setSavedPublic(targetStatus === 'published');
+      if (formattedData.slug) setSavedSlug(formattedData.slug);
       setFormData((prev) => ({
         ...prev,
         status: targetStatus,
@@ -520,14 +573,19 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
       if (!editingPostId && !response.data?.data?._id) {
         resetForm();
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
+      const fields = error.response?.data?.fields;
+      if (fields && typeof fields === 'object') {
+        setFieldErrors(fields);
+        focusPostField(firstFieldKey(fields, ['slug', 'content', 'metaDescription']));
+      }
       setFeedback({
         type: 'error',
         message: error.response?.data?.error || 'אירעה שגיאה בשמירת הפוסט',
       });
     } finally {
       setIsLoading(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -803,12 +861,16 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
               {/* Content editor */}
               <div className={styles.formGroup}>
                 <div className={styles.fieldHeader}>
-                  <label>תוכן</label>
+                  <span className={styles.labelWithHelp}>
+                    <label>תוכן</label>
+                    <FieldHelp text={HEADING_HELP} label="הסבר על כותרות" />
+                    <FieldHelp text={EDITOR_IMAGE_HELP} label="הסבר על תמונות בתוכן" />
+                  </span>
                   <div className={styles.lengthIndicator}>
                     <SeoStatusIndicator {...seoAnalysis.contentLength} />
                   </div>
                 </div>
-                <div className={styles.editorContainer}>
+                <div id="post-content-editor" className={styles.editorContainer}>
                   <RichTextEditor
                     value={formData.content}
                     onChange={handleEditorChange}
@@ -817,6 +879,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                     excludePostId={editingPostId || ''}
                   />
                 </div>
+                <FieldError id="post-content-error">{fieldErrors.content}</FieldError>
               </div>
 
               <PostCtaEditor
@@ -1083,7 +1146,10 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                 {/* URL Slug */}
                 <div className={styles.formGroup}>
                   <div className={styles.fieldHeader}>
-                    <label>Slug</label>
+                    <span className={styles.labelWithHelp}>
+                      <label htmlFor="post-slug">כתובת</label>
+                      <FieldHelp text={SLUG_HELP} label="הסבר על הכתובת" />
+                    </span>
                     {formData.focusKeyword && (
                       <div className={styles.lengthIndicator}>
                         <SeoStatusIndicator 
@@ -1097,12 +1163,16 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                     )}
                   </div>
                   <input
+                    id="post-slug"
                     type="text"
                     name="slug"
                     value={formData.slug}
-                    placeholder="slug-of-the-post"
+                    placeholder="עוגת-בנטו-לב"
                     onChange={handleChange}
+                    aria-invalid={Boolean(fieldErrors.slug)}
+                    aria-describedby="post-slug-error"
                   />
+                  <FieldError id="post-slug-error">{fieldErrors.slug}</FieldError>
                 </div>
                 
                 {/* SEO Title */}
@@ -1125,17 +1195,28 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                 {/* Meta Description */}
                 <div className={styles.formGroup}>
                   <div className={styles.fieldHeader}>
-                    <label>Meta Description</label>
+                    <span className={styles.labelWithHelp}>
+                      <label htmlFor="post-meta-description">Meta Description</label>
+                      <FieldHelp text={SEO_DESCRIPTION_HELP} label="הסבר על תיאור החיפוש" />
+                    </span>
                     <div className={styles.lengthIndicator}>
                       <SeoStatusIndicator {...seoAnalysis.descriptionLength} />
                     </div>
                   </div>
                   <textarea
+                    id="post-meta-description"
                     name="metaDescription"
                     value={formData.metaDescription}
                     placeholder="תיאור הפוסט לתוצאות חיפוש"
                     onChange={handleChange}
                   ></textarea>
+                  <small>{formData.metaDescription.length}/155 תווים</small>
+                  <FieldWarning id="post-meta-warning">
+                    {seoDescriptionWarnings({
+                      text: formData.metaDescription,
+                      siblingTexts: [formData.title, formData.summary, formData.seoTitle],
+                    })}
+                  </FieldWarning>
                 </div>
                 
                 {/* Call to action */}
@@ -1420,7 +1501,7 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
                 {formData.seoTitle || formData.title || 'כותרת הפוסט'}
               </div>
               <div className={styles.serpUrl}>
-                example.com/{formData.slug || 'your-post-url'}
+                {SITE_URL}/blog/{formData.slug || 'כתובת-הפוסט'}
               </div>
               <div className={styles.serpDescription}>
                 {formData.metaDescription || formData.summary || 'תיאור הפוסט יופיע כאן. הוסף מטא תיאור לשיפור הנראות בתוצאות החיפוש.'}
@@ -1429,6 +1510,16 @@ export default function SeoEditor({ postId, blogCategories = [] }) {
           </div>
         </div>
       </div>
+      {slugPrompt !== null && (
+        <SlugChangeDialog
+          onCancel={() => setSlugPrompt(null)}
+          onConfirm={() => {
+            const status = slugPrompt;
+            setSlugPrompt(null);
+            savePost(status, { slugConfirmed: true });
+          }}
+        />
+      )}
       {showMediaPicker && (
         <MediaPickerModal
           isOpen={showMediaPicker}

@@ -73,6 +73,21 @@
       grid-template-columns: 1fr;
       gap: 0;
     }
+
+    &.heroTextOnly {
+      grid-template-columns: minmax(0, 760px);
+      justify-content: center;
+
+      .heroContent {
+        order: 0;
+      }
+
+      @media (max-width: 968px) {
+        .heroContent {
+          margin-top: 0;
+        }
+      }
+    }
   }
 
   // --- צד התמונה ---

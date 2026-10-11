@@ -149,7 +149,7 @@ Sitemap: https://ayacakes.biz/sitemap.xml
 ```
 
 ### Sitemap coverage
-Static entries MUST include: `/`, `/about`, `/shop`, `/blog`, `/bento-workshop`, `/summer`, plus dynamic product and blog slugs from MongoDB. The contact draft is not a public path and stays out of the sitemap.
+Static entries MUST include: `/`, `/about`, `/shop`, `/blog`, `/bento-workshop`, `/paint-cake-workshop`, `/summer`, plus dynamic product and blog slugs from MongoDB. The contact draft is not a public path and stays out of the sitemap.
 
 ### AIO (LLM optimization)
 - Public pages MUST server-render meaningful text content (product names, descriptions, blog body) — not empty shells filled by client JS.

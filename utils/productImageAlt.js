@@ -12,6 +12,7 @@ function usableAlt(value) {
  * Uses the stored image alt when it is a real description.
  * Otherwise uses the product name. Does not invent a distinct alt per frame.
  */
-export function productImageAlt({ name, altText } = {}) {
+export function productImageAlt({ name, altText, decorative = false } = {}) {
+  if (decorative) return '';
   return usableAlt(altText) || usableAlt(name);
 }

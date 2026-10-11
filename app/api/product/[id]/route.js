@@ -5,6 +5,9 @@ import { verifyAdminSession } from "@/server/functions/verifyAdminSession";
 import { revalidatePublicContent } from "@/server/functions/revalidatePublicContent";
 import { normalizeCategoryIdWrite, withCategoryFields } from "@/utils/categoryRef";
 import { serializeData } from "@/utils/serialization";
+import { contentChanged, PRODUCT_CONTENT_KEYS } from "@/utils/adminContentRules";
+import { applyProductWrite } from "@/server/functions/productWrite";
+import { duplicateSlugMessage, fieldsErrorResponse } from "@/server/functions/uniqueSlug";
 
 export async function GET(req, { params }) {
   await connectToMongo();
@@ -23,7 +26,8 @@ export async function GET(req, { params }) {
       data: withCategoryFields(serializeData(product)),
     });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    console.error('Product read failed:', error);
+    return NextResponse.json({ success: false, error: 'Request failed' }, { status: 400 });
   }
 }
 
@@ -45,13 +49,20 @@ export async function PUT(req, { params }) {
       );
     }
 
-    if (typeof data.slug === 'string') {
-      data.slug = data.slug.trim();
-      if (!data.slug) delete data.slug;
+    const previous = await productModel.findById(id).lean();
+    const fields = applyProductWrite(data, { publishing: data.isActive === true, isCreate: false });
+    if (previous?.slug && data.slug === previous.slug) delete fields.slug;
+    if (data.slug && !fields.slug) {
+      const duplicate = await duplicateSlugMessage(productModel, data.slug, id);
+      if (duplicate) fields.slug = duplicate;
+    }
+    if (Object.keys(fields).length) {
+      return NextResponse.json(fieldsErrorResponse(fields), { status: 400 });
     }
 
-    const previous = await productModel.findById(id).select('slug').lean();
-    data.updatedAt = new Date();
+    if (contentChanged(previous, data, PRODUCT_CONTENT_KEYS)) {
+      data.updatedAt = new Date();
+    }
     const product = await productModel.findByIdAndUpdate(id, data, { new: true });
     revalidatePublicContent([
       '/shop',
@@ -61,6 +72,10 @@ export async function PUT(req, { params }) {
     ]);
     return NextResponse.json({ success: true, data: product });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    console.error('Product update failed:', error);
+    if (error?.code === 11000) {
+      return NextResponse.json(fieldsErrorResponse({ slug: 'הכתובת כבר בשימוש. בחרו כתובת אחרת.' }), { status: 400 });
+    }
+    return NextResponse.json({ success: false, error: 'Request failed' }, { status: 400 });
   }
 }

@@ -12,8 +12,13 @@ import { productImageAlt } from '@/utils/productImageAlt';
 
 
 export default function ProductItem({ product, hideAdminActions = false }) {
-    const { _id, name, subtitle, images, slug, altText } = product;
-    const imageAlt = productImageAlt({ name, altText });
+    const { _id, name, subtitle, images, slug, altText, imageAlts } = product;
+    const firstAlt = Array.isArray(imageAlts) ? imageAlts[0] : null;
+    const imageAlt = productImageAlt({
+        name,
+        altText: firstAlt?.alt || altText,
+        decorative: Boolean(firstAlt?.decorative),
+    });
 
     const router = useRouter();
     const isAuthenticated = useStore((state) => state.isAuthenticated);

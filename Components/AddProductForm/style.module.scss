@@ -49,6 +49,12 @@
         margin-bottom: 15px;
         font-weight: 600;
       }
+
+      .sectionNote {
+        color: var(--mutedColor);
+        font-size: 13px;
+        margin: -8px 0 12px;
+      }
     }
 
     .formGrid {
@@ -64,7 +70,7 @@
     .formField {
       margin-bottom: 15px;
 
-      label {
+      > label {
         display: block;
         margin-bottom: 8px;
         font-weight: 500;
@@ -104,6 +110,27 @@
         color: var(--mutedColor);
         font-size: 13px;
         margin: 6px 0 0;
+      }
+
+      .seoPreview {
+        margin-top: 8px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--grayColor);
+        text-align: right;
+
+        strong {
+          display: block;
+          color: var(--secColor);
+          font-weight: 500;
+        }
+
+        span {
+          display: block;
+          margin-top: 4px;
+          color: var(--mutedColor);
+          font-size: 13px;
+        }
       }
     }
 
@@ -207,39 +234,33 @@
       }
 
       .selectedImages {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: var(--space-7);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
 
         .imagePreview {
-          position: relative;
-          border-radius: var(--radius-admin-sm);
-          overflow: hidden;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          display: grid;
+          grid-template-columns: 120px 1fr;
+          gap: 8px 12px;
+          align-items: start;
 
           img {
-            width: 100%;
+            width: 120px;
             height: 120px;
             object-fit: cover;
+            border-radius: var(--radius-admin-sm);
+            grid-row: 1 / span 5;
           }
 
           button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
+            justify-self: start;
+            background: var(--secColor);
+            color: var(--mainColor);
             border: none;
-            border-radius: var(--radius-admin-circle);
-            width: 24px;
-            height: 24px;
+            border-radius: var(--radius-admin-sm);
+            padding: 4px 10px;
             cursor: pointer;
             font-size: 12px;
-            @include flex-center;
-
-            &:hover {
-              background: rgba(255, 0, 0, 1);
-            }
           }
         }
       }

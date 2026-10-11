@@ -103,7 +103,7 @@ export default async function ProductPage({ params }) {
             {item.slug && <ProductPageTracker slug={item.slug} />}
             <div className={styles.productPage}>
                 <div className={styles.leftSide}>
-                    <ImageGallery images={images} name={name} altText={item.altText} />
+                    <ImageGallery images={images} name={name} altText={item.altText} imageAlts={item.imageAlts || []} />
                 </div>
                 <div className={styles.rightSide}>
                     <h1 className={styles.name}>

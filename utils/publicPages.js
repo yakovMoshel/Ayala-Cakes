@@ -4,6 +4,7 @@ export const STATIC_PAGES = [
   { path: '/shop', title: 'חנות' },
   { path: '/blog', title: 'בלוג' },
   { path: '/bento-workshop', title: 'סדנת בנטו' },
+  { path: '/paint-cake-workshop', title: 'סדנת ציור על עוגות' },
   { path: '/summer', title: 'קורס קיץ' },
   { path: '/favorites', title: 'מועדפים' },
   { path: '/privacy', title: 'מדיניות פרטיות' },

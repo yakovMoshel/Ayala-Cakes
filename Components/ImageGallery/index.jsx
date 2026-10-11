@@ -5,10 +5,19 @@ import Image from 'next/image';
 import styles from './style.module.scss';
 import { productImageAlt } from '@/utils/productImageAlt';
 
-export default function ImageGallery({ images, name = '', altText = '' }) {
+export default function ImageGallery({ images, name = '', altText = '', imageAlts = [] }) {
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [isEnlarged, setIsEnlarged] = useState(false);
-  const alt = productImageAlt({ name, altText });
+  const altFor = (image) => {
+    const index = images.indexOf(image);
+    const meta = index >= 0 ? imageAlts[index] : null;
+    return productImageAlt({
+      name,
+      altText: meta?.alt || altText,
+      decorative: Boolean(meta?.decorative),
+    });
+  };
+  const alt = altFor(selectedImage);
 
   const toggleEnlarged = () => {
     setIsEnlarged(!isEnlarged);
@@ -36,7 +45,7 @@ export default function ImageGallery({ images, name = '', altText = '' }) {
           >
             <Image
               src={image}
-              alt={alt}
+              alt={altFor(image)}
               width={200}
               height={200}
               sizes="100px"

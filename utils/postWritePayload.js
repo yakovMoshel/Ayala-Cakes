@@ -1,17 +1,31 @@
 import { sanitizeBlogHtml, sanitizeEmbedHtml } from '@/utils/sanitizeHtml';
 import { normalizePublishDateForWrite } from '@/utils/postPublishDate';
 import { replaceEmbeddedDataImages } from '@/server/functions/replaceEmbeddedDataImages';
+import { EMBEDDED_IMAGE_ERROR, hasEmbeddedDataImage } from '@/utils/adminContentRules';
 
 export async function preparePostWritePayload(data) {
   if (!data || typeof data !== 'object') return data;
-  if (typeof data.content !== 'string' || !data.content.includes('data:image/')) {
+  if (typeof data.content !== 'string' || !hasEmbeddedDataImage(data.content)) {
     return sanitizePostWritePayload(data);
   }
 
-  return sanitizePostWritePayload({
-    ...data,
-    content: await replaceEmbeddedDataImages(data.content),
-  });
+  let content = data.content;
+  try {
+    content = await replaceEmbeddedDataImages(content);
+  } catch (error) {
+    console.error('Embedded image upload failed:', error);
+    const blocked = new Error(EMBEDDED_IMAGE_ERROR);
+    blocked.fields = { content: EMBEDDED_IMAGE_ERROR };
+    throw blocked;
+  }
+
+  if (hasEmbeddedDataImage(content)) {
+    const blocked = new Error(EMBEDDED_IMAGE_ERROR);
+    blocked.fields = { content: EMBEDDED_IMAGE_ERROR };
+    throw blocked;
+  }
+
+  return sanitizePostWritePayload({ ...data, content });
 }
 
 export function sanitizePostWritePayload(data) {

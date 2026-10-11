@@ -83,12 +83,12 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div id="contact" className={styles.formContainer}>
+      <div className={styles.formContainer}>
         <ContactForm />
       </div>
       <div className={styles.endFooter}>
         <p>
-          כל הזכויות שמורות <FaRegCopyright /> {year}
+          כל הזכויות שמורות <FaRegCopyright className={styles.copyMark} /> {year}
           <span className={styles.policySep} aria-hidden="true"> · </span>
           <Link href="/privacy" className={styles.policyLink}>
             מדיניות פרטיות

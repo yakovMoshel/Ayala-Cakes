@@ -38,7 +38,7 @@ const WorkshopLanding = ({ content }) => {
             {/* Hero */}
             {(hero?.image || hero?.title || hero?.text) && (
                 <section className={styles.hero} aria-label="מידע ראשי">
-                    <div className={styles.heroContainer}>
+                    <div className={`${styles.heroContainer} ${hero.image ? '' : styles.heroTextOnly}`}>
                         {hero.image && (
                             <div className={styles.heroImageWrapper}>
                                 <Image
