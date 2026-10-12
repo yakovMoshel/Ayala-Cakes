@@ -4,6 +4,7 @@ export const STATIC_SITE_PAGES = [
   { label: 'חנות', value: '/shop', type: 'page' },
   { label: 'בלוג', value: '/blog', type: 'page' },
   { label: 'אודות', value: '/about', type: 'page' },
+  { label: 'צור קשר', value: '/#contact', type: 'page' },
   { label: 'סדנת בנטו', value: '/bento-workshop', type: 'page' },
   { label: 'סדנת ציור על עוגות', value: '/paint-cake-workshop', type: 'page' },
   { label: 'קיץ', value: '/summer', type: 'page' },

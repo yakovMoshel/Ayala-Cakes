@@ -83,7 +83,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className={styles.formContainer}>
+      <div id="contact" className={styles.formContainer}>
         <ContactForm />
       </div>
       <div className={styles.endFooter}>

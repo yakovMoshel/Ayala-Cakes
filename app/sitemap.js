@@ -128,12 +128,10 @@ export default async function sitemap() {
     if (page.path === '/blog') {
       lastModified = latestDate([fileDate, newestPost]);
     }
-    if (page.path === '/summer') {
-      lastModified = latestDate([fileDate, fileModified('./summer/SummerClient.jsx')]);
-    }
     const workshopContent = {
       '/bento-workshop': '../content/workshops/bento.js',
       '/paint-cake-workshop': '../content/workshops/paintCake.js',
+      '/summer': '../content/workshops/summer.js',
     };
     if (workshopContent[page.path]) {
       lastModified = latestDate([fileDate, fileModified(workshopContent[page.path])]);
