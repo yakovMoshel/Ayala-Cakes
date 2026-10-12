@@ -20,8 +20,8 @@ export const paintCakeWorkshop = {
     },
 
     hero: {
-        image: '',
-        imageAlt: 'סדנת ציור על עוגות Paint & Cake - עוגות אישיות על כני ציור',
+        image: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1200,dpr_auto/v1791828789/ayala-media/paint-and-cake-workshop-by-ayala-avraham.webp',
+        imageAlt: 'נערה מציירת פרחים צבעוניים בקצפת על עוגה במסגרת על כן ציור, עם שקית זילוף ופלטת צבעים על השולחן.',
         title: 'מי אמר שאי אפשר לאכול את יצירת האמנות שלך?',
         text: 'הכירי את Paint & Cake! סדנת ציור על עוגות שמשלבת בין עולם האמנות לעולם המתוק. כל משתתפת מרכיבה עוגה אישית על כן ציור, יוצרת עם מכחולים וקצפות צבעוניות, ויוצאת עם יצירת אמנות שאפשר גם לאכול. חוויה מקורית, יצירתית ומגבשת ליום הולדת שלא שוכחים!',
         trust: '⭐ מהיוצרת של סדנאות הבנטו שכבר שימחו מאות ילדות',
@@ -30,7 +30,98 @@ export const paintCakeWorkshop = {
     gallery: {
         title: 'כשעוגה הופכת ליצירת אמנות 🎨',
         description: 'מכחולים, קצפות צבעוניות והמון יצירתיות - הצצה לחוויה המתוקה שמחכה לכן',
-        images: [],
+        images: [
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791825888/ayala-media/paint-cake-workshop-table-easels-cream-palettes.webp',
+                alt: 'שולחן סדנת ציור על עוגות ערוך עם כני ציור מעץ, פלטות קצפות צבעוניות ופרחים, לפני תחילת הסדנה.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826450/ayala-media/paint-and-cake-workstations-brushes-spatulas.webp',
+                alt: 'עמדות יצירה אישיות בסדנת Paint & Cake עם מסגרות לעוגה על כני ציור, מכחולים, ספטולות ופלטות צבעים.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826466/ayala-media/birthday-cake-painting-party-girls-haifa-krayot.webp',
+                alt: 'בנות חוגגות יום הולדת סביב שולחן ארוך בסדנת ציור על עוגות, עם כני ציור ושלט Happy Birthday ברקע.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826476/ayala-media/girls-assembling-layer-cakes-piping-bags.webp',
+                alt: 'משתתפות מרכיבות עוגות שכבות אישיות עם שקיות זילוף בתוך מסגרות על כני ציור.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826489/ayala-media/vanilla-cream-layer-cake-canvas-frame.webp',
+                alt: 'עוגת שכבות עם קרם וניל בתוך מסגרת על כן ציור, בזמן שמשתתפת ממלאת אותה בשקית זילוף.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826508/ayala-media/teen-birthday-cake-workshop-at-home.webp',
+                alt: 'חגיגת יום הולדת לנערות בסלון הבית, עם סדנת ציור על עוגות, כני ציור ופלטות צבעים על השולחן.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826529/ayala-media/girl-painting-flowers-on-cake-canvas.webp',
+                alt: 'נערה מציירת פרחים צבעוניים בקצפת על עוגה העומדת על כן ציור, עם מכחול ופלטת צבעים ביד.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826547/ayala-media/brush-painting-whipped-cream-colors-cake.webp',
+                alt: 'ציור במכחול בקצפות צבעוניות על עוגת קנבס בסדנת Paint & Cake.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826562/ayala-media/blue-cake-painted-flowers-spatula-technique.webp',
+                alt: 'עוגה בציפוי תכלת עם פרחים מצוירים בטכניקת ספטולה, לצד פלטת קצפות צבעוניות.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791826580/ayala-media/finished-painted-flower-cakes-paint-cake-workshop.webp',
+                alt: 'עוגות מצוירות בפרחים צבעוניים בסיום סדנת ציור על עוגות, מוכנות לצילום ולאריזה.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791827973/ayala-media/girls-smiling-paint-cake-workshop-table.webp',
+                alt: 'נערות מחייכות סביב שולחן סדנת ציור על עוגות, עם עוגות קנבס על כני ציור ופלטות צבעים.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791827996/ayala-media/girls-piping-cream-cake-canvas-closeup.webp',
+                alt: 'קרוב על משתתפות שמזלפות קרם על עוגות הקנבס שלהן בסדנת Paint & Cake.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791828005/ayala-media/birthday-girls-piping-cakes-on-easels.webp',
+                alt: 'שלוש בנות מזלפות קרם על עוגות על כני ציור במסיבת יום הולדת עם סדנת ציור על עוגות.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791828018/ayala-media/teen-girls-focused-cake-decorating-easels.webp',
+                alt: 'נערות מרוכזות בעיצוב העוגה שלהן על כן ציור בסדנת ציור על עוגות.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791828026/ayala-media/girl-decorating-cake-long-workshop-table.webp',
+                alt: 'ילדה מעצבת עוגת קנבס ליד שולחן ארוך בסדנת ציור על עוגות בבית.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791828038/ayala-media/girls-filling-cake-frames-piping-bags.webp',
+                alt: 'משתתפות ממלאות את מסגרות העוגה בקרם עם שקיות זילוף בסדנת Paint & Cake.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791828049/ayala-media/layered-cakes-in-frames-workshop-table.webp',
+                alt: 'שולחן הסדנה עם עוגות שכבות בתוך מסגרות על כני ציור ופלטות קצפות צבעוניות.',
+                loading: 'lazy',
+            },
+            {
+                src: 'https://res.cloudinary.com/ddopx40bu/image/upload/f_auto,q_auto,c_limit,w_1600,dpr_auto/v1791828060/ayala-media/paint-cake-birthday-workshop-home-kitchen.webp',
+                alt: 'סדנת ציור על עוגות ליום הולדת בבית, עם נערות שמציירות בקצפת סביב שולחן ארוך.',
+                loading: 'lazy',
+            },
+        ],
     },
 
     benefits: {

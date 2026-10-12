@@ -11,6 +11,7 @@ import {
   ShoppingBag, 
   FolderTree, 
   FileText, 
+  LayoutTemplate,
   Image as ImageIcon, 
   BarChart3, 
   LogOut, 
@@ -63,6 +64,8 @@ export default function AdminWrapper({ children }) {
   }
 
   const isPostCategoriesActive = pathname === '/admin/posts/categories';
+
+  const isLandingPagesActive = pathname.startsWith('/admin/landing-pages');
 
   const isPostsActive =
     (pathname.startsWith('/admin/posts') && !isPostCategoriesActive) ||
@@ -144,6 +147,16 @@ export default function AdminWrapper({ children }) {
               </Link>
             </li>
             <li>
+              <Link
+                href="/admin/landing-pages"
+                className={`${styles.navLink} ${isLandingPagesActive ? styles.active : ''}`}
+                aria-current={isLandingPagesActive ? 'page' : undefined}
+              >
+                <LayoutTemplate size={18} />
+                <span>דפי נחיתה</span>
+              </Link>
+            </li>
+            <li>
               <Link 
                 href="/admin/media" 
                 className={`${styles.navLink} ${pathname === '/admin/media' ? styles.active : ''}`}
@@ -198,6 +211,7 @@ export default function AdminWrapper({ children }) {
               { label: 'ניהול קטגוריות', value: '/admin/categories' },
               { label: 'ניהול פוסטים', value: '/admin/posts' },
               { label: '— קטגוריות בלוג', value: '/admin/posts/categories' },
+              { label: 'דפי נחיתה', value: '/admin/landing-pages' },
               { label: 'ספריית מדיה', value: '/admin/media' },
               { label: 'מדדים', value: '/admin/metrics' },
               { label: 'חזרה לאתר', value: '/' },

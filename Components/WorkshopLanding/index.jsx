@@ -45,9 +45,9 @@ const WorkshopLanding = ({ content }) => {
                                     src={hero.image}
                                     alt={hero.imageAlt}
                                     fill
+                                    sizes="(max-width: 968px) 100vw, 640px"
                                     style={{ objectFit: 'cover' }}
                                     priority
-                                    loading="eager"
                                     className={styles.heroImage}
                                 />
                             </div>
@@ -77,6 +77,7 @@ const WorkshopLanding = ({ content }) => {
                     images={gallery.images}
                     title={gallery.title}
                     description={gallery.description}
+                    eagerCount={hero?.image ? 0 : 1}
                     speed={4000}
                     cardWidth={300}
                     cardWidthMobile={240}

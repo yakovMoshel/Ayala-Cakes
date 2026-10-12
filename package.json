@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "build": "next build",
-    "migrate:slugs": "node scripts/migrate-products-slug-simple.js"
+    "migrate:slugs": "node scripts/migrate-products-slug-simple.js",
+    "migrate:landing-pages": "node scripts/migrate-landing-pages.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

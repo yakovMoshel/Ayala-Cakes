@@ -1,0 +1,165 @@
+@import '/app/mixins.scss';
+
+.form {
+  max-width: 860px;
+  margin: 0 auto;
+  direction: rtl;
+
+  select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid rgba(var(--midColor-rgb), 0.2);
+    border-radius: var(--radius-admin-sm);
+    font-size: var(--text-base);
+    font-family: var(--font);
+    color: var(--secColor);
+    background-color: var(--grayColor);
+    text-align: right;
+  }
+}
+
+.saved {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--color-success-border);
+  border-radius: var(--radius-admin-sm);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+
+  h1 {
+    margin: 0;
+    color: var(--secColor);
+    font-size: var(--text-2xl);
+  }
+
+  button {
+    width: auto;
+    margin-top: 0;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: 24px;
+  border: 1px solid rgba(var(--secColor-rgb), 0.08);
+  border-radius: var(--radius-admin-lg);
+  background: white;
+
+  h2 {
+    margin: 0;
+    color: var(--secColor);
+    font-size: var(--text-xl);
+  }
+}
+
+.card,
+.nested {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 16px;
+  border-radius: var(--radius-admin-sm);
+  background: var(--grayColor);
+}
+
+.nested {
+  background: white;
+}
+
+.cardHead,
+.rowActions,
+.inlineRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.inlineRow {
+  align-items: flex-end;
+
+  > div {
+    flex: 1;
+  }
+}
+
+.addButton,
+.removeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid rgba(var(--secColor-rgb), 0.15);
+  border-radius: var(--radius-admin-sm);
+  background: white;
+  color: var(--secColor);
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addButton {
+  width: fit-content;
+  padding: 8px 12px;
+}
+
+.removeButton {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.preview,
+.note,
+.fieldError {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.preview,
+.note {
+  color: var(--mutedColor);
+  direction: ltr;
+  text-align: right;
+}
+
+.note {
+  direction: rtl;
+}
+
+.fieldError {
+  color: var(--color-error-text);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--secColor);
+  font-weight: 600;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

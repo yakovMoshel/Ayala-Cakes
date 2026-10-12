@@ -124,6 +124,10 @@
                         flex-direction: column;
                         gap: 4px;
                     }
+
+                    &.submenuDismissed .submenu {
+                        display: none;
+                    }
                 }
 
                 @media (prefers-reduced-motion: reduce) {

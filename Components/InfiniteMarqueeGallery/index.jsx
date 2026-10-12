@@ -16,7 +16,8 @@ const InfiniteMarqueeGallery = ({
     height = 300,
     heightMobile = 240,
     spaceBetween = 20,
-    pauseOnHover = true
+    pauseOnHover = true,
+    eagerCount = 0,
 }) => {
     if (!images || images.length === 0) {
         return null;
@@ -58,11 +59,11 @@ const InfiniteMarqueeGallery = ({
                             <div className={styles.imageCard}>
                                 <Image
                                     src={image.src}
-                                    alt={image.alt || `Gallery image ${index + 1}`}
+                                    alt={image.alt || ''}
                                     fill
-                                    sizes="(max-width: 768px) 250px, 300px"
+                                    sizes="(max-width: 768px) 240px, 300px"
                                     style={{ objectFit: 'cover' }}
-                                    loading={index < 3 ? 'eager' : 'lazy'}
+                                    loading={image.loading || (index < eagerCount ? 'eager' : 'lazy')}
                                 />
                             </div>
                         </SwiperSlide>
