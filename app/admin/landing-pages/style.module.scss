@@ -1,0 +1,130 @@
+@import '/app/mixins.scss';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-11);
+  direction: rtl;
+  text-align: right;
+  font-family: var(--font);
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: 16px 20px;
+  background: white;
+  border-radius: var(--radius-admin-lg);
+  border: 1px solid rgba(var(--secColor-rgb), 0.05);
+  @include shadow;
+}
+
+.thumb,
+.thumbPlaceholder {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-admin-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.thumbPlaceholder {
+  background: var(--mainColor);
+  color: var(--secColor);
+  @include flex-center;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.title {
+  color: var(--secColor);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--mutedColor);
+  font-size: var(--text-sm);
+}
+
+.dialogBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  @include flex-center;
+  padding: 20px;
+  background: rgba(var(--secColor-rgb), 0.45);
+}
+
+.confirmDialog {
+  width: min(100%, 430px);
+  padding: 28px;
+  border-radius: var(--radius-admin-lg);
+  background: white;
+  border: 1px solid rgba(var(--secColor-rgb), 0.1);
+  @include shadow;
+  text-align: right;
+
+  h3 {
+    margin: 0 0 12px;
+    color: var(--secColor);
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--mutedColor);
+    line-height: 1.6;
+  }
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-4);
+  margin-top: 24px;
+
+  button {
+    min-width: 90px;
+    padding: 10px 18px;
+    border-radius: var(--radius-admin-sm);
+    border: 1px solid rgba(var(--secColor-rgb), 0.15);
+    background: white;
+    color: var(--secColor);
+    font-family: var(--font);
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+.dialogActions .dangerButton {
+  background: var(--color-error-text);
+  border-color: var(--color-error-text);
+  color: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

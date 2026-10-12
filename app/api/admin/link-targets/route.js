@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { connectToMongo } from '@/server/DL/connectToMongo';
 import { postModel } from '@/server/DL/Models/postModel';
 import { productModel } from '@/server/DL/Models/productModel';
+import { landingPageModel } from '@/server/DL/Models/landingPageModel';
 import { verifyAdminSession } from '@/server/functions/verifyAdminSession';
 import { getStaticPages } from '@/utils/siteLinks';
 
@@ -50,7 +51,7 @@ export async function GET(req) {
   try {
     await connectToMongo();
 
-    const [posts, products] = await Promise.all([
+    const [posts, products, landingPages] = await Promise.all([
       type === 'all' || type === 'post'
         ? postModel
             .find({
@@ -69,12 +70,34 @@ export async function GET(req) {
             .populate({ path: 'categoryId', select: 'name' })
             .lean()
         : [],
+      type === 'all' || type === 'page'
+        ? landingPageModel
+            .find({ status: 'published' })
+            .select('title slug updatedAt')
+            .lean()
+        : [],
     ]);
 
     let items = [];
 
     if (type === 'all' || type === 'page') {
-      items = items.concat(getStaticPages());
+      const staticPages = getStaticPages();
+      const staticUrls = new Set(staticPages.map((page) => page.url));
+      items = items.concat(staticPages);
+      items = items.concat(
+        landingPages
+          .filter((page) => page.slug && !staticUrls.has(`/${page.slug}`))
+          .map((page) => ({
+            id: String(page._id),
+            type: 'page',
+            title: page.title,
+            url: `/${page.slug}`,
+            subtitle: `/${page.slug}`,
+            date: page.updatedAt,
+            views: 0,
+            status: 'published',
+          }))
+      );
     }
 
     if (type === 'all' || type === 'post') {

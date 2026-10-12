@@ -2,6 +2,7 @@ import fs from 'fs';
 import { connectToMongo } from '@/server/DL/connectToMongo';
 import { getAllProducts } from '@/server/BL/productService';
 import { getAllPosts } from '@/server/BL/postService';
+import { getPublishedLandingPages } from '@/server/BL/landingPageService';
 import { toAbsoluteContentUrl, toAbsoluteSiteUrl } from '@/utils/siteUrl';
 
 // Rebuild from the database on each request, and again when content is revalidated.
@@ -15,9 +16,6 @@ const STATIC_PAGES = [
   { path: '/terms', file: './terms/page.jsx', changeFrequency: 'yearly', priority: 0.4 },
   { path: '/shop', file: './shop/page.jsx', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/blog', file: './blog/page.jsx', changeFrequency: 'weekly', priority: 0.9 },
-  { path: '/bento-workshop', file: './bento-workshop/page.jsx', changeFrequency: 'monthly', priority: 0.8 },
-  { path: '/paint-cake-workshop', file: './paint-cake-workshop/page.jsx', changeFrequency: 'monthly', priority: 0.8 },
-  { path: '/summer', file: './summer/page.jsx', changeFrequency: 'monthly', priority: 0.7 },
 ];
 
 function fileModified(relativeFile) {
@@ -72,13 +70,15 @@ export default async function sitemap() {
   const postDates = [];
   const productPages = [];
   const blogPages = [];
+  const landingPages = [];
   const malformed = [];
 
   try {
     await connectToMongo();
-    const [products, posts] = await Promise.all([
+    const [products, posts, publishedLandings] = await Promise.all([
       getAllProducts(),
       getAllPosts(),
+      getPublishedLandingPages(),
     ]);
 
     for (const product of products || []) {
@@ -108,6 +108,16 @@ export default async function sitemap() {
         0.7,
       ));
     }
+
+    for (const page of publishedLandings || []) {
+      if (!canListSlug(page.slug)) continue;
+      landingPages.push(entry(
+        toAbsoluteSiteUrl(`/${page.slug}`),
+        contentModified(page),
+        'monthly',
+        0.8,
+      ));
+    }
   } catch (error) {
     console.error('Error generating sitemap:', error);
   }
@@ -128,18 +138,8 @@ export default async function sitemap() {
     if (page.path === '/blog') {
       lastModified = latestDate([fileDate, newestPost]);
     }
-    if (page.path === '/summer') {
-      lastModified = latestDate([fileDate, fileModified('./summer/SummerClient.jsx')]);
-    }
-    const workshopContent = {
-      '/bento-workshop': '../content/workshops/bento.js',
-      '/paint-cake-workshop': '../content/workshops/paintCake.js',
-    };
-    if (workshopContent[page.path]) {
-      lastModified = latestDate([fileDate, fileModified(workshopContent[page.path])]);
-    }
     return entry(toAbsoluteSiteUrl(page.path), lastModified, page.changeFrequency, page.priority);
   });
 
-  return [...staticPages, ...productPages, ...blogPages];
+  return [...staticPages, ...landingPages, ...productPages, ...blogPages];
 }

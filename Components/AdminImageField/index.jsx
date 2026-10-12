@@ -59,7 +59,9 @@ export default function AdminImageField({
         <div className={styles.urlInputWrap}>
           <ImageIcon className={styles.inputIcon} size={18} aria-hidden="true" />
           <input
-            type="url"
+            type="text"
+            inputMode="url"
+            dir="ltr"
             id={id}
             name={id}
             value={value}
@@ -67,6 +69,8 @@ export default function AdminImageField({
             onChange={(e) => onChange(e.target.value)}
             required={required && !value}
             disabled={disabled}
+            pattern="https?:\/\/\S+|\/.*"
+            title="הזיני קישור מלא או נתיב שמתחיל ב־/"
           />
         </div>
         <button

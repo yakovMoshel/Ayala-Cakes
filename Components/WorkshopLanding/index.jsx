@@ -45,9 +45,9 @@ const WorkshopLanding = ({ content }) => {
                                     src={hero.image}
                                     alt={hero.imageAlt}
                                     fill
+                                    sizes="(max-width: 968px) 100vw, 640px"
                                     style={{ objectFit: 'cover' }}
                                     priority
-                                    loading="eager"
                                     className={styles.heroImage}
                                 />
                             </div>
@@ -77,6 +77,7 @@ const WorkshopLanding = ({ content }) => {
                     images={gallery.images}
                     title={gallery.title}
                     description={gallery.description}
+                    eagerCount={hero?.image ? 0 : 1}
                     speed={4000}
                     cardWidth={300}
                     cardWidthMobile={240}
@@ -177,7 +178,7 @@ const WorkshopLanding = ({ content }) => {
                                     <span className={styles.roleTag}>{item.role}</span>
                                 </div>
                                 <p>{item.text}</p>
-                                <span className={styles.time}>{item.time}</span>
+                                {item.time && <span className={styles.time}>{item.time}</span>}
                             </div>
                         ))}
                     </div>
@@ -201,6 +202,7 @@ const WorkshopLanding = ({ content }) => {
                                 duration={item.duration}
                                 emphasis={item.emphasis}
                                 features={item.features}
+                                bonus={item.bonus}
                                 price={item.price}
                                 color={item.color}
                                 recommended={item.recommended}

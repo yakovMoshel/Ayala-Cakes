@@ -15,6 +15,7 @@ export default function Header() {
     const setUser = useStore((state) => state.setUser);
     const [isOpen, setIsOpen] = useState(false);
     const [workshopsOpen, setWorkshopsOpen] = useState(false);
+    const [submenuDismissed, setSubmenuDismissed] = useState(false);
     // Pulse animation for favorites menu item — restore with favorites below
     // const [isPulsing, setIsPulsing] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
@@ -22,6 +23,8 @@ export default function Header() {
     const workshopsButtonRef = useRef(null);
     const backButtonRef = useRef(null);
     const drawerWasOpen = useRef(false);
+    const submenuPointerInside = useRef(false);
+    const submenuWasVisible = useRef(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -90,6 +93,16 @@ export default function Header() {
         setWorkshopsOpen(false);
     };
 
+    const closeDesktopSubmenu = () => {
+        setWorkshopsOpen(false);
+        setSubmenuDismissed(true);
+    };
+
+    useEffect(() => {
+        setWorkshopsOpen(false);
+        if (submenuPointerInside.current) setSubmenuDismissed(true);
+    }, [path]);
+
     const menuItems = [
         { href: '/', label: 'בית' },
         { href: '/about', label: 'אודות' },
@@ -113,18 +126,48 @@ export default function Header() {
             return (
                 <div
                     key={item.label}
-                    className={`${styles.menuItem} ${styles.hasSubmenu} ${workshopsOpen ? styles.submenuOpen : ''}`}
+                    className={`${styles.menuItem} ${styles.hasSubmenu} ${workshopsOpen ? styles.submenuOpen : ''} ${submenuDismissed ? styles.submenuDismissed : ''}`}
+                    onMouseEnter={() => {
+                        submenuPointerInside.current = true;
+                    }}
+                    onMouseLeave={() => {
+                        submenuPointerInside.current = false;
+                        setSubmenuDismissed(false);
+                        setWorkshopsOpen(false);
+                    }}
                     onKeyDown={(event) => {
-                        if (event.key === 'Escape') setWorkshopsOpen(false);
+                        if (event.key === 'Escape') closeDesktopSubmenu();
                     }}
                 >
                     <button
                         type="button"
                         className={groupActive ? styles.active : ''}
-                        aria-expanded={workshopsOpen}
+                        aria-expanded={workshopsOpen && !submenuDismissed}
                         aria-haspopup="true"
                         aria-controls="workshops-submenu"
-                        onClick={() => setWorkshopsOpen((open) => !open)}
+                        onMouseDown={(event) => {
+                            const submenu = event.currentTarget.nextElementSibling;
+                            submenuWasVisible.current = Boolean(
+                                submenu && window.getComputedStyle(submenu).display !== 'none'
+                            );
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key !== 'Enter' && event.key !== ' ') return;
+                            const submenu = event.currentTarget.nextElementSibling;
+                            const visible = submenu && window.getComputedStyle(submenu).display !== 'none';
+                            if (!visible) return;
+                            event.preventDefault();
+                            closeDesktopSubmenu();
+                        }}
+                        onClick={() => {
+                            if (submenuWasVisible.current) {
+                                submenuWasVisible.current = false;
+                                closeDesktopSubmenu();
+                                return;
+                            }
+                            setSubmenuDismissed(false);
+                            setWorkshopsOpen(true);
+                        }}
                     >
                         {item.label}
                     </button>
@@ -135,7 +178,7 @@ export default function Header() {
                                 href={child.href}
                                 role="menuitem"
                                 className={path === child.href ? styles.active : ''}
-                                onClick={handleMenuItemClick}
+                                onClick={closeDesktopSubmenu}
                             >
                                 {child.label}
                             </Link>
