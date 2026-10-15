@@ -74,16 +74,23 @@ export default function MediaPickerModal({
     if (!files || files.length === 0) return;
     setUploading(true);
     try {
+      const uploadedIds = [];
       for (const file of files) {
-        await uploadImageFile(file, {
+        const uploaded = await uploadImageFile(file, {
           filename: uploadFilename,
           alt: uploadAlt,
         });
+        if (uploaded?.public_id) uploadedIds.push(uploaded.public_id);
       }
       if (fileInputRef.current) fileInputRef.current.value = "";
       setUploadFilename("");
       setUploadAlt("");
       await fetchImages();
+      if (uploadedIds.length) {
+        setSelectedIds((prev) =>
+          multiple ? [...new Set([...prev, ...uploadedIds])] : uploadedIds.slice(-1)
+        );
+      }
       setActiveTab("library");
     } catch (e) {
       setActionError(e.message || "העלאה נכשלה");
